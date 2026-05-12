@@ -1,213 +1,398 @@
 (function (global) {
     const defaultProcesses = [
-        { value: 'client-onboarding-kyc', label: 'Client onboarding & KYC', referents: ['Amina El Mansouri — Chief Compliance Officer', 'Marc Laurent — B2B Partnership Director'] },
-        { value: 'luxury-travel-design', label: 'Luxury travel design', referents: ['Karim Haddad — VP Luxury Operations'] },
-        { value: 'supplier-sourcing-due-diligence', label: 'Supplier sourcing & due diligence', referents: ['Amina El Mansouri — Chief Compliance Officer', 'Marc Laurent — B2B Partnership Director'] },
-        { value: 'vip-guest-operations', label: 'VIP guest operations', referents: ['Karim Haddad — VP Luxury Operations', 'Raka Santoso — Indonesia Premium Markets Lead'] },
-        { value: 'payments-deposits-refunds', label: 'Payments, deposits & refunds', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
-        { value: 'data-privacy-guest-confidentiality', label: 'Data privacy & guest confidentiality', referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead'] },
-        { value: 'sanctions-restricted-party-screening', label: 'Sanctions and restricted-party screening', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
-        { value: 'complaints-incidents-crisis-handling', label: 'Complaints, incidents & crisis handling', referents: ['Karim Haddad — VP Luxury Operations', 'Sofia Rahman — Data Protection & Guest Privacy Lead'] },
-        { value: 'partner-relationship-management', label: 'Partner relationship management', referents: ['Marc Laurent — B2B Partnership Director'] }
+        { value: 'gouvernance', label: 'Gouvernance', referents: ['Nadia Benali — Directrice Gouvernance'] },
+        { value: 'developpement-client', label: 'Développement client', referents: ['Alexandre Moreau — Directeur Développement Client'] },
+        { value: 'recrutement', label: 'Recrutement', referents: ['Camille Perrin — Responsable Acquisition Talents'] },
+        { value: 'delivery-service', label: 'Delivery service', referents: ['Yanis Bouchard — Directeur Delivery Service'] },
+        { value: 'qualite', label: 'Qualité', referents: ['Inès Caron — Responsable Excellence Qualité'] },
+        { value: 'confidentialite-surete', label: 'Confidentialité & sûreté', referents: ['Sami El Idrissi — Responsable Sûreté & Confidentialité'] },
+        { value: 'ressources-humaines', label: 'Ressources humaines', referents: ['Claire Dubois — Directrice Ressources Humaines'] },
+        { value: 'facturation-encaissement', label: 'Facturation & encaissement', referents: ['Julien Marchand — Responsable Billing & Cash Collection'] },
+        { value: 'achats-fournisseurs', label: 'Achats & fournisseurs', referents: ['Soraya Haddad — Directrice Achats & Fournisseurs'] },
+        { value: 'finance', label: 'Finance', referents: ['Thomas Lemaire — Directeur Financier'] },
+        { value: 'juridique-compliance', label: 'Juridique & compliance', referents: ['Aïcha Rahmani — Directrice Juridique & Compliance'] },
+        { value: 'si-cybersecurite', label: 'SI & cybersécurité', referents: ['Olivier Garnier — Directeur SI & Cybersécurité'] },
+        { value: 'communication-reputation', label: 'Communication & réputation', referents: ['Maya Chevalier — Directrice Communication & Réputation'] },
+        { value: 'fondation', label: 'Fondation', referents: ['Romain Delattre — Directeur Fondation'] }
     ];
 
     const defaultSubProcesses = {
-        'client-onboarding-kyc': [
+        'gouvernance': [
             {
-                value: 'client-identity-verification',
-                label: 'Client identity verification',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'gouvernance-instances',
+                label: 'Instances',
+                referents: ['Nadia Benali — Directrice Gouvernance', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'ubo-source-of-funds-review',
-                label: 'UBO and source-of-funds review',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'gouvernance-strategie',
+                label: 'Stratégie',
+                referents: ['Nadia Benali — Directrice Gouvernance', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'travel-profile-consent-capture',
-                label: 'Travel profile and consent capture',
-                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
+                value: 'gouvernance-pilotage-filiales',
+                label: 'Pilotage filiales',
+                referents: ['Nadia Benali — Directrice Gouvernance', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'b2b-account-approval',
-                label: 'B2B account approval',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'gouvernance-risques-controle',
+                label: 'Risques & contrôle',
+                referents: ['Nadia Benali — Directrice Gouvernance', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'gouvernance-reporting',
+                label: 'Reporting',
+                referents: ['Nadia Benali — Directrice Gouvernance', 'Salma Roche — Référente coordination']
             }
         ],
-        'luxury-travel-design': [
+        'developpement-client': [
             {
-                value: 'guest-preferences-discovery',
-                label: 'Guest preferences discovery',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'developpement-client-prospection',
+                label: 'Prospection',
+                referents: ['Alexandre Moreau — Directeur Développement Client', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'bespoke-itinerary-curation',
-                label: 'Bespoke itinerary curation',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'developpement-client-qualification-client',
+                label: 'Qualification client',
+                referents: ['Alexandre Moreau — Directeur Développement Client', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'turkey-market-experience-design',
-                label: 'Turkey market experience design',
-                referents: ['Leila Demir — Turkey Market Director']
+                value: 'developpement-client-offre-pricing',
+                label: 'Offre & pricing',
+                referents: ['Alexandre Moreau — Directeur Développement Client', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'indonesia-premium-market-design',
-                label: 'Indonesia premium market design',
-                referents: ['Raka Santoso — Indonesia Premium Markets Lead']
+                value: 'developpement-client-contractualisation',
+                label: 'Contractualisation',
+                referents: ['Alexandre Moreau — Directeur Développement Client', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'developpement-client-suivi-client',
+                label: 'Suivi client',
+                referents: ['Alexandre Moreau — Directeur Développement Client', 'Salma Roche — Référente coordination']
             }
         ],
-        'supplier-sourcing-due-diligence': [
+        'recrutement': [
             {
-                value: 'supplier-market-scan',
-                label: 'Supplier market scan',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'recrutement-planification-rh',
+                label: 'Planification RH',
+                referents: ['Camille Perrin — Responsable Acquisition Talents', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'supplier-compliance-questionnaire',
-                label: 'Supplier compliance questionnaire',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'recrutement-sourcing',
+                label: 'Sourcing',
+                referents: ['Camille Perrin — Responsable Acquisition Talents', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'onsite-quality-review',
-                label: 'Onsite quality and service review',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'recrutement-selection',
+                label: 'Sélection',
+                referents: ['Camille Perrin — Responsable Acquisition Talents', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'contracting-and-recertification',
-                label: 'Contracting and periodic recertification',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'recrutement-verifications',
+                label: 'Vérifications',
+                referents: ['Camille Perrin — Responsable Acquisition Talents', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'recrutement-onboarding-rh',
+                label: 'Onboarding RH',
+                referents: ['Camille Perrin — Responsable Acquisition Talents', 'Salma Roche — Référente coordination']
             }
         ],
-        'vip-guest-operations': [
+        'delivery-service': [
             {
-                value: 'arrival-departure-orchestration',
-                label: 'Arrival and departure orchestration',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'delivery-service-analyse-du-besoin',
+                label: 'Analyse du besoin',
+                referents: ['Yanis Bouchard — Directeur Delivery Service', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'chauffeur-and-security-coordination',
-                label: 'Chauffeur and security coordination',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'delivery-service-matching',
+                label: 'Matching',
+                referents: ['Yanis Bouchard — Directeur Delivery Service', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'villa-yacht-jet-readiness',
-                label: 'Villa, yacht and jet readiness',
-                referents: ['Raka Santoso — Indonesia Premium Markets Lead']
+                value: 'delivery-service-planification',
+                label: 'Planification',
+                referents: ['Yanis Bouchard — Directeur Delivery Service', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'in-stay-concierge-monitoring',
-                label: 'In-stay concierge monitoring',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'delivery-service-brief-mission',
+                label: 'Brief mission',
+                referents: ['Yanis Bouchard — Directeur Delivery Service', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'delivery-service-supervision',
+                label: 'Supervision',
+                referents: ['Yanis Bouchard — Directeur Delivery Service', 'Salma Roche — Référente coordination']
             }
         ],
-        'payments-deposits-refunds': [
+        'qualite': [
             {
-                value: 'quote-approval-and-deposit-call',
-                label: 'Quote approval and deposit call',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'qualite-standards',
+                label: 'Standards',
+                referents: ['Inès Caron — Responsable Excellence Qualité', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'escrow-and-supplier-prepayments',
-                label: 'Escrow and supplier prepayments',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'qualite-formation-luxe',
+                label: 'Formation luxe',
+                referents: ['Inès Caron — Responsable Excellence Qualité', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'refund-exception-approval',
-                label: 'Refund exception approval',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'qualite-controles-qualite',
+                label: 'Contrôles qualité',
+                referents: ['Inès Caron — Responsable Excellence Qualité', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'corporate-invoicing-reconciliation',
-                label: 'Corporate invoicing and reconciliation',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'qualite-incidents-qualite',
+                label: 'Incidents qualité',
+                referents: ['Inès Caron — Responsable Excellence Qualité', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'qualite-amelioration-continue',
+                label: 'Amélioration continue',
+                referents: ['Inès Caron — Responsable Excellence Qualité', 'Salma Roche — Référente coordination']
             }
         ],
-        'data-privacy-guest-confidentiality': [
+        'confidentialite-surete': [
             {
-                value: 'guest-data-minimization',
-                label: 'Guest data minimization',
-                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
+                value: 'confidentialite-surete-confidentialite',
+                label: 'Confidentialité',
+                referents: ['Sami El Idrissi — Responsable Sûreté & Confidentialité', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'vip-confidentiality-protocols',
-                label: 'VIP confidentiality protocols',
-                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
+                value: 'confidentialite-surete-protection-des-donnees',
+                label: 'Protection des données',
+                referents: ['Sami El Idrissi — Responsable Sûreté & Confidentialité', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'secure-sharing-with-partners',
-                label: 'Secure sharing with partners',
-                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
+                value: 'confidentialite-surete-gestion-des-acces',
+                label: 'Gestion des accès',
+                referents: ['Sami El Idrissi — Responsable Sûreté & Confidentialité', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'retention-and-deletion-controls',
-                label: 'Retention and deletion controls',
-                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
+                value: 'confidentialite-surete-surete-missions',
+                label: 'Sûreté missions',
+                referents: ['Sami El Idrissi — Responsable Sûreté & Confidentialité', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'confidentialite-surete-gestion-de-crise',
+                label: 'Gestion de crise',
+                referents: ['Sami El Idrissi — Responsable Sûreté & Confidentialité', 'Salma Roche — Référente coordination']
             }
         ],
-        'sanctions-restricted-party-screening': [
+        'ressources-humaines': [
             {
-                value: 'client-screening-before-booking',
-                label: 'Client screening before booking',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'ressources-humaines-administration-rh',
+                label: 'Administration RH',
+                referents: ['Claire Dubois — Directrice Ressources Humaines', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'supplier-and-agent-screening',
-                label: 'Supplier and agent screening',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'ressources-humaines-temps-absences',
+                label: 'Temps & absences',
+                referents: ['Claire Dubois — Directrice Ressources Humaines', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'market-specific-restricted-party-review',
-                label: 'Market-specific restricted-party review',
-                referents: ['Leila Demir — Turkey Market Director', 'Raka Santoso — Indonesia Premium Markets Lead']
+                value: 'ressources-humaines-paie',
+                label: 'Paie',
+                referents: ['Claire Dubois — Directrice Ressources Humaines', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'hit-escalation-and-clearance',
-                label: 'Hit escalation and clearance',
-                referents: ['Amina El Mansouri — Chief Compliance Officer']
+                value: 'ressources-humaines-performance',
+                label: 'Performance',
+                referents: ['Claire Dubois — Directrice Ressources Humaines', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'ressources-humaines-discipline-contentieux',
+                label: 'Discipline & contentieux',
+                referents: ['Claire Dubois — Directrice Ressources Humaines', 'Salma Roche — Référente coordination']
             }
         ],
-        'complaints-incidents-crisis-handling': [
+        'facturation-encaissement': [
             {
-                value: 'guest-complaint-triage',
-                label: 'Guest complaint triage',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'facturation-encaissement-parametrage-client',
+                label: 'Paramétrage client',
+                referents: ['Julien Marchand — Responsable Billing & Cash Collection', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'supplier-service-incident-response',
-                label: 'Supplier service incident response',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'facturation-encaissement-suivi-des-temps',
+                label: 'Suivi des temps',
+                referents: ['Julien Marchand — Responsable Billing & Cash Collection', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'medical-security-crisis-escalation',
-                label: 'Medical and security crisis escalation',
-                referents: ['Karim Haddad — VP Luxury Operations']
+                value: 'facturation-encaissement-facturation',
+                label: 'Facturation',
+                referents: ['Julien Marchand — Responsable Billing & Cash Collection', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'privacy-incident-notification',
-                label: 'Privacy incident notification',
-                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
+                value: 'facturation-encaissement-encaissement',
+                label: 'Encaissement',
+                referents: ['Julien Marchand — Responsable Billing & Cash Collection', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'facturation-encaissement-revenue-assurance',
+                label: 'Revenue assurance',
+                referents: ['Julien Marchand — Responsable Billing & Cash Collection', 'Salma Roche — Référente coordination']
             }
         ],
-        'partner-relationship-management': [
+        'achats-fournisseurs': [
             {
-                value: 'partner-segmentation-and-tiering',
-                label: 'Partner segmentation and tiering',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'achats-fournisseurs-besoins-d-achat',
+                label: 'Besoins d’achat',
+                referents: ['Soraya Haddad — Directrice Achats & Fournisseurs', 'Leïla Saadi — Référente opérations']
             },
             {
-                value: 'performance-review-and-scorecards',
-                label: 'Performance review and scorecards',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'achats-fournisseurs-qualification-fournisseurs',
+                label: 'Qualification fournisseurs',
+                referents: ['Soraya Haddad — Directrice Achats & Fournisseurs', 'Hugo Martin — Référent contrôle interne']
             },
             {
-                value: 'joint-marketing-and-referral-controls',
-                label: 'Joint marketing and referral controls',
-                referents: ['Marc Laurent — B2B Partnership Director']
+                value: 'achats-fournisseurs-commandes-contrats',
+                label: 'Commandes & contrats',
+                referents: ['Soraya Haddad — Directrice Achats & Fournisseurs', 'Nour Haddad — Référente conformité']
             },
             {
-                value: 'renewal-exit-and-blacklisting',
-                label: 'Renewal, exit and blacklisting',
-                referents: ['Amina El Mansouri — Chief Compliance Officer', 'Marc Laurent — B2B Partnership Director']
+                value: 'achats-fournisseurs-paiement-fournisseurs',
+                label: 'Paiement fournisseurs',
+                referents: ['Soraya Haddad — Directrice Achats & Fournisseurs', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'achats-fournisseurs-performance-fournisseurs',
+                label: 'Performance fournisseurs',
+                referents: ['Soraya Haddad — Directrice Achats & Fournisseurs', 'Salma Roche — Référente coordination']
+            }
+        ],
+        'finance': [
+            {
+                value: 'finance-comptabilite',
+                label: 'Comptabilité',
+                referents: ['Thomas Lemaire — Directeur Financier', 'Leïla Saadi — Référente opérations']
+            },
+            {
+                value: 'finance-clotures',
+                label: 'Clôtures',
+                referents: ['Thomas Lemaire — Directeur Financier', 'Hugo Martin — Référent contrôle interne']
+            },
+            {
+                value: 'finance-reporting-financier',
+                label: 'Reporting financier',
+                referents: ['Thomas Lemaire — Directeur Financier', 'Nour Haddad — Référente conformité']
+            },
+            {
+                value: 'finance-tresorerie',
+                label: 'Trésorerie',
+                referents: ['Thomas Lemaire — Directeur Financier', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'finance-fiscalite',
+                label: 'Fiscalité',
+                referents: ['Thomas Lemaire — Directeur Financier', 'Salma Roche — Référente coordination']
+            }
+        ],
+        'juridique-compliance': [
+            {
+                value: 'juridique-compliance-contrats',
+                label: 'Contrats',
+                referents: ['Aïcha Rahmani — Directrice Juridique & Compliance', 'Leïla Saadi — Référente opérations']
+            },
+            {
+                value: 'juridique-compliance-anticorruption',
+                label: 'Anticorruption',
+                referents: ['Aïcha Rahmani — Directrice Juridique & Compliance', 'Hugo Martin — Référent contrôle interne']
+            },
+            {
+                value: 'juridique-compliance-kyc-sanctions',
+                label: 'KYC & sanctions',
+                referents: ['Aïcha Rahmani — Directrice Juridique & Compliance', 'Nour Haddad — Référente conformité']
+            },
+            {
+                value: 'juridique-compliance-conformite-locale',
+                label: 'Conformité locale',
+                referents: ['Aïcha Rahmani — Directrice Juridique & Compliance', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'juridique-compliance-alertes-enquetes',
+                label: 'Alertes & enquêtes',
+                referents: ['Aïcha Rahmani — Directrice Juridique & Compliance', 'Salma Roche — Référente coordination']
+            }
+        ],
+        'si-cybersecurite': [
+            {
+                value: 'si-cybersecurite-gouvernance-it',
+                label: 'Gouvernance IT',
+                referents: ['Olivier Garnier — Directeur SI & Cybersécurité', 'Leïla Saadi — Référente opérations']
+            },
+            {
+                value: 'si-cybersecurite-applications-metier',
+                label: 'Applications métier',
+                referents: ['Olivier Garnier — Directeur SI & Cybersécurité', 'Hugo Martin — Référent contrôle interne']
+            },
+            {
+                value: 'si-cybersecurite-habilitations',
+                label: 'Habilitations',
+                referents: ['Olivier Garnier — Directeur SI & Cybersécurité', 'Nour Haddad — Référente conformité']
+            },
+            {
+                value: 'si-cybersecurite-cybersecurite',
+                label: 'Cybersécurité',
+                referents: ['Olivier Garnier — Directeur SI & Cybersécurité', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'si-cybersecurite-continuite-it',
+                label: 'Continuité IT',
+                referents: ['Olivier Garnier — Directeur SI & Cybersécurité', 'Salma Roche — Référente coordination']
+            }
+        ],
+        'communication-reputation': [
+            {
+                value: 'communication-reputation-communication-corporate',
+                label: 'Communication corporate',
+                referents: ['Maya Chevalier — Directrice Communication & Réputation', 'Leïla Saadi — Référente opérations']
+            },
+            {
+                value: 'communication-reputation-communication-client',
+                label: 'Communication client',
+                referents: ['Maya Chevalier — Directrice Communication & Réputation', 'Hugo Martin — Référent contrôle interne']
+            },
+            {
+                value: 'communication-reputation-communication-interne',
+                label: 'Communication interne',
+                referents: ['Maya Chevalier — Directrice Communication & Réputation', 'Nour Haddad — Référente conformité']
+            },
+            {
+                value: 'communication-reputation-veille-reputationnelle',
+                label: 'Veille réputationnelle',
+                referents: ['Maya Chevalier — Directrice Communication & Réputation', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'communication-reputation-communication-de-crise',
+                label: 'Communication de crise',
+                referents: ['Maya Chevalier — Directrice Communication & Réputation', 'Salma Roche — Référente coordination']
+            }
+        ],
+        'fondation': [
+            {
+                value: 'fondation-gouvernance-fondation',
+                label: 'Gouvernance Fondation',
+                referents: ['Romain Delattre — Directeur Fondation', 'Leïla Saadi — Référente opérations']
+            },
+            {
+                value: 'fondation-selection-projets',
+                label: 'Sélection projets',
+                referents: ['Romain Delattre — Directeur Fondation', 'Hugo Martin — Référent contrôle interne']
+            },
+            {
+                value: 'fondation-gestion-des-dons',
+                label: 'Gestion des dons',
+                referents: ['Romain Delattre — Directeur Fondation', 'Nour Haddad — Référente conformité']
+            },
+            {
+                value: 'fondation-partenariats',
+                label: 'Partenariats',
+                referents: ['Romain Delattre — Directeur Fondation', 'Mathis Nguyen — Référent performance']
+            },
+            {
+                value: 'fondation-impact-reporting',
+                label: 'Impact & reporting',
+                referents: ['Romain Delattre — Directeur Fondation', 'Salma Roche — Référente coordination']
             }
         ]
     };
