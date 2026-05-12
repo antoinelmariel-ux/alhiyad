@@ -21,20 +21,20 @@ const RISK_PROBABILITY_INFO = {
 
 const RISK_IMPACT_INFO = {
     1: {
-        label: 'Low',
-        text: "<p><strong>Financial (base)</strong></p><ul><li>&lt; 300K€</li></ul><p><strong>Legal</strong></p><ul><li>internal disciplinary action against an employee</li></ul><p><strong>Reputational</strong></p><ul><li>no impact, internal or local external (e.g., partners)</li><li>disruption limited to a few days</li></ul><p><strong>Operational</strong></p><ul><li>little or no disruption</li><li>slowdown in operations</li></ul>"
+        label: 'Faible',
+        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>&lt; 250 k$</li></ul><p><strong>Réputationnel</strong></p><ul><li>plainte client VIP isolée</li></ul><p><strong>Opérationnel</strong></p><ul><li>retard service isolé</li></ul><p><strong>Juridique</strong></p><ul><li>réclamation contractuelle</li></ul><p><strong>Humain</strong></p><ul><li>inconfort client/staff</li></ul>"
     },
     2: {
-        label: 'Moderate',
-        text: "<p><strong>Financial (base)</strong></p><ul><li>[300K€ ; 3M€[</li></ul><p><strong>Legal</strong></p><ul><li>legal or administrative proceedings involving an individual employee</li></ul><p><strong>Reputational</strong></p><ul><li>regional external impact</li><li>disruption limited to a few weeks</li></ul><p><strong>Operational</strong></p><ul><li>minor disruptions</li><li>temporary loss of business or contracts</li></ul>"
+        label: 'Modéré',
+        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>250 k$ à 2,5 M$</li></ul><p><strong>Réputationnel</strong></p><ul><li>impact sur partenaire palace</li></ul><p><strong>Opérationnel</strong></p><ul><li>incident séjour VIP</li></ul><p><strong>Juridique</strong></p><ul><li>contrôle autorité locale</li></ul><p><strong>Humain</strong></p><ul><li>atteinte limitée à la sécurité</li></ul>"
     },
     3: {
-        label: 'High',
-        text: "<p><strong>Financial (base)</strong></p><ul><li>[3M€ ; 30M€[</li></ul><p><strong>Legal</strong></p><ul><li>sanctions at the affiliate level; Judicial Public Interest Agreement (CJIP)</li></ul><p><strong>Reputational</strong></p><ul><li>national external impact (e.g., Department of Health)</li><li>national media crisis</li><li>impact lasting several months</li></ul><p><strong>Operational</strong></p><ul><li>significant disruptions</li><li>permanent loss of business or contracts</li></ul>"
+        label: 'Élevé',
+        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>2,5 M$ à 25 M$</li></ul><p><strong>Réputationnel</strong></p><ul><li>crise média régionale</li></ul><p><strong>Opérationnel</strong></p><ul><li>rupture fournisseur clé</li></ul><p><strong>Juridique</strong></p><ul><li>contentieux multi-juridictions</li></ul><p><strong>Humain</strong></p><ul><li>dommage physique ou psychologique sérieux</li></ul>"
     },
     4: {
-        label: 'Critical',
-        text: "<p><strong>Financial (base)</strong></p><ul><li>≥ 30M€</li></ul><p><strong>Legal</strong></p><ul><li>group-wide sanctions; criminal conviction</li></ul><p><strong>Reputational</strong></p><ul><li>international external impact (e.g., EMA, FDA, etc.)</li><li>international media crisis</li><li>long-term damage lasting several years</li></ul><p><strong>Operational</strong></p><ul><li>cessation of operations</li></ul>"
+        label: 'Critique',
+        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>≥ 25 M$</li></ul><p><strong>Réputationnel</strong></p><ul><li>atteinte internationale à la marque Al Hiyad</li></ul><p><strong>Opérationnel</strong></p><ul><li>interruption d’activité multi-marchés</li></ul><p><strong>Juridique</strong></p><ul><li>sanctions, interdiction d’opérer ou poursuites pénales</li></ul><p><strong>Humain</strong></p><ul><li>risque vital ou atteinte grave à une personne</li></ul>"
     }
 };
 
