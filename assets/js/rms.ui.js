@@ -133,7 +133,7 @@ function applyFilters(filterKeyOrEvent, value, sourceElement) {
     const normalizedKey = typeof filterKey === 'string' ? filterKey.trim() : '';
 
     if (!rms.filters) {
-        rms.filters = { process: '', type: '', status: '', search: '', entity: [], tiers: [] };
+        rms.filters = { process: '', type: '', status: '', theme: '', search: '', entity: [], tiers: [] };
     }
 
     if (normalizedKey) {
@@ -171,7 +171,7 @@ function searchRisks(searchTermOrEvent, sourceElement) {
     const normalizedValue = searchTerm == null ? '' : String(searchTerm).trim();
 
     if (!rms.filters) {
-        rms.filters = { process: '', type: '', status: '', search: '', entity: [], tiers: [] };
+        rms.filters = { process: '', type: '', status: '', theme: '', search: '', entity: [], tiers: [] };
     }
 
     rms.filters.search = normalizedValue;
@@ -191,7 +191,7 @@ function toggleEntityFilterChip(entityValue) {
     if (!window.rms || !entityValue) return;
 
     if (!rms.filters) {
-        rms.filters = { process: '', type: '', status: '', search: '', entity: [], tiers: [] };
+        rms.filters = { process: '', type: '', status: '', theme: '', search: '', entity: [], tiers: [] };
     }
 
     const current = Array.isArray(rms.filters.entity) ? rms.filters.entity : [];
@@ -212,7 +212,7 @@ function renderRiskTierFilterOptions() {
     }
 
     if (!rms.filters) {
-        rms.filters = { process: '', type: '', status: '', search: '', entity: [], tiers: [] };
+        rms.filters = { process: '', type: '', status: '', theme: '', search: '', entity: [], tiers: [] };
     }
 
     const options = Array.isArray(rms.config?.tiers) ? rms.config.tiers : [];

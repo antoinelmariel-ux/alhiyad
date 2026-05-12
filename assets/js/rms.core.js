@@ -143,6 +143,7 @@ class RiskManagementSystem {
             process: '',
             type: '',
             status: '',
+            theme: '',
             search: '',
             entity: [],
             tiers: []
@@ -336,6 +337,7 @@ class RiskManagementSystem {
 
         const parameterKeys = [
             'riskTypes',
+            'riskThemes',
             'countries',
             'tiers',
             'targetAudiences',
@@ -352,6 +354,15 @@ class RiskManagementSystem {
         parameterKeys.forEach(key => {
             config[key] = cloneList(parameterConfig[key]);
         });
+
+        if (!config.riskThemes.length) {
+            config.riskThemes = [
+                { value: 'corruption', label: 'Corruption' },
+                { value: 'personal-data', label: 'Données Personnelles' },
+                { value: 'international-sanctions', label: 'Sanctions internationales' },
+                { value: 'discrimination', label: 'Discrimination' }
+            ];
+        }
 
         config.riskThemeAggravatingFactors = cloneAggravatingFactorConfig(parameterConfig.riskThemeAggravatingFactors);
 
@@ -579,6 +590,7 @@ class RiskManagementSystem {
 
         const simpleArrayKeys = [
             'riskTypes',
+            'riskThemes',
             'countries',
             'tiers',
             'targetAudiences',
@@ -3195,9 +3207,11 @@ class RiskManagementSystem {
             });
         };
 
+        fill(['matrixThemeFilter', 'risksThemeFilter'], this.config.riskThemes, 'All themes');
         fill(['matrixProcessFilter', 'risksProcessFilter', 'interviewProcessFilter'], this.config.processes, 'All processes');
         fill(['matrixRiskTypeFilter', 'risksTypeFilter'], this.config.riskTypes, 'All types');
         fill(['matrixStatusFilter', 'risksStatusFilter'], this.config.riskStatuses, 'All statuses');
+        fill('riskTheme', this.config.riskThemes, 'Select...');
         fill('processus', this.config.processes, 'Select...');
         this.updateSousProcessusOptions();
         fill('typeCorruption', this.config.riskTypes, 'Select...');
@@ -3554,6 +3568,7 @@ class RiskManagementSystem {
                 renderer: (body) => this.renderMindMapModuleConfiguration(body)
             },
             { key: 'riskTypes', label: 'Types de corruption' },
+            { key: 'riskThemes', label: 'Thématiques des risques' },
             { key: 'countries', label: 'Entités concernées' },
             {
                 key: 'countryColumns',
@@ -8144,12 +8159,14 @@ class RiskManagementSystem {
             process = '',
             type = '',
             status = '',
+            theme = '',
             search = '',
             entity = [],
             tiers = []
         } = this.filters || {};
 
         const processFilter = String(process || '').toLowerCase();
+        const themeFilter = String(theme || '').toLowerCase();
         const searchFilter = String(search || '').toLowerCase();
         const entityFilters = Array.isArray(entity)
             ? entity.map(value => String(value || '').toLowerCase()).filter(Boolean)
@@ -8174,6 +8191,13 @@ class RiskManagementSystem {
                     ? risk.typesCorruption
                     : [risk?.typeCorruption];
                 if (!typeValues.some(value => value === type)) {
+                    return false;
+                }
+            }
+
+            if (themeFilter) {
+                const riskTheme = String(risk?.riskTheme || '').toLowerCase();
+                if (riskTheme !== themeFilter) {
                     return false;
                 }
             }
