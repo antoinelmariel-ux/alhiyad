@@ -375,6 +375,12 @@
                         <div id="matrixEntityFilterChips" class="filter-chip-group" aria-label="Filter matrix by entities"></div>
                     </div>
                     <div class="filter-group">
+                        <label class="filter-label" for="matrixThemeFilter">Theme</label>
+                        <select class="filter-select" id="matrixThemeFilter" data-risk-filter="theme" onchange="applyFilters('theme', this.value, this)">
+                            <option value="">All themes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
                         <label class="filter-label" for="matrixProcessFilter">Process</label>
                         <select class="filter-select" id="matrixProcessFilter" data-risk-filter="process" onchange="applyFilters('process', this.value, this)">
                             <option value="">All processes</option>
@@ -567,6 +573,12 @@
                         <div class="filter-group filter-group-entities">
                             <label class="filter-label" for="risksEntityFilterChips">Relevant entities</label>
                             <div id="risksEntityFilterChips" class="filter-chip-group" aria-label="Filter register by entities"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="risksThemeFilter">Theme</label>
+                            <select class="filter-select" id="risksThemeFilter" data-risk-filter="theme" onchange="applyFilters('theme', this.value, this)">
+                                <option value="">All themes</option>
+                            </select>
                         </div>
                         <div class="filter-group">
                             <label class="filter-label" for="risksProcessFilter">Process</label>
