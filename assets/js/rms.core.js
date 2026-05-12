@@ -613,6 +613,10 @@ class RiskManagementSystem {
             updated = true;
         }
 
+        if (this.applyLuxuryBusinessModelMigration(fallback)) {
+            updated = true;
+        }
+
         const templateSource = Array.isArray(baseConfig.interviewTemplates)
             ? baseConfig.interviewTemplates
             : Array.isArray(fallback.interviewTemplates)
@@ -668,8 +672,185 @@ class RiskManagementSystem {
         return updated;
     }
 
+    applyLuxuryBusinessModelMigration(fallback = {}) {
+        const hasAnyValue = (list, values) => {
+            const set = new Set(Array.isArray(list)
+                ? list.map(entry => String(entry?.value || ''))
+                : []);
+            return values.some(value => set.has(value));
+        };
+
+        const hasAllValue = (list, values) => {
+            const set = new Set(Array.isArray(list)
+                ? list.map(entry => String(entry?.value || ''))
+                : []);
+            return values.every(value => set.has(value));
+        };
+
+        const cloneList = (list) => Array.isArray(list)
+            ? list.map(item => (item && typeof item === 'object') ? { ...item } : item)
+            : [];
+
+        const cloneSubProcesses = (source) => {
+            if (!source || typeof source !== 'object' || Array.isArray(source)) {
+                return {};
+            }
+            return Object.entries(source).reduce((acc, [key, value]) => {
+                acc[key] = cloneList(value);
+                return acc;
+            }, {});
+        };
+
+        let changed = false;
+
+        const targetTierValues = [
+            'palace-hotels',
+            'private-villas',
+            'premium-chauffeurs',
+            'partner-concierges',
+            'lifestyle-agents',
+            'yacht-jet-operators',
+            'exclusive-experience-suppliers',
+            'b2b-corporate-clients',
+            'b2c-ultra-high-net-worth-clients'
+        ];
+        const legacyTierValues = [
+            'HealthcareProfessionals',
+            'HCPAssociationsLearnedSocieties',
+            'PatientAssociations',
+            'blood-doner-associations',
+            'PlasmaDonors',
+            'HealthcareOrganizations',
+            'GroupPurchasingOrganizations',
+            'PublicOfficials',
+            'PublicAuthorities',
+            'Politicians',
+            'DistributorsAndCommercialAgents',
+            'Intermediaries',
+            'ConsultingServicesProviders',
+            'Suppliers',
+            'PharmaceuticalCompanies'
+        ];
+
+        if (hasAnyValue(this.config.tiers, legacyTierValues) && !hasAllValue(this.config.tiers, targetTierValues)) {
+            this.config.tiers = cloneList(fallback.tiers);
+            changed = true;
+        }
+
+        const targetAudienceValues = [
+            'hq-dubai-leadership',
+            'dubai-luxury-operations',
+            'turkey-europe-americas-middle-east',
+            'indonesia-asian-premium-markets',
+            'guest-privacy-confidentiality',
+            'b2b-partnerships'
+        ];
+        const legacyAudienceValues = [
+            'international-operations',
+            'france-operations',
+            'corporate-affairs',
+            'plasma-collection-centers',
+            'dcam',
+            'finance-accounting-procurement',
+            'industry'
+        ];
+
+        if (hasAnyValue(this.config.targetAudiences, legacyAudienceValues) && !hasAllValue(this.config.targetAudiences, targetAudienceValues)) {
+            this.config.targetAudiences = cloneList(fallback.targetAudiences);
+            changed = true;
+        }
+
+        const targetProcessValues = [
+            'client-onboarding-kyc',
+            'luxury-travel-design',
+            'supplier-sourcing-due-diligence',
+            'vip-guest-operations',
+            'payments-deposits-refunds',
+            'data-privacy-guest-confidentiality',
+            'sanctions-restricted-party-screening',
+            'complaints-incidents-crisis-handling',
+            'partner-relationship-management'
+        ];
+        const legacyProcessValues = [
+            'Stratégie',
+            'Communication',
+            "Management Qualité et Risques d'entreprise",
+            'Mesure et Amélioration Qualité',
+            'Gestion de la performance',
+            'R&D et Réglementaire',
+            'Production',
+            'Commercialisation des produits',
+            'Supply Chain',
+            'Gestion des prestations',
+            'Ressources humaines',
+            'Achats',
+            'Finance',
+            'Systèmes transverses de connaissance et de documentation',
+            'Système d’information (SI)',
+            'Sites et Equipement',
+            'Juridique Compliance Propriété Intellectuelle Assurances'
+        ];
+
+        if (hasAnyValue(this.config.processes, legacyProcessValues) && !hasAllValue(this.config.processes, targetProcessValues)) {
+            this.config.processes = cloneList(fallback.processes);
+            this.config.subProcesses = cloneSubProcesses(fallback.subProcesses);
+            changed = true;
+        }
+
+        if (changed) {
+            this.config.referentDirectory = this.normalizeReferentDirectory(fallback.referentDirectory);
+        }
+
+        return changed;
+    }
+
     applyEntityModelMigration() {
         const targetEntities = [
+            { value: 'HQ Dubai', label: 'HQ Dubai', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
+            { value: 'Dubai Operations', label: 'Dubai Operations', referents: ['Karim Haddad — VP Luxury Operations'] },
+            {
+                value: 'Turkey Subsidiary',
+                label: 'Turkey Subsidiary',
+                markets: ['Europe', 'Americas', 'Middle East'],
+                referents: ['Leila Demir — Turkey Market Director']
+            },
+            {
+                value: 'Indonesia Subsidiary',
+                label: 'Indonesia Subsidiary',
+                markets: ['Growing Asian premium markets'],
+                referents: ['Raka Santoso — Indonesia Premium Markets Lead']
+            }
+        ];
+
+        const targetColumns = [
+            {
+                key: 'dubai-platform',
+                label: 'Dubai platform',
+                countries: ['HQ Dubai', 'Dubai Operations']
+            },
+            {
+                key: 'turkey-covered-markets',
+                label: 'Turkey — Europe, Americas, Middle East',
+                countries: ['Turkey Subsidiary']
+            },
+            {
+                key: 'indonesia-premium-markets',
+                label: 'Indonesia — growing Asian premium markets',
+                countries: ['Indonesia Subsidiary']
+            }
+        ];
+
+        const currentEntities = Array.isArray(this.config?.countries)
+            ? this.config.countries.map(entry => String(entry?.value || ''))
+            : [];
+        const currentSet = new Set(currentEntities);
+        const legacyEntityValues = [
+            'Allemagne',
+            'Belgique',
+            'Italie',
+            'République Tchèque',
+            'Turquie',
+            'USA',
             'HQ',
             'France',
             'Benelux',
@@ -683,33 +864,13 @@ class RiskManagementSystem {
             'HemaBiologics',
             'Distributors'
         ];
-
-        const targetColumns = [
-            { key: 'hq', label: 'Transversal entities', countries: ['HQ', 'LFB USA', 'American Plasma', 'EuroPlasma'] },
-            {
-                key: 'pharma-affiliates-jv-plus-50',
-                label: 'Pharma Affiliates / JV > 50%',
-                countries: ['France', 'Benelux', 'Germany', 'Spain', 'UK', 'Mexico']
-            },
-            {
-                key: 'distributors-jv-minus-50',
-                label: 'Distributors / JV < 50%',
-                countries: ['HemaBiologics', 'Distributors']
-            }
-        ];
-
-        const currentEntities = Array.isArray(this.config?.countries)
-            ? this.config.countries.map(entry => String(entry?.value || ''))
-            : [];
-        const currentSet = new Set(currentEntities);
-        const hasLegacySet = ['Allemagne', 'Belgique', 'Italie', 'République Tchèque', 'Turquie', 'USA']
-            .some(value => currentSet.has(value));
-        const looksLikeLegacyCountryModel = hasLegacySet && !currentSet.has('HQ');
-        const shouldMigrateEntities = !currentEntities.length || looksLikeLegacyCountryModel;
+        const hasLegacySet = legacyEntityValues.some(value => currentSet.has(value));
+        const hasTargetEntities = targetEntities.every(entity => currentSet.has(entity.value));
+        const shouldMigrateEntities = !currentEntities.length || (hasLegacySet && !hasTargetEntities);
 
         let changed = false;
         if (shouldMigrateEntities) {
-            this.config.countries = targetEntities.map(value => ({ value, label: value }));
+            this.config.countries = targetEntities.map(entity => ({ ...entity }));
             changed = true;
         }
 
@@ -719,9 +880,16 @@ class RiskManagementSystem {
             this.config.countries
         );
         const existing = Array.isArray(this.config?.countryColumns) ? this.config.countryColumns : [];
-        const hasDeprecatedSplitColumns = existing.some(column => ['lfb-usa', 'europasma'].includes(column?.key));
-        const hasDeprecatedHqLabel = existing.some(column => column?.key === 'hq' && column?.label === 'HQ');
-        const shouldMigrateColumns = !existing.length || looksLikeLegacyCountryModel || hasDeprecatedSplitColumns || hasDeprecatedHqLabel;
+        const legacyColumnKeys = [
+            'hq',
+            'lfb-usa',
+            'europasma',
+            'pharma-affiliates-jv-plus-50',
+            'distributors-jv-minus-50'
+        ];
+        const hasDeprecatedColumns = existing.some(column => legacyColumnKeys.includes(column?.key));
+        const hasTargetColumns = targetColumns.every(target => existing.some(column => column?.key === target.key));
+        const shouldMigrateColumns = !existing.length || hasDeprecatedColumns || (shouldMigrateEntities && !hasTargetColumns);
         if (shouldMigrateColumns) {
             this.config.countryColumns = normalizedTargets;
             changed = true;
