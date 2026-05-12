@@ -143,9 +143,6 @@
                 <button class="tab" onclick="switchTab('interviews')">
                     🗣️ Interviews
                 </button>
-                <button class="tab" onclick="switchTab('quick-assessment')">
-                    ⚡ Quick assessment
-                </button>
                 <button class="tab" onclick="switchTab('matrix')">
                     📈 Risk Matrix
                 </button>
@@ -157,9 +154,6 @@
                 </button>
                 <button class="tab" onclick="switchTab('plans')">
                     📝 Action Plans
-                </button>
-                <button class="tab" onclick="switchTab('reports')">
-                    📑 Reports
                 </button>
                 <button class="tab" onclick="switchTab('config')">
                     ⚙️ Administration
@@ -356,131 +350,6 @@
                         <div class="interview-loading-text">Loading interview reports...</div>
                     </div>
                     <div id="interviewList" class="interview-list"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="quick-assessment-tab" class="tab-content">
-            <div class="main-content">
-                <div class="toolbar">
-                    <div class="toolbar-title" id="qaToolbarTitle">Quick assessment</div>
-                    <div class="toolbar-actions">
-                        <button class="btn btn-outline" type="button" id="qaExportJsonBtn">Export JSON</button>
-                        <button class="btn btn-outline" type="button" id="qaExportCsvBtn">Export CSV</button>
-                        <button class="btn btn-secondary" type="button" id="qaImportBtn">Import JSON</button>
-                        <input type="file" id="qaImportFile" accept="application/json" hidden>
-                    </div>
-                </div>
-                <div class="content-area quick-assessment-content">
-                    <div class="qa-subtabs">
-                        <button type="button" class="qa-subtab active" data-qa-view="scenarios" id="qaSubtabScenarios">1. Scenario loading</button>
-                        <button type="button" class="qa-subtab" data-qa-view="assessment" id="qaSubtabAssessment">2. Assessment</button>
-                        <button type="button" class="qa-subtab" data-qa-view="overview" id="qaSubtabOverview">3. Consolidated view</button>
-                    </div>
-
-                    <section class="qa-panel active" id="qa-scenarios-panel">
-                        <label class="form-label" id="qaScenariosLabel" for="qaScenariosInput">Paste your scenarios (1 line = 1 scenario, max 500 characters)</label>
-                        <textarea id="qaScenariosInput" class="form-textarea qa-scenarios-input" rows="6" placeholder="Undue payment through an intermediary"></textarea>
-                        <div class="qa-scenarios-actions">
-                            <button type="button" class="btn btn-primary" id="qaLoadScenariosBtn">Load scenarios</button>
-                            <span class="form-helper" id="qaScenariosHelper">Loading scenarios replaces the current list.</span>
-                        </div>
-                        <div id="qaScenarioList" class="qa-scenario-list"></div>
-                    </section>
-
-                    <section class="qa-panel" id="qa-assessment-panel">
-                        <div class="qa-assessment-grid">
-                            <div class="qa-card qa-card-scenario">
-                                <div class="qa-selected-caption" id="qaSelectedCaption">Selected scenario</div>
-                                <div class="qa-current-scenario" id="qaCurrentScenario">No scenario selected</div>
-                                <div class="qa-actions-row">
-                                    <button class="btn btn-secondary btn-icon" type="button" id="qaDuplicateBtn" title="Duplicate this scenario" aria-label="Duplicate this scenario">⧉</button>
-                                    <button class="btn btn-danger btn-icon" type="button" id="qaDeleteBtn" title="Delete this scenario" aria-label="Delete this scenario">🗑️</button>
-                                </div>
-                                <div class="qa-progress"><div id="qaAssessmentProgressFill"></div></div>
-                            </div>
-
-                            <div class="qa-card qa-card-matrix">
-                                <h4 id="qaRawRiskTitle">Gross risk (inherent)</h4>
-                                <div class="qa-matrix-wrapper">
-                                    <div class="qa-matrix-surface">
-                                        <div id="qaMatrix" class="qa-matrix"></div>
-                                        <div class="axis-label x-axis">Probability →</div>
-                                        <div class="axis-label y-axis">
-                                            <span class="axis-text">Impact</span>
-                                            <span class="axis-arrow" aria-hidden="true">↑</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="qa-card qa-card-details">
-                                <h4 id="qaRawDetailTitle">Gross risk details</h4>
-                                <div class="qa-risk-calculation" id="qaRiskCalculation">P1 × I1 = 1 (Low)</div>
-                                <div class="qa-risk-block">
-                                    <h5 id="qaProbabilityTitle">Probability 1 - Unlikely</h5>
-                                    <p id="qaProbabilityDetail">Event has not occurred in the past 5 years. Event not expected to occur in the next 5 years.</p>
-                                </div>
-                                <div class="qa-risk-block">
-                                    <h5 id="qaImpactTitle">Impact 1 - Low</h5>
-                                    <ul id="qaImpactDetail" class="qa-impact-list"></ul>
-                                </div>
-                                <h4 id="qaAggravatingTitle">Aggravating factors</h4>
-                                <div id="qaAggravatingFactors" class="qa-aggravating-list"></div>
-                            </div>
-
-                            <div class="qa-card qa-card-controls">
-                                <label class="form-label" id="qaEffectivenessLabel" for="qaEffectiveness">Control effectiveness</label>
-                                <input type="range" id="qaEffectiveness" min="0" max="75" step="25">
-                                <div class="form-helper" id="qaEffectivenessLegend">0% - Ineffective</div>
-                            </div>
-
-                            <div class="qa-card qa-card-comment">
-                                <label class="form-label" id="qaCommentLabel" for="qaComment">Comment</label>
-                                <textarea id="qaComment" class="form-textarea" rows="4" placeholder="Add your notes..."></textarea>
-                                <div class="qa-nav-actions">
-                                    <button class="btn btn-secondary" type="button" id="qaPrevBtn">← Previous scenario</button>
-                                    <button class="btn btn-secondary" type="button" id="qaNextBtn">Next scenario →</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="qa-panel" id="qa-overview-panel">
-                        <div class="qa-overview-actions">
-                            <button type="button" class="btn btn-primary" id="qaCreateDraftRisksBtn">Basculer en Risques (Draft)</button>
-                        </div>
-                        <div class="qa-overview-grid">
-                            <div>
-                                <h4 id="qaOverviewSortedTitle">Gross risks sorted (P × I descending)</h4>
-                                <div id="qaOverviewRiskList" class="qa-overview-list"></div>
-                            </div>
-                            <div>
-                                <h4 id="qaOverviewMatrixTitle">Gross risk matrix</h4>
-                                <div class="qa-overview-matrix-layout">
-                                    <div class="qa-overview-row-labels" aria-hidden="true">
-                                        <span>Critical impact</span>
-                                        <span>High impact</span>
-                                        <span>Moderate impact</span>
-                                        <span>Low impact</span>
-                                    </div>
-                                    <div class="qa-overview-matrix-stage">
-                                        <div class="qa-matrix-wrapper qa-overview-matrix-wrapper">
-                                            <div class="qa-matrix-surface">
-                                                <div id="qaOverviewMatrix" class="qa-overview-matrix"></div>
-                                            </div>
-                                        </div>
-                                        <div class="qa-overview-col-labels" aria-hidden="true">
-                                            <span>Unlikely</span>
-                                            <span>Moderately likely</span>
-                                            <span>Likely</span>
-                                            <span>Very likely</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
                 </div>
             </div>
         </div>
@@ -864,58 +733,6 @@
                             </div>
                             <div class="controls-table-body" id="actionPlansList">
                                 <!-- Populated by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports Tab -->
-        <div id="reports-tab" class="tab-content">
-            <div class="main-content">
-                <div class="toolbar">
-                    <div class="toolbar-title">Reports and Analytics</div>
-                    <div class="toolbar-actions">
-                        <button class="btn btn-outline" onclick="exportReportsRisksXlsx()">
-                            ⬇️ Export risques (XLSX)
-                        </button>
-                        <button class="btn btn-primary" onclick="generateReport()">
-                            📊 Generate report
-                        </button>
-                    </div>
-                </div>
-
-                <div class="content-area">
-                    <div class="form-section">
-                        <div class="form-section-title">Available Reports</div>
-                        <div class="dashboard-grid">
-                            <div class="stat-card primary" onclick="generateReport('sapin2')">
-                                <div class="stat-header">
-                                    <span class="stat-title">Luxury concierge compliance report</span>
-                                    <span class="stat-icon">📄</span>
-                                </div>
-                                <div style="margin-top: 10px; font-size: 0.9em; color: #7f8c8d;">
-                                    Full service integrity and compliance report
-                                </div>
-                            </div>
-                            <div class="stat-card success" onclick="generateReport('executive')">
-                                <div class="stat-header">
-                                    <span class="stat-title">Executive summary</span>
-                                    <span class="stat-icon">👔</span>
-                                </div>
-                                <div style="margin-top: 10px; font-size: 0.9em; color: #7f8c8d;">
-                                    Executive risk view
-                                </div>
-                            </div>
-                            <div class="stat-card warning" onclick="generateReport('audit')">
-                                <div class="stat-header">
-                                    <span class="stat-title">Audit report</span>
-                                    <span class="stat-icon">🔍</span>
-                                </div>
-                                <div style="margin-top: 10px; font-size: 0.9em; color: #7f8c8d;">
-                                    Details for internal audit
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1714,7 +1531,6 @@
     <script defer src="assets/js/rms.data.records.js"></script>
     <script defer src="assets/js/rms.matrix.js"></script>
     <script defer src="assets/js/rms.ui.js"></script>
-    <script defer src="assets/js/rms.quick-assessment.js"></script>
     <script defer src="assets/js/rms.core.js"></script>
     <script defer src="assets/js/rms.integrations.js"></script>
     <script defer src="assets/js/feedback.js"></script>
