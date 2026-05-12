@@ -322,6 +322,13 @@ class RiskManagementSystem {
             }, {});
         };
 
+        const cloneAggravatingFactorConfig = (map) => {
+            if (!map || typeof map !== 'object' || Array.isArray(map)) {
+                return {};
+            }
+            return JSON.parse(JSON.stringify(map));
+        };
+
         const config = {
             processes: cloneReferentList(processConfig.processes),
             subProcesses: cloneSubProcessMap(processConfig.subProcesses)
@@ -345,6 +352,8 @@ class RiskManagementSystem {
         parameterKeys.forEach(key => {
             config[key] = cloneList(parameterConfig[key]);
         });
+
+        config.riskThemeAggravatingFactors = cloneAggravatingFactorConfig(parameterConfig.riskThemeAggravatingFactors);
 
         const templateList = Array.isArray(parameterConfig.interviewTemplates)
             ? parameterConfig.interviewTemplates
@@ -608,6 +617,20 @@ class RiskManagementSystem {
             updated = true;
         }
         this.config.countryColumns = normalizedCountryColumns;
+
+        const aggravatingFactorSource = baseConfig.riskThemeAggravatingFactors
+            && typeof baseConfig.riskThemeAggravatingFactors === 'object'
+            && !Array.isArray(baseConfig.riskThemeAggravatingFactors)
+            ? baseConfig.riskThemeAggravatingFactors
+            : fallback.riskThemeAggravatingFactors;
+        this.config.riskThemeAggravatingFactors = aggravatingFactorSource
+            && typeof aggravatingFactorSource === 'object'
+            && !Array.isArray(aggravatingFactorSource)
+            ? JSON.parse(JSON.stringify(aggravatingFactorSource))
+            : {};
+        if (!baseConfig.riskThemeAggravatingFactors) {
+            updated = true;
+        }
 
         if (this.applyEntityModelMigration()) {
             updated = true;
@@ -1336,7 +1359,7 @@ class RiskManagementSystem {
             .filter(Boolean);
 
         if (typeof normalizeAggravatingFactors === 'function') {
-            normalized.aggravatingFactors = normalizeAggravatingFactors(risk.aggravatingFactors);
+            normalized.aggravatingFactors = normalizeAggravatingFactors(risk.aggravatingFactors, normalized.riskTheme || 'corruption');
         } else {
             const group1 = Array.isArray(risk?.aggravatingFactors?.group1)
                 ? [...risk.aggravatingFactors.group1]
@@ -1344,7 +1367,7 @@ class RiskManagementSystem {
             const group2 = Array.isArray(risk?.aggravatingFactors?.group2)
                 ? [...risk.aggravatingFactors.group2]
                 : [];
-            normalized.aggravatingFactors = { group1, group2 };
+            normalized.aggravatingFactors = { theme: normalized.riskTheme || 'corruption', group1, group2 };
         }
 
         const rawCoefficient = Number(risk?.aggravatingCoefficient);

@@ -176,13 +176,32 @@ const AGGRAVATING_FACTOR_GROUPS = Object.freeze({
     group2: { coefficient: 1.2, inputName: 'aggravatingGroup2' }
 });
 
-function normalizeAggravatingFactors(factors = {}) {
-    const normalized = { group1: [], group2: [] };
+function normalizeAggravatingTheme(theme) {
+    const allowedThemes = new Set([
+        'corruption',
+        'personal-data',
+        'international-sanctions',
+        'discrimination'
+    ]);
+    const normalizedTheme = typeof theme === 'string' ? theme.trim() : '';
+    return allowedThemes.has(normalizedTheme) ? normalizedTheme : 'corruption';
+}
+
+function normalizeAggravatingFactors(factors = {}, fallbackTheme = 'corruption') {
+    const rawTheme = factors && typeof factors === 'object' && typeof factors.theme === 'string'
+        ? factors.theme
+        : fallbackTheme;
+    const normalized = {
+        theme: normalizeAggravatingTheme(rawTheme),
+        group1: [],
+        group2: []
+    };
+
     if (!factors || typeof factors !== 'object') {
         return normalized;
     }
 
-    Object.keys(normalized).forEach(groupKey => {
+    Object.keys(AGGRAVATING_FACTOR_GROUPS).forEach(groupKey => {
         const rawValues = factors[groupKey];
         if (!Array.isArray(rawValues)) {
             normalized[groupKey] = [];
@@ -223,7 +242,7 @@ function getRiskAggravatingFactors(risk) {
     }
 
     if (risk.aggravatingFactors && typeof risk.aggravatingFactors === 'object') {
-        return normalizeAggravatingFactors(risk.aggravatingFactors);
+        return normalizeAggravatingFactors(risk.aggravatingFactors, risk.riskTheme || 'corruption');
     }
 
     const legacy = {
@@ -231,7 +250,7 @@ function getRiskAggravatingFactors(risk) {
         group2: Array.isArray(risk.aggravatingGroup2) ? risk.aggravatingGroup2 : []
     };
 
-    return normalizeAggravatingFactors(legacy);
+    return normalizeAggravatingFactors(legacy, risk.riskTheme || 'corruption');
 }
 
 function getRiskAggravatingCoefficient(risk) {
@@ -263,16 +282,21 @@ function formatCoefficient(value, options) {
 }
 
 function getFormAggravatingSelection() {
-    const selection = { group1: [], group2: [] };
+    const selection = { theme: 'corruption', group1: [], group2: [] };
 
     if (typeof document === 'undefined') {
         selection.coefficient = 1;
         return selection;
     }
 
+    const riskThemeInput = document.getElementById('riskTheme');
+    selection.theme = normalizeAggravatingTheme(riskThemeInput ? riskThemeInput.value : 'corruption');
+
     Object.entries(AGGRAVATING_FACTOR_GROUPS).forEach(([groupKey, config]) => {
         const selector = `input[name="${config.inputName}"]:checked`;
-        const values = Array.from(document.querySelectorAll(selector)).map(input => input.value);
+        const values = Array.from(document.querySelectorAll(selector))
+            .filter(input => normalizeAggravatingTheme(input.dataset.theme || selection.theme) === selection.theme)
+            .map(input => input.value);
         selection[groupKey] = values;
     });
 
@@ -281,6 +305,7 @@ function getFormAggravatingSelection() {
 }
 
 window.AGGRAVATING_FACTOR_GROUPS = AGGRAVATING_FACTOR_GROUPS;
+window.normalizeAggravatingTheme = normalizeAggravatingTheme;
 window.normalizeAggravatingFactors = normalizeAggravatingFactors;
 window.computeAggravatingCoefficientFromGroups = computeAggravatingCoefficientFromGroups;
 window.getRiskAggravatingFactors = getRiskAggravatingFactors;
