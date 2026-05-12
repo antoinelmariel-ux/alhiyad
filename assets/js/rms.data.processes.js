@@ -1,614 +1,213 @@
 (function (global) {
     const defaultProcesses = [
-        { value: 'Stratégie', label: 'Strategy', referents: [] },
-        { value: 'Communication', label: 'Communication', referents: [] },
-        { value: "Management Qualité et Risques d'entreprise", label: "Quality & Enterprise Risk Management", referents: [] },
-        { value: 'Mesure et Amélioration Qualité', label: 'Quality Measurement & Improvement', referents: [] },
-        { value: 'Gestion de la performance', label: 'Performance Management', referents: [] },
-        { value: 'R&D et Réglementaire', label: 'R&D and Regulatory Affairs', referents: [] },
-        { value: 'Production', label: 'Production', referents: [] },
-        { value: 'Commercialisation des produits', label: 'Product Commercialization', referents: [] },
-        { value: 'Supply Chain', label: 'Supply Chain', referents: [] },
-        { value: 'Gestion des prestations', label: 'Service Management', referents: [] },
-        { value: 'Ressources humaines', label: 'Human Resources', referents: ['Virginie SCANU'] },
-        { value: 'Achats', label: 'Procurement', referents: [] },
-        { value: 'Finance', label: 'Finance', referents: [] },
-        { value: 'Systèmes transverses de connaissance et de documentation', label: 'Cross-functional Knowledge & Documentation Systems', referents: [] },
-        { value: "Système d’information (SI)", label: "Information System (IS)", referents: ['Christophe MAHE'] },
-        { value: 'Sites et Equipement', label: 'Sites and Equipment', referents: [] },
-        { value: 'Juridique Compliance Propriété Intellectuelle Assurances', label: 'Legal, Compliance, IP and Insurance', referents: ['Fabrice DUBOIS'] }
+        { value: 'client-onboarding-kyc', label: 'Client onboarding & KYC', referents: ['Amina El Mansouri — Chief Compliance Officer', 'Marc Laurent — B2B Partnership Director'] },
+        { value: 'luxury-travel-design', label: 'Luxury travel design', referents: ['Karim Haddad — VP Luxury Operations'] },
+        { value: 'supplier-sourcing-due-diligence', label: 'Supplier sourcing & due diligence', referents: ['Amina El Mansouri — Chief Compliance Officer', 'Marc Laurent — B2B Partnership Director'] },
+        { value: 'vip-guest-operations', label: 'VIP guest operations', referents: ['Karim Haddad — VP Luxury Operations', 'Raka Santoso — Indonesia Premium Markets Lead'] },
+        { value: 'payments-deposits-refunds', label: 'Payments, deposits & refunds', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
+        { value: 'data-privacy-guest-confidentiality', label: 'Data privacy & guest confidentiality', referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead'] },
+        { value: 'sanctions-restricted-party-screening', label: 'Sanctions and restricted-party screening', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
+        { value: 'complaints-incidents-crisis-handling', label: 'Complaints, incidents & crisis handling', referents: ['Karim Haddad — VP Luxury Operations', 'Sofia Rahman — Data Protection & Guest Privacy Lead'] },
+        { value: 'partner-relationship-management', label: 'Partner relationship management', referents: ['Marc Laurent — B2B Partnership Director'] }
     ];
 
     const defaultSubProcesses = {
-        'Stratégie': [
+        'client-onboarding-kyc': [
             {
-                value: 'Stratégie globale et objectifs',
-                label: 'Overall strategy and objectives',
-                referents: [
-                    'Jacques BROM',
-                    'Fabrice DUBOIS',
-                    'Virginie SCANU',
-                    'Karen PINACHYAN',
-                    'Didier VERON',
-                    'Bruno DE MIRIBEL',
-                    'Hanna LEPERS',
-                    'Anne Laurence SABATINI',
-                    'Vincent LORET',
-                    'Philippe NOQUERO',
-                    'Jose MORENO TOSCANO',
-                    'Vincent TEINTENIER'
-                ]
+                value: 'client-identity-verification',
+                label: 'Client identity verification',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
             },
             {
-                value: 'Gestion des projets Produits',
-                label: 'Product project management',
-                referents: [
-                    'Hanna LEPERS',
-                    'Anne Laurence SABATINI',
-                    'Karen PINACHYAN',
-                    'Didier VERON',
-                    'Jacques BROM',
-                    'Jose MORENO TOSCANO'
-                ]
+                value: 'ubo-source-of-funds-review',
+                label: 'UBO and source-of-funds review',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
             },
             {
-                value: 'Gestion des projets Industriels',
-                label: 'Industrial project management',
-                referents: ['Vincent LORET', 'Philippe NOQUERO']
+                value: 'travel-profile-consent-capture',
+                label: 'Travel profile and consent capture',
+                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
+            },
+            {
+                value: 'b2b-account-approval',
+                label: 'B2B account approval',
+                referents: ['Marc Laurent — B2B Partnership Director']
             }
         ],
-        'Communication': [
+        'luxury-travel-design': [
             {
-                value: 'Communication interne',
-                label: 'Internal communication',
-                referents: ['Virginie SCANU']
+                value: 'guest-preferences-discovery',
+                label: 'Guest preferences discovery',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'Communication externe',
-                label: 'External communication',
-                referents: ['Didier VERON']
+                value: 'bespoke-itinerary-curation',
+                label: 'Bespoke itinerary curation',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'lobbying-new',
-                label: 'Lobbying (NEW)',
-                referents: ['Mazen ELZAABI']
+                value: 'turkey-market-experience-design',
+                label: 'Turkey market experience design',
+                referents: ['Leila Demir — Turkey Market Director']
+            },
+            {
+                value: 'indonesia-premium-market-design',
+                label: 'Indonesia premium market design',
+                referents: ['Raka Santoso — Indonesia Premium Markets Lead']
             }
         ],
-        "Management Qualité et Risques d'entreprise": [
+        'supplier-sourcing-due-diligence': [
             {
-                value: 'Cartographie des risques',
-                label: 'Risk mapping',
-                referents: ['Vincent LAGADOU']
+                value: 'supplier-market-scan',
+                label: 'Supplier market scan',
+                referents: ['Marc Laurent — B2B Partnership Director']
             },
             {
-                value: 'Contrôle interne',
-                label: 'Internal control',
-                referents: ['Florence POBEAU', 'Vincent LAGADOU']
+                value: 'supplier-compliance-questionnaire',
+                label: 'Supplier compliance questionnaire',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
             },
             {
-                value: 'Audit interne',
-                label: 'Internal audit',
-                referents: ['Vincent LAGADOU']
+                value: 'onsite-quality-review',
+                label: 'Onsite quality and service review',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'Management du système qualité',
-                label: 'Quality system management',
-                referents: ['Odile LEPORT']
-            },
-            {
-                value: 'Quality Risk Management (QRM)',
-                label: 'Quality Risk Management (QRM)',
-                referents: ['Odile LEPORT']
+                value: 'contracting-and-recertification',
+                label: 'Contracting and periodic recertification',
+                referents: ['Marc Laurent — B2B Partnership Director']
             }
         ],
-        'Mesure et Amélioration Qualité': [
+        'vip-guest-operations': [
             {
-                value: 'Déviations',
-                label: 'Deviations',
-                referents: ['Odile LEPORT']
+                value: 'arrival-departure-orchestration',
+                label: 'Arrival and departure orchestration',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'Out Of Specifications/Out of Trend',
-                label: 'Out Of Specifications/Out of Trend',
-                referents: ['Odile LEPORT']
+                value: 'chauffeur-and-security-coordination',
+                label: 'Chauffeur and security coordination',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'Actions Correctives et Préventives',
-                label: 'Corrective and Preventive Actions (CAPA)',
-                referents: ['Odile LEPORT']
+                value: 'villa-yacht-jet-readiness',
+                label: 'Villa, yacht and jet readiness',
+                referents: ['Raka Santoso — Indonesia Premium Markets Lead']
             },
             {
-                value: 'Changements Industriels',
-                label: 'Industrial changes',
-                referents: ['Vincent LORET']
-            },
-            {
-                value: 'Audits qualité internes',
-                label: 'Internal quality audits',
-                referents: ['Odile LEPORT']
-            },
-            {
-                value: 'Revues qualité produits',
-                label: 'Product quality reviews',
-                referents: ['Odile LEPORT']
+                value: 'in-stay-concierge-monitoring',
+                label: 'In-stay concierge monitoring',
+                referents: ['Karim Haddad — VP Luxury Operations']
             }
         ],
-        'Gestion de la performance': [
+        'payments-deposits-refunds': [
             {
-                value: 'Budget',
-                label: 'Budget',
-                referents: ['Bruno DE MIRIBEL', 'Nathalie CORSO']
+                value: 'quote-approval-and-deposit-call',
+                label: 'Quote approval and deposit call',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'Reportings',
-                label: 'Reporting',
-                referents: ['Bruno DE MIRIBEL', 'Karine ARTIGUE']
+                value: 'escrow-and-supplier-prepayments',
+                label: 'Escrow and supplier prepayments',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
             },
             {
-                value: 'Responsabilité Sociétale d’Entreprise (RSE)',
-                label: 'Corporate Social Responsibility (CSR)',
-                referents: ['Didier VERON']
+                value: 'refund-exception-approval',
+                label: 'Refund exception approval',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
+            },
+            {
+                value: 'corporate-invoicing-reconciliation',
+                label: 'Corporate invoicing and reconciliation',
+                referents: ['Marc Laurent — B2B Partnership Director']
             }
         ],
-        'R&D et Réglementaire': [
+        'data-privacy-guest-confidentiality': [
             {
-                value: 'Recherche',
-                label: 'Research',
-                referents: ['Karen PINACHYAN']
+                value: 'guest-data-minimization',
+                label: 'Guest data minimization',
+                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
             },
             {
-                value: 'Développement',
-                label: 'Development',
-                referents: ['Catherine BURNOUF', 'Karen PINACHYAN', 'Emilien DUBOZ', 'Judith LAREDO']
+                value: 'vip-confidentiality-protocols',
+                label: 'VIP confidentiality protocols',
+                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
             },
             {
-                value: 'Etudes cliniques',
-                label: 'Clinical studies',
-                referents: ['Catherine BURNOUF', 'Karen PINACHYAN', 'Emilien DUBOZ', 'Judith LAREDO']
+                value: 'secure-sharing-with-partners',
+                label: 'Secure sharing with partners',
+                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
             },
             {
-                value: 'Industrialisation des procédés',
-                label: 'Process industrialization',
-                referents: ['Vincent LORET', 'Karen PINACHYAN']
-            },
-            {
-                value: 'Gestion réglementaire',
-                label: 'Regulatory management',
-                referents: ['Karen PINACHYAN', 'Céline DOSBAA']
+                value: 'retention-and-deletion-controls',
+                label: 'Retention and deletion controls',
+                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
             }
         ],
-        'Production': [
+        'sanctions-restricted-party-screening': [
             {
-                value: 'Collecte plasma /lait',
-                label: 'Plasma/milk collection',
-                referents: [
-                    'Jose MORENO TOSCANO',
-                    'Michael STEINBERG',
-                    'Benjamin MÉRY',
-                    'Ben SAMARRIPAS',
-                    'Nate BOULANGER',
-                    'Milan ZELENY',
-                    'Maximilian HUDL'
-                ]
+                value: 'client-screening-before-booking',
+                label: 'Client screening before booking',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
             },
             {
-                value: 'Réception et acceptation  du plasma /lait',
-                label: 'Plasma/milk receipt and acceptance',
-                referents: [
-                    'Jose MORENO TOSCANO',
-                    'Benjamin MÉRY',
-                    'Ben SAMARRIPAS',
-                    'Milan ZELENY',
-                    'Maximilian HUDL'
-                ]
+                value: 'supplier-and-agent-screening',
+                label: 'Supplier and agent screening',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
             },
             {
-                value: 'Réception et acceptation des matières et articles',
-                label: 'Materials and articles receipt and acceptance',
-                referents: ['Vincent LORET', 'Odile LEPORT']
+                value: 'market-specific-restricted-party-review',
+                label: 'Market-specific restricted-party review',
+                referents: ['Leila Demir — Turkey Market Director', 'Raka Santoso — Indonesia Premium Markets Lead']
             },
             {
-                value: 'Décongélation/préparation du plasma',
-                label: 'Plasma thawing/preparation',
-                referents: ['Vincent LORET', 'Odile LEPORT']
-            },
-            {
-                value: 'Fractionnement /Bioproduction',
-                label: 'Fractionation / Bioproduction',
-                referents: [
-                    'Vincent LORET',
-                    'Odile LEPORT',
-                    'Cédric DEPRE',
-                    'Régis Roussel [OSICS]',
-                    'Matthieu CAILLOD',
-                    'Herbert GUEDEGBE',
-                    'Eric PIMPURNIAUX'
-                ]
-            },
-            {
-                value: 'Mise en forme pharmaceutique',
-                label: 'Pharmaceutical formulation',
-                referents: ['Odile LEPORT', 'Vincent LORET']
-            },
-            {
-                value: 'Conditionnement secondaire',
-                label: 'Secondary packaging',
-                referents: ['Odile LEPORT', 'Vincent LORET']
-            },
-            {
-                value: 'Contrôles matières, produits (sous toutes les formes)',
-                label: 'Materials and products controls (all forms)',
-                referents: ['Odile LEPORT', 'Vincent LORET']
-            },
-            {
-                value: "Contrôles de l'environnement de production",
-                label: "Production environment controls",
-                referents: ['Odile LEPORT', 'Vincent LORET']
-            },
-            {
-                value: 'Certification et Libération',
-                label: 'Certification and release',
-                referents: ['Odile LEPORT']
+                value: 'hit-escalation-and-clearance',
+                label: 'Hit escalation and clearance',
+                referents: ['Amina El Mansouri — Chief Compliance Officer']
             }
         ],
-        'Commercialisation des produits': [
+        'complaints-incidents-crisis-handling': [
             {
-                value: 'Lancement de produit',
-                label: 'Product launch',
-                referents: [
-                    'Hanna LEPERS',
-                    'Anne Laurence SABATINI',
-                    'Sophie DANTAN LEWIS',
-                    'Agnes FLORENTINO',
-                    'Jérémie GRAVELINE',
-                    'Javier BARALLOBRE',
-                    'Savary OM',
-                    'Estella OZINO TELMON',
-                    'Jose MORENO TOSCANO',
-                    'Romuald GAUDEFROY',
-                    'Peter OLIVER',
-                    'Paulina ESCOBEDO',
-                    'Pilar MARTINEZ',
-                    'Marc GAUTHIER-DARNIS',
-                    'Anke BALCAEN'
-                ]
+                value: 'guest-complaint-triage',
+                label: 'Guest complaint triage',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'marketing-plasma-new',
-                label: 'Marketing Plasma (NEW)',
-                referents: ['Benjamin MÉRY', 'Jessica TAEUFER', 'Ben SAMARRIPAS', 'Marketing American Plasma']
+                value: 'supplier-service-incident-response',
+                label: 'Supplier service incident response',
+                referents: ['Marc Laurent — B2B Partnership Director']
             },
             {
-                value: 'market-acess-new',
-                label: 'Market Acess (NEW)',
-                referents: ['Marc GAUTHIER-DARNIS']
+                value: 'medical-security-crisis-escalation',
+                label: 'Medical and security crisis escalation',
+                referents: ['Karim Haddad — VP Luxury Operations']
             },
             {
-                value: 'Gestion des marchés et des clients',
-                label: 'Market and customer management',
-                referents: [
-                    'Hanna LEPERS',
-                    'Anne Laurence SABATINI',
-                    'Jérémie GRAVELINE',
-                    'Javier BARALLOBRE',
-                    'Nora BOUMAZA',
-                    'Piras THEVENDRAN',
-                    'Olfa CHAMMAKHI',
-                    'Paulina ESCOBEDO',
-                    'Romuald GAUDEFROY',
-                    'Peter OLIVER',
-                    'Pilar MARTINEZ',
-                    'KAM',
-                    'Sales Reps',
-                    'Jaime CASTILLO'
-                ]
-            },
-            {
-                value: 'Administration des ventes',
-                label: 'Sales administration',
-                referents: ['Hanna LEPERS', 'Anne Laurence SABATINI', 'Patricia DEMENIER']
-            },
-            {
-                value: 'Information scientifique et médicale',
-                label: 'Scientific and medical information',
-                referents: ['MSL', 'Savary OM', 'Sophie DANTAN LEWIS']
-            },
-            {
-                value: 'Réclamations et litiges',
-                label: 'Claims and disputes',
-                referents: ['Patricia DEMENIER', 'Hanna LEPERS']
-            },
-            {
-                value: 'Vigilances',
-                label: 'Vigilance',
-                referents: ['Karen PINACHYAN', 'Virginie DENCIC']
-            },
-            {
-                value: 'Alertes et rappels',
-                label: 'Alerts and recalls',
-                referents: ['Odile LEPORT']
-            },
-            {
-                value: 'Arrêt de produit',
-                label: 'Product discontinuation',
-                referents: ['Odile LEPORT', 'Jacques BROM', 'Hanna LEPERS', 'Anne Laurence SABATINI', 'Bruno DE MIRIBEL']
-            },
-            {
-                value: 'Ruptures de stocks et tensions d’approvisionnement',
-                label: 'Stockouts and supply tensions',
-                referents: ['Odile LEPORT', 'Jacques BROM', 'Bruno DE MIRIBEL', 'Eric PIMPURNIAUX', 'Hanna LEPERS', 'Anne Laurence SABATINI']
-            },
-            {
-                value: 'audit-inspection-new',
-                label: 'Audit / Inspection (NEW)',
-                referents: ['Constance VAN-TICHELEN']
-            },
-            {
-                value: 'business-dev-bioprod-new',
-                label: 'Business Dev BioProd (NEW)',
-                referents: ['Vincent DEHOUSSE']
+                value: 'privacy-incident-notification',
+                label: 'Privacy incident notification',
+                referents: ['Sofia Rahman — Data Protection & Guest Privacy Lead']
             }
         ],
-        'Supply Chain': [
+        'partner-relationship-management': [
             {
-                value: 'Planification, organisation de la production',
-                label: 'Production planning and organization',
-                referents: ['Eric PIMPURNIAUX', 'Vincent LORET']
+                value: 'partner-segmentation-and-tiering',
+                label: 'Partner segmentation and tiering',
+                referents: ['Marc Laurent — B2B Partnership Director']
             },
             {
-                value: 'Approvisionnement plasma',
-                label: 'Plasma supply',
-                referents: ['Jose MORENO TOSCANO', 'Vincent LORET']
+                value: 'performance-review-and-scorecards',
+                label: 'Performance review and scorecards',
+                referents: ['Marc Laurent — B2B Partnership Director']
             },
             {
-                value: 'Approvisionnement des matières et articles',
-                label: 'Materials and articles supply',
-                referents: ['Christophe KOTECKI', 'Vincent LORET']
+                value: 'joint-marketing-and-referral-controls',
+                label: 'Joint marketing and referral controls',
+                referents: ['Marc Laurent — B2B Partnership Director']
             },
             {
-                value: 'Transport des matières/produits internes',
-                label: 'Internal materials/products transport',
-                referents: ['Vincent LORET']
-            },
-            {
-                value: 'Stockage des matières et productions Sites',
-                label: 'Storage of materials and site production',
-                referents: ['Vincent LORET', 'Cédric DEPRE', 'Régis Roussel [OSICS]', 'Matthieu CAILLOD', 'Herbert GUEDEGBE']
-            },
-            {
-                value: 'Stockage et distribution des produits commercialisés',
-                label: 'Storage and distribution of marketed products',
-                referents: [
-                    'Hanna LEPERS',
-                    'Anne Laurence SABATINI',
-                    'Vincent LORET',
-                    'Javier BARALLOBRE',
-                    'Peter OLIVER',
-                    'Pilar MARTINEZ',
-                    'Romuald GAUDEFROY',
-                    'Paulina ESCOBEDO'
-                ]
-            }
-        ],
-        'Gestion des prestations': [
-            {
-                value: 'Travail à façon/Prestation',
-                label: 'Contract manufacturing / Services',
-                referents: ['Vincent LORET']
-            },
-            {
-                value: 'Transfert de technologie',
-                label: 'Technology transfer',
-                referents: ['Vincent LORET', 'Marcia BASSIT']
-            }
-        ],
-        'Ressources humaines': [
-            {
-                value: 'Recrutement',
-                label: 'Recruitment',
-                referents: ['Virginie SCANU', 'Magali BURCKART']
-            },
-            {
-                value: 'Gestion du personnel',
-                label: 'Workforce management',
-                referents: ['Virginie SCANU', 'Stéphanie CHARLOPIN']
-            },
-            {
-                value: 'Développement et performance',
-                label: 'Development and performance',
-                referents: ['Virginie SCANU']
-            },
-            {
-                value: 'Rémunérations et avantages',
-                label: 'Compensation and benefits',
-                referents: ['Stéphanie CHARLOPIN', 'Virginie SCANU']
-            },
-            {
-                value: 'Paye',
-                label: 'Payroll',
-                referents: ['Stéphanie CHARLOPIN', 'Virginie SCANU']
-            },
-            {
-                value: 'Relations sociales',
-                label: 'Labor relations',
-                referents: ['Virginie SCANU']
-            },
-            {
-                value: 'Déplacements et Notes de frais professionnels',
-                label: 'Travel and business expenses',
-                referents: ['Eric LE FAOU', 'Virginie SCANU']
-            },
-            {
-                value: 'Santé et sécurité (HSE)',
-                label: 'Health and safety (HSE)',
-                referents: ['Vincent LORET', 'Roxane LEUNG-TACK']
-            }
-        ],
-        'Achats': [
-            {
-                value: 'Sélection et référencement',
-                label: 'Selection and qualification',
-                referents: ['Christophe KOTECKI', 'Baptiste JARRASSIER', 'Ronan CESBRON', 'Jean-Yves LAMIRAULT', 'Donna OLIVER']
-            },
-            {
-                value: 'Agrément et Suivi pharmaceutique',
-                label: 'Pharmaceutical approval and follow-up',
-                referents: ['Odile LEPORT']
-            },
-            {
-                value: 'Engagement de dépense et Factures',
-                label: 'Spend commitment and invoices',
-                referents: ['Bruno DE MIRIBEL', 'Karine ARTIGUE', 'Nathalie CORSO']
-            },
-            {
-                value: 'Investissement',
-                label: 'Investment',
-                referents: ['Bruno DE MIRIBEL', 'Vincent LORET', 'Jacques BROM', 'Didier VERON']
-            }
-        ],
-        'Finance': [
-            {
-                value: 'Comptabilité et Fiscalité',
-                label: 'Accounting and taxation',
-                referents: [
-                    'Bruno DE MIRIBEL',
-                    'Karine ARTIGUE',
-                    'Nate BOULANGER',
-                    'Jose MENDIETA',
-                    'Thomasz BIALEK',
-                    'Patrick CHUMBINHO',
-                    'Elly DUVAL',
-                    'Thomas BOHM',
-                    'Sandy BOUSSUGE'
-                ]
-            },
-            {
-                value: 'Contrôle de gestion',
-                label: 'Management control',
-                referents: ['Bruno DE MIRIBEL', 'Nathalie CORSO']
-            },
-            {
-                value: 'Trésorerie',
-                label: 'Treasury',
-                referents: ['Martial BROUARD']
-            }
-        ],
-        'Systèmes transverses de connaissance et de documentation': [
-            {
-                value: 'Gestion des procédures et dossiers de lot',
-                label: 'Procedure and batch record management',
-                referents: ['Odile LEPORT']
-            },
-            {
-                value: 'Gestion de la donnée pharmaceutique (DI)',
-                label: 'Pharmaceutical data management (DI)',
-                referents: ['Odile LEPORT']
-            },
-            {
-                value: 'Gestion de la connaissance procédé /produit',
-                label: 'Process/product knowledge management',
-                referents: ['Odile LEPORT']
-            },
-            {
-                value: 'Archivage',
-                label: 'Archiving',
-                referents: ['Odile LEPORT']
-            }
-        ],
-        "Système d’information (SI)": [
-            {
-                value: 'Maintenance SI et gestion du changement',
-                label: 'IS maintenance and change management',
-                referents: []
-            },
-            {
-                value: 'Exploitation SI',
-                label: 'IS operations',
-                referents: []
-            },
-            {
-                value: 'Projets et développements SI',
-                label: 'IS projects and development',
-                referents: []
-            },
-            {
-                value: 'Sécurisation SI',
-                label: 'IS security',
-                referents: []
-            },
-            {
-                value: 'Pilotage de sous-traitance SI',
-                label: 'IS outsourcing management',
-                referents: []
-            },
-            {
-                value: 'Compliance Validation SI',
-                label: 'Compliance Validation SI',
-                referents: []
-            }
-        ],
-        'Sites et Equipement': [
-            {
-                value: 'Qualification/validation',
-                label: 'Qualification/validation',
-                referents: ['Vincent LORET', 'Cédric DEPRE', 'Régis Roussel [OSICS]', 'Matthieu CAILLOD', 'Herbert GUEDEGBE', 'Odile LEPORT']
-            },
-            {
-                value: 'Maintenance et renouvellement des équipements de production',
-                label: 'Maintenance and renewal of production equipment',
-                referents: ['Vincent LORET', 'Cédric DEPRE', 'Régis Roussel [OSICS]', 'Matthieu CAILLOD', 'Herbert GUEDEGBE']
-            },
-            {
-                value: 'Maintenance des locaux techniques et utilités',
-                label: 'Maintenance of technical facilities and utilities',
-                referents: ['Vincent LORET', 'Cédric DEPRE', 'Régis Roussel [OSICS]', 'Matthieu CAILLOD', 'Herbert GUEDEGBE']
-            },
-            {
-                value: "Assurance de l'environnement stérile",
-                label: "Sterile environment assurance",
-                referents: ['Vincent LORET', 'Cédric DEPRE', 'Régis Roussel [OSICS]', 'Matthieu CAILLOD', 'Herbert GUEDEGBE', 'Odile LEPORT']
-            },
-            {
-                value: 'Sûreté des sites (HSE)',
-                label: 'Site safety (HSE)',
-                referents: ['Vincent LORET', 'Roxane LEUNG-TACK']
-            },
-            {
-                value: 'Déchets et environnement (HSE)',
-                label: 'Waste and environment (HSE)',
-                referents: ['Vincent LORET', 'Roxane LEUNG-TACK']
-            },
-            {
-                value: 'Services généraux et Immobilier',
-                label: 'General services and real estate',
-                referents: ['Eric LE FAOU']
-            }
-        ],
-        'Juridique Compliance Propriété Intellectuelle Assurances': [
-            {
-                value: 'Droit des sociétés',
-                label: 'Corporate law',
-                referents: ['Nicolas LENFANT']
-            },
-            {
-                value: 'Contrats et contentieux',
-                label: 'Contracts and litigation',
-                referents: ['Severine BAZILLIER', 'Juliette Woimant', 'Kareen HANTZBERG']
-            },
-            {
-                value: 'Propriété intellectuelle (marques, brevets…)',
-                label: 'Intellectual property (trademarks, patents...)',
-                referents: ['Laurence LE TEXIER']
-            },
-            {
-                value: 'Compliance juridique',
-                label: 'Legal compliance',
-                referents: ['Fabrice DUBOIS', 'Rolf UFFINK', 'Joanna FLETCHER', 'Anja VANDENPLAS']
-            },
-            {
-                value: 'Assurances',
-                label: 'Insurance',
-                referents: ['Nicolas LENFANT']
+                value: 'renewal-exit-and-blacklisting',
+                label: 'Renewal, exit and blacklisting',
+                referents: ['Amina El Mansouri — Chief Compliance Officer', 'Marc Laurent — B2B Partnership Director']
             }
         ]
     };
