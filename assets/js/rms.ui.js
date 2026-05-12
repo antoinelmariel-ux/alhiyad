@@ -1249,7 +1249,10 @@ function addNewRisk() {
     const modal = document.getElementById('riskModal');
     if (modal) {
         bringModalToFront(modal);
-        requestAnimationFrame(() => initRiskEditMatrix());
+        requestAnimationFrame(() => {
+            initRiskEditMatrix();
+            focusRiskThemeField();
+        });
     }
 }
 window.addNewRisk = addNewRisk;
@@ -1262,8 +1265,30 @@ function closeModal(modalId) {
 window.closeModal = closeModal;
 
 window.getSelectedActionPlansForRisk = () => selectedActionPlansForRisk;
+
+function focusRiskThemeField() {
+    const riskThemeSelect = document.getElementById('riskTheme');
+    if (!riskThemeSelect) return;
+    riskThemeSelect.focus({ preventScroll: true });
+}
+window.focusRiskThemeField = focusRiskThemeField;
 function saveRisk() {
     if (!rms) return;
+
+    const riskThemeSelect = document.getElementById('riskTheme');
+    const riskTheme = riskThemeSelect ? riskThemeSelect.value : '';
+    if (!riskTheme) {
+        if (riskThemeSelect) {
+            riskThemeSelect.focus();
+            if (typeof riskThemeSelect.reportValidity === 'function') {
+                riskThemeSelect.reportValidity();
+            }
+        }
+        if (typeof showNotification === 'function') {
+            showNotification('warning', 'Please select a risk theme before saving.');
+        }
+        return;
+    }
 
     const aggravatingSelection = typeof getFormAggravatingSelection === 'function'
         ? getFormAggravatingSelection()
@@ -1301,6 +1326,7 @@ function saveRisk() {
     });
 
     const formData = {
+        riskTheme,
         processus: processusAssocies[0] || '',
         processusAssocies,
         sousProcessus: sousProcessusAssocies[0] || '',

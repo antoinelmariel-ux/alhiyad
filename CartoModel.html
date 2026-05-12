@@ -1206,6 +1206,18 @@
                     <div class="form-section">
                         <div class="form-section-title">General Information</div>
                         <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label class="form-label" for="riskTheme">Thématique du risque</label>
+                                <select class="form-select" id="riskTheme" required>
+                                    <option value="">Select...</option>
+                                    <option value="corruption">Corruption</option>
+                                    <option value="personal-data">Données Personnelles</option>
+                                    <option value="international-sanctions">Sanctions internationales</option>
+                                    <option value="discrimination">Discrimination</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label">Process</label>
                                 <select class="form-select visually-hidden" id="processus" multiple size="5" onchange="rms.updateSousProcessusOptions()" aria-hidden="true" tabindex="-1">

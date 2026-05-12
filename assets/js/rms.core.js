@@ -1304,6 +1304,14 @@ class RiskManagementSystem {
         normalized.typeCorruption = normalized.typesCorruption[0] || '';
         normalized.corruptionExposure = normalized.corruptionExposureTypes[0] || '';
         normalized.corruptionMode = normalized.corruptionModes[0] || '';
+        const allowedRiskThemes = new Set([
+            'corruption',
+            'personal-data',
+            'international-sanctions',
+            'discrimination'
+        ]);
+        const riskTheme = typeof risk?.riskTheme === 'string' ? risk.riskTheme.trim() : '';
+        normalized.riskTheme = allowedRiskThemes.has(riskTheme) ? riskTheme : 'corruption';
         normalized.targetAudience = normalized.targetAudiences[0] || '';
         normalized.titre = typeof risk?.titre === 'string' ? risk.titre.trim() : '';
         normalized.example = typeof risk?.example === 'string' ? risk.example.trim() : '';
@@ -12287,6 +12295,7 @@ class RiskManagementSystem {
         const form = document.getElementById('riskForm');
         if (form) {
             form.reset();
+            const riskThemeSelect = document.getElementById('riskTheme');
             const processSelect = document.getElementById('processus');
             const subProcessSelect = document.getElementById('sousProcessus');
             const corruptionTypeSelect = document.getElementById('typeCorruption');
@@ -12301,6 +12310,9 @@ class RiskManagementSystem {
             const targetAudiences = normalizeSelectionValues(risk.targetAudiences, risk.targetAudience);
             const tiersValues = normalizeSelectionValues(risk.tiers);
             const entitiesValues = normalizeSelectionValues(risk.paysExposes);
+            if (riskThemeSelect) {
+                riskThemeSelect.value = risk.riskTheme || 'corruption';
+            }
             if (processSelect) {
                 Array.from(processSelect.options).forEach(opt => {
                     opt.selected = processValues.includes(opt.value);
@@ -12464,7 +12476,12 @@ class RiskManagementSystem {
             } else {
                 modal.classList.add('show');
             }
-            requestAnimationFrame(() => initRiskEditMatrix());
+            requestAnimationFrame(() => {
+                initRiskEditMatrix();
+                if (typeof window.focusRiskThemeField === 'function') {
+                    window.focusRiskThemeField();
+                }
+            });
         }
     }
 
