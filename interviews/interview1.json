@@ -1,0 +1,20 @@
+{
+  "id": 1,
+  "fileIndex": 1,
+  "fileName": "interview1.json",
+  "title": "Entretien Agnes FLORENTINO",
+  "referents": [
+    "Agnes FLORENTINO"
+  ],
+  "date": "2026-01-09",
+  "notes": "",
+  "scopes": [],
+  "processes": [],
+  "subProcesses": [],
+  "createdAt": "2026-01-09T16:20:44Z",
+  "updatedAt": "2026-01-09T16:20:44Z",
+  "mindMap": {
+    "version": 1,
+    "data": null
+  }
+}

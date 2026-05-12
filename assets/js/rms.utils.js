@@ -1,0 +1,563 @@
+// Enhanced Risk Management System - Utility Functions
+
+function sanitizeId(str) {
+    return str.replace(/[^a-z0-9_-]/gi, '_');
+}
+
+function slugifyLabel(input) {
+    if (typeof input !== 'string') {
+        return '';
+    }
+
+    return input
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+const RICH_TEXT_ALLOWED_TAGS = new Set([
+    'P', 'BR', 'DIV', 'SPAN', 'STRONG', 'EM', 'B', 'I', 'U',
+    'UL', 'OL', 'LI', 'A', 'BLOCKQUOTE', 'CODE', 'PRE',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+    'TABLE', 'THEAD', 'TBODY', 'TR', 'TD', 'TH',
+    'DL', 'DT', 'DD'
+]);
+
+const RICH_TEXT_ALLOWED_ATTRIBUTES = {
+    '*': [],
+    A: ['href', 'title', 'target', 'rel']
+};
+
+const SAFE_URL_PATTERN = /^(https?:|mailto:|tel:|#)/i;
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, match => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[match] || match));
+}
+
+function sanitizeRichText(input) {
+    const raw = input == null ? '' : String(input);
+    if (!raw.trim()) {
+        return '';
+    }
+
+    if (typeof DOMParser !== 'function') {
+        return escapeHtml(raw).replace(/\r?\n/g, '<br>');
+    }
+
+    const parser = new DOMParser();
+    const parsedDocument = parser.parseFromString(`<body>${raw}</body>`, 'text/html');
+    const { body } = parsedDocument;
+
+    const sanitizeElement = (element) => {
+        if (!element || element.nodeType !== 1) {
+            return;
+        }
+
+        const tagName = element.tagName.toUpperCase();
+        if (!RICH_TEXT_ALLOWED_TAGS.has(tagName)) {
+            const parent = element.parentNode;
+            if (!parent) {
+                element.remove();
+                return;
+            }
+
+            let child = element.firstChild;
+            while (child) {
+                const next = child.nextSibling;
+                parent.insertBefore(child, element);
+                if (child.nodeType === 1) {
+                    sanitizeElement(child);
+                }
+                child = next;
+            }
+            parent.removeChild(element);
+            return;
+        }
+
+        const allowedAttrs = new Set([
+            ...(RICH_TEXT_ALLOWED_ATTRIBUTES['*'] || []),
+            ...(RICH_TEXT_ALLOWED_ATTRIBUTES[tagName] || [])
+        ]);
+
+        Array.from(element.attributes).forEach(attr => {
+            const attrName = attr.name.toLowerCase();
+            if (!allowedAttrs.has(attrName)) {
+                element.removeAttribute(attr.name);
+                return;
+            }
+
+            const value = attr.value.trim();
+            if (attrName === 'href') {
+                if (!SAFE_URL_PATTERN.test(value) || /^javascript:/i.test(value)) {
+                    element.removeAttribute(attr.name);
+                    return;
+                }
+            }
+
+            if (attrName === 'target') {
+                if (value.toLowerCase() !== '_blank') {
+                    element.removeAttribute(attr.name);
+                    return;
+                }
+                element.setAttribute('rel', 'noopener noreferrer');
+                return;
+            }
+
+            if (attrName === 'rel') {
+                element.setAttribute('rel', 'noopener noreferrer');
+            }
+        });
+
+        let childNode = element.firstChild;
+        while (childNode) {
+            const next = childNode.nextSibling;
+            if (childNode.nodeType === 1) {
+                sanitizeElement(childNode);
+            } else if (childNode.nodeType === 8) {
+                element.removeChild(childNode);
+            }
+            childNode = next;
+        }
+    };
+
+    let current = body.firstChild;
+    while (current) {
+        const next = current.nextSibling;
+        if (current.nodeType === 1) {
+            sanitizeElement(current);
+        } else if (current.nodeType === 8) {
+            body.removeChild(current);
+        }
+        current = next;
+    }
+
+    return body.innerHTML;
+}
+
+function idsEqual(a, b) {
+    return String(a) === String(b);
+}
+
+function getNextSequentialId(items, startAt = 1) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return startAt;
+    }
+
+    let maxId = startAt - 1;
+
+    items.forEach(item => {
+        if (!item || item.id === undefined || item.id === null) return;
+        const numericId = Number(item.id);
+        if (Number.isFinite(numericId) && numericId > maxId) {
+            maxId = Math.trunc(numericId);
+        }
+    });
+
+    return maxId + 1;
+}
+
+window.sanitizeId = sanitizeId;
+window.idsEqual = idsEqual;
+window.getNextSequentialId = getNextSequentialId;
+window.slugifyLabel = slugifyLabel;
+window.sanitizeRichText = sanitizeRichText;
+
+const AGGRAVATING_FACTOR_GROUPS = Object.freeze({
+    group1: { coefficient: 1.4, inputName: 'aggravatingGroup1' },
+    group2: { coefficient: 1.2, inputName: 'aggravatingGroup2' }
+});
+
+function normalizeAggravatingFactors(factors = {}) {
+    const normalized = { group1: [], group2: [] };
+    if (!factors || typeof factors !== 'object') {
+        return normalized;
+    }
+
+    Object.keys(normalized).forEach(groupKey => {
+        const rawValues = factors[groupKey];
+        if (!Array.isArray(rawValues)) {
+            normalized[groupKey] = [];
+            return;
+        }
+
+        const uniqueValues = new Set();
+        normalized[groupKey] = rawValues
+            .map(value => (value === undefined || value === null ? '' : String(value).trim()))
+            .filter(value => {
+                if (!value) return false;
+                if (uniqueValues.has(value)) return false;
+                uniqueValues.add(value);
+                return true;
+            });
+    });
+
+    return normalized;
+}
+
+function computeAggravatingCoefficientFromGroups(groups = {}) {
+    const normalized = normalizeAggravatingFactors(groups);
+    let coefficient = 1;
+
+    if (normalized.group2.length > 0) {
+        coefficient = Math.max(coefficient, AGGRAVATING_FACTOR_GROUPS.group2.coefficient);
+    }
+    if (normalized.group1.length > 0) {
+        coefficient = Math.max(coefficient, AGGRAVATING_FACTOR_GROUPS.group1.coefficient);
+    }
+
+    return coefficient;
+}
+
+function getRiskAggravatingFactors(risk) {
+    if (!risk || typeof risk !== 'object') {
+        return normalizeAggravatingFactors();
+    }
+
+    if (risk.aggravatingFactors && typeof risk.aggravatingFactors === 'object') {
+        return normalizeAggravatingFactors(risk.aggravatingFactors);
+    }
+
+    const legacy = {
+        group1: Array.isArray(risk.aggravatingGroup1) ? risk.aggravatingGroup1 : [],
+        group2: Array.isArray(risk.aggravatingGroup2) ? risk.aggravatingGroup2 : []
+    };
+
+    return normalizeAggravatingFactors(legacy);
+}
+
+function getRiskAggravatingCoefficient(risk) {
+    const factors = getRiskAggravatingFactors(risk);
+    const computed = computeAggravatingCoefficientFromGroups(factors);
+    const raw = Number(risk && risk.aggravatingCoefficient);
+    const base = Number.isFinite(raw) && raw >= 1 ? raw : 1;
+    return Math.max(base, computed);
+}
+
+function getRiskEffectiveBrutProbability(risk) {
+    const prob = Number(risk && risk.probBrut) || 0;
+    return prob * getRiskAggravatingCoefficient(risk);
+}
+
+function getRiskBrutScore(risk) {
+    const impact = Number(risk && risk.impactBrut) || 0;
+    return getRiskEffectiveBrutProbability(risk) * impact;
+}
+
+function formatCoefficient(value, options) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+        return '1,0';
+    }
+
+    const formatOptions = options || { minimumFractionDigits: 1, maximumFractionDigits: 1 };
+    return numeric.toLocaleString('fr-FR', formatOptions);
+}
+
+function getFormAggravatingSelection() {
+    const selection = { group1: [], group2: [] };
+
+    if (typeof document === 'undefined') {
+        selection.coefficient = 1;
+        return selection;
+    }
+
+    Object.entries(AGGRAVATING_FACTOR_GROUPS).forEach(([groupKey, config]) => {
+        const selector = `input[name="${config.inputName}"]:checked`;
+        const values = Array.from(document.querySelectorAll(selector)).map(input => input.value);
+        selection[groupKey] = values;
+    });
+
+    selection.coefficient = computeAggravatingCoefficientFromGroups(selection);
+    return selection;
+}
+
+window.AGGRAVATING_FACTOR_GROUPS = AGGRAVATING_FACTOR_GROUPS;
+window.normalizeAggravatingFactors = normalizeAggravatingFactors;
+window.computeAggravatingCoefficientFromGroups = computeAggravatingCoefficientFromGroups;
+window.getRiskAggravatingFactors = getRiskAggravatingFactors;
+window.getRiskAggravatingCoefficient = getRiskAggravatingCoefficient;
+window.getRiskEffectiveBrutProbability = getRiskEffectiveBrutProbability;
+window.getRiskBrutScore = getRiskBrutScore;
+window.formatCoefficient = formatCoefficient;
+window.getFormAggravatingSelection = getFormAggravatingSelection;
+
+const MITIGATION_EFFECTIVENESS_ORDER = Object.freeze([
+    'efficace',
+    'ameliorable',
+    'insuffisant',
+    'inefficace'
+]);
+
+const MITIGATION_EFFECTIVENESS_SCALE = Object.freeze({
+    inefficace: { label: 'Ineffective', coefficient: 1 },
+    insuffisant: { label: 'Insufficient', coefficient: 0.75 },
+    ameliorable: { label: 'Room for improvement', coefficient: 0.5 },
+    efficace: { label: 'Effective', coefficient: 0.25 }
+});
+
+const DEFAULT_MITIGATION_EFFECTIVENESS = 'insuffisant';
+
+const NET_IMPACT_SEVERITY_MAP = Object.freeze({
+    critique: 4,
+    fort: 3,
+    modere: 2,
+    faible: 1
+});
+
+const NET_IMPACT_TO_SEVERITY = Object.freeze(Object.entries(NET_IMPACT_SEVERITY_MAP)
+    .reduce((acc, [severity, value]) => {
+        acc[value] = severity;
+        return acc;
+    }, {}));
+
+function normalizeMitigationEffectiveness(value) {
+    if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (MITIGATION_EFFECTIVENESS_ORDER.includes(normalized)) {
+            return normalized;
+        }
+    }
+    return DEFAULT_MITIGATION_EFFECTIVENESS;
+}
+
+function getMitigationEffectivenessOptions() {
+    return MITIGATION_EFFECTIVENESS_ORDER.map(key => {
+        const entry = MITIGATION_EFFECTIVENESS_SCALE[key] || {};
+        return {
+            value: key,
+            label: entry.label || key,
+            coefficient: entry.coefficient ?? 0
+        };
+    });
+}
+
+function getRiskMitigationEffectiveness(risk) {
+    if (risk && typeof risk === 'object') {
+        const candidates = [
+            risk.mitigationEffectiveness,
+            risk.mitigation_level,
+            risk.mitigationLevel,
+            risk.efficacite,
+            risk.efficaciteMesures,
+            risk.effectiveness
+        ];
+
+        for (const candidate of candidates) {
+            if (typeof candidate === 'string' && candidate.trim()) {
+                return normalizeMitigationEffectiveness(candidate);
+            }
+        }
+    }
+
+    return DEFAULT_MITIGATION_EFFECTIVENESS;
+}
+
+function getRiskMitigationCoefficient(input) {
+    const level = typeof input === 'string' ? normalizeMitigationEffectiveness(input) : getRiskMitigationEffectiveness(input);
+    const entry = MITIGATION_EFFECTIVENESS_SCALE[level];
+    const coefficient = entry?.coefficient;
+    return Number.isFinite(coefficient) ? coefficient : 1;
+}
+
+function clampMitigationFactor(value) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+        return 1;
+    }
+    return Math.min(Math.max(numeric, 0.25), 1);
+}
+
+function getMitigationColumnFromLevel(level) {
+    const normalized = normalizeMitigationEffectiveness(level);
+    const index = MITIGATION_EFFECTIVENESS_ORDER.indexOf(normalized);
+    return index >= 0 ? index + 1 : 1;
+}
+
+function getMitigationLevelFromColumn(column) {
+    const index = Math.min(
+        Math.max(parseInt(column, 10) - 1, 0),
+        MITIGATION_EFFECTIVENESS_ORDER.length - 1
+    );
+    return MITIGATION_EFFECTIVENESS_ORDER[index] || DEFAULT_MITIGATION_EFFECTIVENESS;
+}
+
+function getNetImpactValueFromSeverity(severity) {
+    if (typeof severity === 'string') {
+        const normalized = severity.trim().toLowerCase();
+        if (NET_IMPACT_SEVERITY_MAP[normalized]) {
+            return NET_IMPACT_SEVERITY_MAP[normalized];
+        }
+    }
+    return NET_IMPACT_SEVERITY_MAP.faible;
+}
+
+function getSeverityFromNetImpactValue(value) {
+    const numeric = parseInt(value, 10);
+    return NET_IMPACT_TO_SEVERITY[numeric] || 'faible';
+}
+
+function getRiskNetScore(risk) {
+    const aggravatingCoefficient = typeof getRiskAggravatingCoefficient === 'function'
+        ? getRiskAggravatingCoefficient(risk)
+        : 1;
+    const brutScore = typeof getRiskBrutScore === 'function'
+        ? getRiskBrutScore(risk)
+        : (Number(risk?.probBrut) || 0) * (Number(risk?.impactBrut) || 0) * aggravatingCoefficient;
+    const mitigationFactor = clampMitigationFactor(getRiskMitigationCoefficient(risk));
+    return brutScore * mitigationFactor;
+}
+
+function getRiskSeverityFromScore(score) {
+    const numericScore = Number(score) || 0;
+    if (numericScore >= 12) return 'critique';
+    if (numericScore >= 6) return 'fort';
+    if (numericScore >= 3) return 'modere';
+    return 'faible';
+}
+
+function getRiskBrutLevel(risk) {
+    const brutScore = typeof getRiskBrutScore === 'function'
+        ? getRiskBrutScore(risk)
+        : (Number(risk?.probBrut) || 0) * (Number(risk?.impactBrut) || 0);
+    return getRiskSeverityFromScore(brutScore);
+}
+
+function getRiskNetInfo(risk) {
+    const aggravatingCoefficient = typeof getRiskAggravatingCoefficient === 'function'
+        ? getRiskAggravatingCoefficient(risk)
+        : 1;
+    const rawMitigationCoefficient = getRiskMitigationCoefficient(risk);
+    const mitigationCoefficient = clampMitigationFactor(rawMitigationCoefficient);
+    const brutScore = typeof getRiskBrutScore === 'function'
+        ? getRiskBrutScore(risk)
+        : (Number(risk?.probBrut) || 0) * (Number(risk?.impactBrut) || 0) * aggravatingCoefficient;
+    const safeAggravatingCoefficient = Number.isFinite(aggravatingCoefficient) && aggravatingCoefficient > 0
+        ? aggravatingCoefficient
+        : 1;
+    const baseBrutScore = brutScore / safeAggravatingCoefficient;
+    const score = brutScore * mitigationCoefficient;
+    const level = getRiskSeverityFromScore(score);
+    const effectiveness = getRiskMitigationEffectiveness(risk);
+    const label = MITIGATION_EFFECTIVENESS_SCALE[effectiveness]?.label || effectiveness;
+    const reduction = Math.round((1 - mitigationCoefficient) * 100);
+
+    return {
+        score,
+        brutScore,
+        baseBrutScore,
+        coefficient: mitigationCoefficient,
+        aggravatingCoefficient: safeAggravatingCoefficient,
+        level,
+        effectiveness,
+        label,
+        reduction
+    };
+}
+
+
+function getRiskPostActionMitigationEffectiveness(risk) {
+    if (risk && typeof risk === 'object') {
+        const candidates = [
+            risk.postActionMitigationEffectiveness,
+            risk.mitigationEffectivenessPostAction,
+            risk.postActionPlanMitigationEffectiveness,
+            risk.mitigationPostAction,
+            risk.effectivenessPostAction
+        ];
+
+        for (const candidate of candidates) {
+            if (typeof candidate === 'string' && candidate.trim()) {
+                return normalizeMitigationEffectiveness(candidate);
+            }
+        }
+    }
+
+    return getRiskMitigationEffectiveness(risk);
+}
+
+function getRiskPostActionMitigationCoefficient(risk) {
+    const level = typeof risk === 'string' ? normalizeMitigationEffectiveness(risk) : getRiskPostActionMitigationEffectiveness(risk);
+    const entry = MITIGATION_EFFECTIVENESS_SCALE[level];
+    const coefficient = entry?.coefficient;
+    return Number.isFinite(coefficient) ? coefficient : 1;
+}
+
+function getRiskPostActionScore(risk) {
+    const aggravatingCoefficient = typeof getRiskAggravatingCoefficient === 'function'
+        ? getRiskAggravatingCoefficient(risk)
+        : 1;
+    const brutScore = typeof getRiskBrutScore === 'function'
+        ? getRiskBrutScore(risk)
+        : (Number(risk?.probBrut) || 0) * (Number(risk?.impactBrut) || 0) * aggravatingCoefficient;
+    const mitigationFactor = clampMitigationFactor(getRiskPostActionMitigationCoefficient(risk));
+    return brutScore * mitigationFactor;
+}
+
+function getRiskPostActionInfo(risk) {
+    const aggravatingCoefficient = typeof getRiskAggravatingCoefficient === 'function'
+        ? getRiskAggravatingCoefficient(risk)
+        : 1;
+    const rawMitigationCoefficient = getRiskPostActionMitigationCoefficient(risk);
+    const mitigationCoefficient = clampMitigationFactor(rawMitigationCoefficient);
+    const brutScore = typeof getRiskBrutScore === 'function'
+        ? getRiskBrutScore(risk)
+        : (Number(risk?.probBrut) || 0) * (Number(risk?.impactBrut) || 0) * aggravatingCoefficient;
+    const safeAggravatingCoefficient = Number.isFinite(aggravatingCoefficient) && aggravatingCoefficient > 0
+        ? aggravatingCoefficient
+        : 1;
+    const baseBrutScore = brutScore / safeAggravatingCoefficient;
+    const score = brutScore * mitigationCoefficient;
+    const level = getRiskSeverityFromScore(score);
+    const effectiveness = getRiskPostActionMitigationEffectiveness(risk);
+    const label = MITIGATION_EFFECTIVENESS_SCALE[effectiveness]?.label || effectiveness;
+    const reduction = Math.round((1 - mitigationCoefficient) * 100);
+
+    return {
+        score,
+        brutScore,
+        baseBrutScore,
+        coefficient: mitigationCoefficient,
+        aggravatingCoefficient: safeAggravatingCoefficient,
+        level,
+        effectiveness,
+        label,
+        reduction
+    };
+}
+
+function formatMitigationCoefficient(value) {
+    const safe = clampMitigationFactor(value);
+    return safe.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+window.MITIGATION_EFFECTIVENESS_ORDER = MITIGATION_EFFECTIVENESS_ORDER;
+window.MITIGATION_EFFECTIVENESS_SCALE = MITIGATION_EFFECTIVENESS_SCALE;
+window.DEFAULT_MITIGATION_EFFECTIVENESS = DEFAULT_MITIGATION_EFFECTIVENESS;
+window.normalizeMitigationEffectiveness = normalizeMitigationEffectiveness;
+window.getMitigationEffectivenessOptions = getMitigationEffectivenessOptions;
+window.getRiskMitigationEffectiveness = getRiskMitigationEffectiveness;
+window.getRiskMitigationCoefficient = getRiskMitigationCoefficient;
+window.getRiskNetScore = getRiskNetScore;
+window.getRiskPostActionMitigationEffectiveness = getRiskPostActionMitigationEffectiveness;
+window.getRiskPostActionMitigationCoefficient = getRiskPostActionMitigationCoefficient;
+window.getRiskPostActionScore = getRiskPostActionScore;
+window.getRiskPostActionInfo = getRiskPostActionInfo;
+window.getRiskSeverityFromScore = getRiskSeverityFromScore;
+window.getRiskBrutLevel = getRiskBrutLevel;
+window.getRiskNetInfo = getRiskNetInfo;
+window.formatMitigationCoefficient = formatMitigationCoefficient;
+window.clampMitigationFactor = clampMitigationFactor;
+window.clampMitigationReduction = clampMitigationFactor;
+window.getMitigationColumnFromLevel = getMitigationColumnFromLevel;
+window.getMitigationLevelFromColumn = getMitigationLevelFromColumn;
+window.getNetImpactValueFromSeverity = getNetImpactValueFromSeverity;
+window.getSeverityFromNetImpactValue = getSeverityFromNetImpactValue;
