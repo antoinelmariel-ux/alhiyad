@@ -1706,6 +1706,30 @@ body.feedback-mode-paused .feedback-panel * {
     color: var(--muted-text-color);
 }
 
+.risk-row-blurred {
+    filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.72;
+}
+
+.risk-row-blurred * {
+    user-select: none;
+    pointer-events: none;
+}
+
+.risk-item.risk-row-blurred:hover,
+tbody tr.risk-row-blurred:hover {
+    background: inherit;
+    box-shadow: none;
+    transform: none;
+}
+
+.risk-row-blurred .action-btn,
+.risk-row-blurred .risk-item-edit-btn {
+    cursor: not-allowed;
+}
+
 /* Legend améliorée */
 .legend {
     display: flex;
@@ -4525,6 +4549,33 @@ tbody tr:hover {
     margin: 0;
     font-size: 0.85rem;
     color: #5d6d7e;
+}
+
+.config-number-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.config-number-label {
+    flex: 1;
+}
+
+.config-number-input {
+    width: 96px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--text-color);
+    background: var(--surface-color);
+}
+
+.config-number-input:focus-visible {
+    outline: 2px solid rgba(13, 31, 60, 0.2);
+    border-color: var(--primary-color);
 }
 
 .admin-history .timeline {

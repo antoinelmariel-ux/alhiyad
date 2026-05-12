@@ -389,7 +389,8 @@ class RiskManagementSystem {
         config.mindMapThemes = cloneMindMapThemes(parameterConfig.mindMapThemes);
         config.mindMapActiveThemeId = parameterConfig.mindMapActiveThemeId || (config.mindMapThemes[0]?.id ?? '');
         config.ui = {
-            showFeedbackButton: false
+            showFeedbackButton: false,
+            visibleRiskLimit: 5
         };
 
         if (!Array.isArray(config.riskStatuses) || config.riskStatuses.length === 0) {
@@ -688,7 +689,7 @@ class RiskManagementSystem {
 
         const uiFallback = fallback.ui && typeof fallback.ui === 'object' && !Array.isArray(fallback.ui)
             ? fallback.ui
-            : { showFeedbackButton: false };
+            : { showFeedbackButton: false, visibleRiskLimit: 5 };
 
         if (!baseConfig.ui || typeof baseConfig.ui !== 'object' || Array.isArray(baseConfig.ui)) {
             this.config.ui = { ...uiFallback };
@@ -704,7 +705,44 @@ class RiskManagementSystem {
             updated = true;
         }
 
+        const normalizedVisibleRiskLimit = Math.max(0, Math.floor(Number(this.config.ui.visibleRiskLimit)));
+        if (!Number.isFinite(normalizedVisibleRiskLimit)) {
+            this.config.ui.visibleRiskLimit = 5;
+            updated = true;
+        } else if (this.config.ui.visibleRiskLimit !== normalizedVisibleRiskLimit) {
+            this.config.ui.visibleRiskLimit = normalizedVisibleRiskLimit;
+            updated = true;
+        }
+
         return updated;
+    }
+
+    getVisibleRiskLimit() {
+        const configuredLimit = Number(this.config?.ui?.visibleRiskLimit);
+        if (!Number.isFinite(configuredLimit)) {
+            return 5;
+        }
+        return Math.max(0, Math.floor(configuredLimit));
+    }
+
+    getRiskNumericId(risk) {
+        const numericId = Number(risk?.id);
+        return Number.isFinite(numericId) ? numericId : Number.MAX_SAFE_INTEGER;
+    }
+
+    getVisibleRiskIdSet(risks = []) {
+        const limit = this.getVisibleRiskLimit();
+        return new Set((Array.isArray(risks) ? risks : [])
+            .slice()
+            .sort((a, b) => {
+                const idComparison = this.getRiskNumericId(a) - this.getRiskNumericId(b);
+                if (idComparison !== 0) {
+                    return idComparison;
+                }
+                return String(a?.id ?? '').localeCompare(String(b?.id ?? ''), undefined, { numeric: true, sensitivity: 'base' });
+            })
+            .slice(0, limit)
+            .map(risk => String(risk?.id)));
     }
 
     applyLuxuryBusinessModelMigration(fallback = {}) {
@@ -3538,15 +3576,54 @@ class RiskManagementSystem {
         toggleHelper.textContent = 'Activez cette option pour rendre le bouton feed-back visible dans l’en-tête.';
         uiCard.appendChild(toggleHelper);
 
+        const visibleRiskLimitLabel = document.createElement('label');
+        visibleRiskLimitLabel.className = 'config-number-field';
+        visibleRiskLimitLabel.setAttribute('for', 'configVisibleRiskLimit');
+
+        const visibleRiskLimitText = document.createElement('span');
+        visibleRiskLimitText.className = 'config-number-label';
+        visibleRiskLimitText.textContent = 'Risques lisibles avant floutage';
+
+        const visibleRiskLimitInput = document.createElement('input');
+        visibleRiskLimitInput.type = 'number';
+        visibleRiskLimitInput.id = 'configVisibleRiskLimit';
+        visibleRiskLimitInput.className = 'config-number-input';
+        visibleRiskLimitInput.min = '0';
+        visibleRiskLimitInput.step = '1';
+        visibleRiskLimitInput.value = String(this.getVisibleRiskLimit());
+
+        visibleRiskLimitLabel.appendChild(visibleRiskLimitText);
+        visibleRiskLimitLabel.appendChild(visibleRiskLimitInput);
+        uiCard.appendChild(visibleRiskLimitLabel);
+
+        const visibleRiskLimitHelper = document.createElement('p');
+        visibleRiskLimitHelper.className = 'config-toggle-helper';
+        visibleRiskLimitHelper.textContent = 'Les risques sont évalués par ID numérique croissant : seuls les premiers restent lisibles, les suivants restent dans le DOM mais sont floutés.';
+        uiCard.appendChild(visibleRiskLimitHelper);
+
         toggleInput.addEventListener('change', () => {
             const isVisible = toggleInput.checked;
             if (!this.config.ui || typeof this.config.ui !== 'object' || Array.isArray(this.config.ui)) {
-                this.config.ui = { showFeedbackButton: isVisible };
+                this.config.ui = { showFeedbackButton: isVisible, visibleRiskLimit: this.getVisibleRiskLimit() };
             } else {
                 this.config.ui.showFeedbackButton = isVisible;
             }
             this.saveConfig();
             this.applyFeedbackButtonVisibility();
+        });
+
+        visibleRiskLimitInput.addEventListener('change', () => {
+            const numericLimit = Math.max(0, Math.floor(Number(visibleRiskLimitInput.value)));
+            const normalizedLimit = Number.isFinite(numericLimit) ? numericLimit : 5;
+            visibleRiskLimitInput.value = String(normalizedLimit);
+            if (!this.config.ui || typeof this.config.ui !== 'object' || Array.isArray(this.config.ui)) {
+                this.config.ui = { showFeedbackButton: Boolean(toggleInput.checked), visibleRiskLimit: normalizedLimit };
+            } else {
+                this.config.ui.visibleRiskLimit = normalizedLimit;
+            }
+            this.saveConfig();
+            this.updateRisksList();
+            this.updateRiskDetailsList();
         });
 
         container.appendChild(uiCard);
@@ -8389,6 +8466,8 @@ class RiskManagementSystem {
             return riskStatus !== 'archive' && riskStatus !== 'not-included';
         });
 
+        const visibleRiskIds = this.getVisibleRiskIdSet(filteredRisks);
+
         const viewConfigs = {
             brut: {
                 containerId: 'riskDetailsListBrut',
@@ -8556,9 +8635,17 @@ class RiskManagementSystem {
                     : '0';
 
                 const metaDetails = `#${risk.id} • Processus: ${processOrSubProcess} • Tiers: ${tiersLabel || 'Not defined'} • Type: ${typeLabel}`;
+                const isBlurred = !visibleRiskIds.has(String(risk?.id));
+                const itemClass = `risk-item${isBlurred ? ' risk-row-blurred' : ''}`;
+                const itemAttributes = isBlurred
+                    ? ' aria-hidden="true"'
+                    : ` onclick='rms.selectRisk(${JSON.stringify(risk.id)}, { preferredView: ${JSON.stringify(mode)} })'`;
+                const editButtonAttributes = isBlurred
+                    ? ' disabled aria-hidden="true" tabindex="-1"'
+                    : ` title="Éditer le risque" aria-label="Éditer le risque ${escapeHtml(risk.titre || risk.description || 'Untitled')}" onclick='event.stopPropagation(); rms.editRisk(${JSON.stringify(risk.id)})'`;
 
                 return `
-                    <div class="risk-item" data-risk-id="${risk.id}" onclick='rms.selectRisk(${JSON.stringify(risk.id)}, { preferredView: ${JSON.stringify(mode)} })'>
+                    <div class="${itemClass}" data-risk-id="${risk.id}"${itemAttributes}>
                         <div class="risk-item-header">
                             <div class="risk-item-title-wrap">
                                 <div class="risk-item-title">${escapeHtml(risk.titre || risk.description || 'Untitled')}</div>
@@ -8569,9 +8656,7 @@ class RiskManagementSystem {
                                 <button
                                     type="button"
                                     class="risk-item-edit-btn"
-                                    title="Éditer le risque"
-                                    aria-label="Éditer le risque ${escapeHtml(risk.titre || risk.description || 'Untitled')}"
-                                    onclick='event.stopPropagation(); rms.editRisk(${JSON.stringify(risk.id)})'
+                                    ${editButtonAttributes}
                                 >✏️</button>
                             </div>
                         </div>
@@ -10057,6 +10142,8 @@ class RiskManagementSystem {
             return acc;
         }, {});
 
+        const visibleRiskIds = this.getVisibleRiskIdSet(filteredRisks);
+
         const rows = filteredRisks.map(risk => {
             const normalizedBrut = (Number(risk?.probBrut) || 0) * (Number(risk?.impactBrut) || 0);
             const brutScore = typeof getRiskBrutScore === 'function'
@@ -10122,6 +10209,10 @@ class RiskManagementSystem {
             const actionPlansLabel = actionPlanNames.length
                 ? actionPlanNames.join(', ')
                 : '—';
+            const isBlurred = !visibleRiskIds.has(String(risk?.id));
+            const rowClass = isBlurred ? ' class="risk-row-blurred" aria-hidden="true"' : '';
+            const actionTitle = isBlurred ? '' : ` title="${escapeHtml(actionPlansLabel)}"`;
+            const disabledAttr = isBlurred ? ' disabled aria-hidden="true" tabindex="-1"' : '';
 
             return {
                 risk,
@@ -10131,7 +10222,7 @@ class RiskManagementSystem {
                 aggravatedScore: Number.isFinite(aggravatedScore) ? Number(aggravatedScore) : null,
                 netScore: Number.isFinite(netScore) ? Number(netScore) : null,
                 html: `
-                <tr>
+                <tr${rowClass}>
                     <td>#${risk.id}</td>
                     <td class="risk-description-cell">
                         <div class="risk-register-title">${escapeHtml(risk.titre || risk.description || 'Untitled')}</div>
@@ -10145,13 +10236,13 @@ class RiskManagementSystem {
                     <td>${renderScoreCircle(grossLabel, grossScore)}</td>
                     <td>${renderScoreCircle(aggravatedLabel, aggravatedScore)}</td>
                     <td>${renderScoreCircle(netLabel, netScore, `Reduction ${reductionLabel}${effectivenessLabel}`)}</td>
-                    <td title="${actionPlansLabel}">${actionPlansLabel}</td>
+                    <td${actionTitle}>${actionPlansLabel}</td>
                     <td><span class="table-badge badge-${riskBadgeClass}">${riskStatusLabel || 'Not defined'}</span></td>
                     <td class="table-actions-cell">
                         <div class="table-actions">
-                            <button class="action-btn" title="Dupliquer" onclick='rms.duplicateRisk(${JSON.stringify(risk.id)})'>📄</button>
-                            <button class="action-btn" onclick='rms.editRisk(${JSON.stringify(risk.id)})'>✏️</button>
-                            <button class="action-btn" onclick='rms.deleteRisk(${JSON.stringify(risk.id)})'>🗑️</button>
+                            <button class="action-btn" title="Dupliquer" onclick='rms.duplicateRisk(${JSON.stringify(risk.id)})'${disabledAttr}>📄</button>
+                            <button class="action-btn" onclick='rms.editRisk(${JSON.stringify(risk.id)})'${disabledAttr}>✏️</button>
+                            <button class="action-btn" onclick='rms.deleteRisk(${JSON.stringify(risk.id)})'${disabledAttr}>🗑️</button>
                         </div>
                     </td>
                 </tr>
