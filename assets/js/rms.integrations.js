@@ -104,16 +104,45 @@ function createDashboardPdfWriter() {
 
 async function loadDashboardBrandingAssets() {
     const logoElement = document.querySelector('.header-logo');
-    const fallbackSrc = 'assets/img/LFB-logo.PNG';
+    const fallbackSrc = 'assets/img/al-hiyad-logo.svg';
     const logoSrc = logoElement?.src || fallbackSrc;
 
     try {
         const logoDataUrl = await fetchAssetAsDataUrl(logoSrc);
-        return { logo: logoDataUrl };
+        const normalizedLogoDataUrl = logoDataUrl.startsWith('data:image/svg')
+            ? await convertSvgDataUrlToPngDataUrl(logoDataUrl)
+            : logoDataUrl;
+        return { logo: normalizedLogoDataUrl };
     } catch (error) {
         console.warn('Impossible de charger le logo du site pour le PDF', error);
         return null;
     }
+}
+
+function convertSvgDataUrlToPngDataUrl(svgDataUrl) {
+    if (typeof document === 'undefined' || typeof Image === 'undefined') {
+        return Promise.resolve(svgDataUrl);
+    }
+
+    return new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = image.naturalWidth || 560;
+            canvas.height = image.naturalHeight || 160;
+            const context = canvas.getContext('2d');
+
+            if (!context) {
+                resolve(svgDataUrl);
+                return;
+            }
+
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/png'));
+        };
+        image.onerror = () => resolve(svgDataUrl);
+        image.src = svgDataUrl;
+    });
 }
 
 async function fetchAssetAsDataUrl(url) {
