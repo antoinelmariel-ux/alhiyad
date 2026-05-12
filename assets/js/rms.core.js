@@ -12537,6 +12537,9 @@ class RiskManagementSystem {
                     syncRiskMultiSelectChipsFromSelect('corruptionMode');
                 }
             }
+            if (typeof updateCorruptionSpecificFieldsVisibility === 'function') {
+                updateCorruptionSpecificFieldsVisibility({ clearHiddenValues: false });
+            }
             if (targetAudienceSelect) {
                 Array.from(targetAudienceSelect.options).forEach(opt => {
                     opt.selected = targetAudiences.includes(opt.value);

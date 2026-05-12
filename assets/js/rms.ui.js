@@ -1097,6 +1097,41 @@ const RISK_MULTI_SELECT_CHIP_CONFIG = {
     tiers: { containerId: 'tiersChips', defaultColor: '#16a34a' }
 };
 
+const CORRUPTION_SPECIFIC_SELECT_IDS = ['typeCorruption', 'corruptionExposure', 'corruptionMode'];
+
+function clearRiskMultiSelectValues(selectId) {
+    const select = document.getElementById(selectId);
+    if (!select) {
+        return;
+    }
+
+    Array.from(select.options).forEach(option => {
+        option.selected = false;
+    });
+
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+
+    if (typeof syncRiskMultiSelectChipsFromSelect === 'function') {
+        syncRiskMultiSelectChipsFromSelect(selectId);
+    }
+}
+
+function updateCorruptionSpecificFieldsVisibility(options = {}) {
+    const riskThemeSelect = document.getElementById('riskTheme');
+    const isCorruptionTheme = riskThemeSelect && riskThemeSelect.value === 'corruption';
+    const shouldClearHiddenValues = options.clearHiddenValues !== false;
+
+    document.querySelectorAll('[data-corruption-specific]').forEach(element => {
+        element.hidden = !isCorruptionTheme;
+        element.setAttribute('aria-hidden', isCorruptionTheme ? 'false' : 'true');
+    });
+
+    if (!isCorruptionTheme && shouldClearHiddenValues) {
+        CORRUPTION_SPECIFIC_SELECT_IDS.forEach(clearRiskMultiSelectValues);
+    }
+}
+window.updateCorruptionSpecificFieldsVisibility = updateCorruptionSpecificFieldsVisibility;
+
 function getRiskMultiSelectConfig(selectId) {
     return RISK_MULTI_SELECT_CHIP_CONFIG[selectId] || null;
 }
@@ -1311,6 +1346,7 @@ function addNewRisk() {
         }
         document.getElementById('comment').value = '';
         renderAllRiskMultiSelectChips();
+        updateCorruptionSpecificFieldsVisibility();
 
         if (statutSelect) {
             const defaultStatus = rms?.config?.riskStatuses?.[0]?.value || '';
@@ -1398,10 +1434,16 @@ function saveRisk() {
 
     const processusAssocies = getSelectedValues('processus');
     const sousProcessusAssocies = getSelectedValues('sousProcessus');
-    const typesCorruption = getSelectedValues('typeCorruption');
-    const corruptionExposure = getSelectedValues('corruptionExposure');
-    const corruptionMode = getSelectedValues('corruptionMode');
+    let typesCorruption = getSelectedValues('typeCorruption');
+    let corruptionExposure = getSelectedValues('corruptionExposure');
+    let corruptionMode = getSelectedValues('corruptionMode');
     const targetAudience = getSelectedValues('targetAudience');
+
+    if (riskTheme !== 'corruption') {
+        typesCorruption = [];
+        corruptionExposure = [];
+        corruptionMode = [];
+    }
 
     const controlAssignments = selectedControlsForRisk.map(controlId => {
         const key = String(controlId);
@@ -2303,11 +2345,13 @@ function bindEvents() {
     }
 
     renderAggravatingFactorsForCurrentTheme();
+    updateCorruptionSpecificFieldsVisibility({ clearHiddenValues: false });
 
     const riskThemeSelect = document.getElementById('riskTheme');
     if (riskThemeSelect) {
         riskThemeSelect.addEventListener('change', () => {
             renderAggravatingFactorsForCurrentTheme();
+            updateCorruptionSpecificFieldsVisibility();
         });
     }
 
