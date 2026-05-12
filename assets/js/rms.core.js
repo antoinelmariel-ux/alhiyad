@@ -7860,6 +7860,23 @@ class RiskManagementSystem {
             modere: 'Moderate Risk',
             faible: 'Low Risk'
         };
+        const riskThemeMap = (Array.isArray(this.config?.riskThemes) ? this.config.riskThemes : []).reduce((acc, item) => {
+            if (!item || item.value === undefined || item.value === null) {
+                return acc;
+            }
+            const rawValue = String(item.value);
+            const label = item.label || rawValue;
+            acc[rawValue] = label;
+            acc[rawValue.toLowerCase()] = label;
+            return acc;
+        }, {});
+        const resolveRiskThemeLabel = (value) => {
+            if (value == null || value === '') {
+                return 'Not defined';
+            }
+            const rawValue = String(value);
+            return riskThemeMap[rawValue] || riskThemeMap[rawValue.toLowerCase()] || rawValue;
+        };
         Object.entries(viewConfigs).forEach(([viewKey, config]) => {
             const grid = document.getElementById(config.gridId);
             if (!grid) return;
@@ -7981,8 +7998,9 @@ class RiskManagementSystem {
                             .filter(Boolean)
                             .join(', ')
                         : '';
+                    const themeLabel = resolveRiskThemeLabel(risk?.riskTheme || 'corruption');
                     const tooltipLines = [
-                        `${processOrSubProcess} • ${tiersLabel || 'Not defined'}`,
+                        `${processOrSubProcess} • ${tiersLabel || 'Not defined'} • Thématique: ${themeLabel}`,
                         `**${displayTitle}**`,
                         displayText
                     ];
@@ -8004,7 +8022,7 @@ class RiskManagementSystem {
                     if (idsEqual(this.selectedRiskId, risk.id)) {
                         point.classList.add('active-point');
                     }
-                    point.setAttribute('aria-label', `${config.label} : ${displayTitle}`);
+                    point.setAttribute('aria-label', `${config.label} : ${displayTitle} • Thématique: ${themeLabel}`);
                     point.onclick = () => this.selectRisk(risk.id, { preferredView: viewKey });
                     grid.appendChild(point);
 
@@ -8076,8 +8094,9 @@ class RiskManagementSystem {
                         .filter(Boolean)
                         .join(', ')
                     : '';
+                const themeLabel = resolveRiskThemeLabel(risk?.riskTheme || 'corruption');
                 const tooltipLines = [
-                    `${processOrSubProcess} • ${tiersLabel || 'Not defined'}`,
+                    `${processOrSubProcess} • ${tiersLabel || 'Not defined'} • Thématique: ${themeLabel}`,
                     `**${displayTitle}**`,
                     displayText
                 ];
@@ -8090,7 +8109,7 @@ class RiskManagementSystem {
                 if (idsEqual(this.selectedRiskId, risk.id)) {
                     point.classList.add('active-point');
                 }
-                point.setAttribute('aria-label', `${config.label} : ${displayTitle}`);
+                point.setAttribute('aria-label', `${config.label} : ${displayTitle} • Thématique: ${themeLabel}`);
                 point.onclick = () => this.selectRisk(risk.id, { preferredView: viewKey });
                 if (viewKey === 'brut' && window.matrixEditMode) {
                     point.draggable = true;
@@ -8470,6 +8489,27 @@ class RiskManagementSystem {
                 return typeMap[rawValue] || typeMap[rawValue.toLowerCase()] || rawValue;
             };
 
+            const themeMap = (Array.isArray(this.config?.riskThemes) ? this.config.riskThemes : []).reduce((acc, item) => {
+                if (!item || item.value === undefined || item.value === null) {
+                    return acc;
+                }
+                const rawValue = String(item.value);
+                const label = item.label || rawValue;
+                acc[rawValue] = label;
+                acc[rawValue.toLowerCase()] = label;
+                return acc;
+            }, {});
+
+            const resolveThemeLabel = (value) => {
+                if (value == null || value === '') {
+                    return 'Not defined';
+                }
+                const rawValue = String(value);
+                return themeMap[rawValue] || themeMap[rawValue.toLowerCase()] || rawValue;
+            };
+
+            const renderThemeBadge = (label) => `<span class="table-badge badge-info">${escapeHtml(label || 'Not defined')}</span>`;
+
             const tierMap = (Array.isArray(this.config?.tiers) ? this.config.tiers : []).reduce((acc, item) => {
                 if (!item || item.value === undefined || item.value === null) {
                     return acc;
@@ -8504,6 +8544,7 @@ class RiskManagementSystem {
                     : '';
                 const processOrSubProcess = selectedSubProcessLabel || processLabel;
                 const typeLabel = resolveTypeLabel(risk?.typeCorruption);
+                const themeLabel = resolveThemeLabel(risk?.riskTheme || 'corruption');
                 const tiersLabel = Array.isArray(risk?.tiers)
                     ? risk.tiers
                         .map(tier => resolveTierLabel(tier))
@@ -8535,7 +8576,8 @@ class RiskManagementSystem {
                             </div>
                         </div>
                         <div class="risk-item-meta">
-                            ${metaDetails}
+                            ${renderThemeBadge(themeLabel)}
+                            <span>${escapeHtml(metaDetails)}</span>
                         </div>
                     </div>
                 `;
@@ -9937,6 +9979,7 @@ class RiskManagementSystem {
         };
 
         const typeMap = buildLabelMap(this.config?.riskTypes);
+        const themeMap = buildLabelMap(this.config?.riskThemes);
         const tierMap = buildLabelMap(this.config?.tiers);
         const entityMap = buildLabelMap(this.config?.countries);
 
@@ -9988,7 +10031,7 @@ class RiskManagementSystem {
         if (!allRisks.length) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="12" class="table-empty">No risk recorded</td>
+                    <td colspan="13" class="table-empty">No risk recorded</td>
                 </tr>
             `;
             this.updateRiskRegisterSortIndicators();
@@ -9998,7 +10041,7 @@ class RiskManagementSystem {
         if (!filteredRisks.length) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="12" class="table-empty">No risk matches the filters</td>
+                    <td colspan="13" class="table-empty">No risk matches the filters</td>
                 </tr>
             `;
             this.updateRiskRegisterSortIndicators();
@@ -10053,6 +10096,7 @@ class RiskManagementSystem {
             const effectivenessLabel = netInfo.label ? ` (${netInfo.label})` : '';
 
             const typeLabel = resolveLabel(typeMap, risk.typeCorruption);
+            const themeLabel = resolveLabel(themeMap, risk.riskTheme || 'corruption') || 'Not defined';
             const entityLabels = Array.isArray(risk.paysExposes)
                 ? risk.paysExposes.map(entity => resolveLabel(entityMap, entity))
                 : [];
@@ -10094,7 +10138,8 @@ class RiskManagementSystem {
                         <div class="risk-register-description">${escapeHtml(risk.description || '—')}</div>
                     </td>
                     <td>${renderChipList(processChipLabels)}</td>
-                    <td>${typeLabel}</td>
+                    <td>${renderColorChip(themeLabel, 'Not defined')}</td>
+                    <td>${escapeHtml(typeLabel || 'Not defined')}</td>
                     <td>${renderChipList(entityLabels)}</td>
                     <td>${renderChipList(tierLabels)}</td>
                     <td>${renderScoreCircle(grossLabel, grossScore)}</td>
