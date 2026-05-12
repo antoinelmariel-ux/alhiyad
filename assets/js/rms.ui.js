@@ -796,17 +796,108 @@ function hideModal(modal) {
 }
 
 window.bringModalToFront = bringModalToFront;
+
+function getRiskThemeAggravatingFactorsConfig(theme) {
+    const configs = window.rms?.config?.riskThemeAggravatingFactors || window.RMS_DEFAULT_PARAMETER_CONFIG?.riskThemeAggravatingFactors || {};
+    const normalizedTheme = typeof normalizeAggravatingTheme === 'function'
+        ? normalizeAggravatingTheme(theme)
+        : (theme || 'corruption');
+    return configs[normalizedTheme] || configs.corruption || { group1: [], group2: [] };
+}
+
+function renderAggravatingFactors(theme, selectedFactors = null) {
+    const block = document.getElementById('aggravatingFactorsBlock');
+    if (!block) return;
+
+    const normalizedTheme = typeof normalizeAggravatingTheme === 'function'
+        ? normalizeAggravatingTheme(theme)
+        : (theme || 'corruption');
+    const config = getRiskThemeAggravatingFactorsConfig(normalizedTheme);
+    const selected = typeof normalizeAggravatingFactors === 'function'
+        ? normalizeAggravatingFactors(selectedFactors || { theme: normalizedTheme }, normalizedTheme)
+        : { theme: normalizedTheme, group1: [], group2: [] };
+    const groups = (typeof AGGRAVATING_FACTOR_GROUPS === 'object' && AGGRAVATING_FACTOR_GROUPS)
+        ? AGGRAVATING_FACTOR_GROUPS
+        : {
+            group1: { coefficient: 1.4, inputName: 'aggravatingGroup1' },
+            group2: { coefficient: 1.2, inputName: 'aggravatingGroup2' }
+        };
+    const groupLabels = { group1: 'Critical', group2: 'Major' };
+
+    const renderGroup = (groupKey) => {
+        const groupConfig = groups[groupKey] || {};
+        const configuredFactors = Array.isArray(config[groupKey]) ? config[groupKey] : [];
+        const selectedValues = Array.isArray(selected[groupKey]) && selected.theme === normalizedTheme
+            ? selected[groupKey]
+            : [];
+        const configuredValues = new Set(configuredFactors
+            .map(factor => factor && factor.value != null ? String(factor.value) : '')
+            .filter(Boolean));
+        const legacySelectedFactors = selectedValues
+            .filter(value => value && !configuredValues.has(value))
+            .map(value => ({ value, label: `Legacy factor: ${value}` }));
+        const factorList = [...configuredFactors, ...legacySelectedFactors];
+        const options = factorList.map((factor, index) => {
+            const value = factor && factor.value != null ? String(factor.value) : '';
+            const label = factor && factor.label != null ? String(factor.label) : value;
+            if (!value) return '';
+            const id = `aggravating-${normalizedTheme}-${groupKey}-${index}-${sanitizeId(value)}`;
+            const checked = selectedValues.includes(value) ? ' checked' : '';
+            return `
+                                        <label class="aggravating-factor-option" for="${escapeHtml(id)}">
+                                            <input type="checkbox" id="${escapeHtml(id)}" name="${escapeHtml(groupConfig.inputName || '')}" value="${escapeHtml(value)}" data-theme="${escapeHtml(normalizedTheme)}"${checked}>
+                                            <span>${escapeHtml(label)}</span>
+                                        </label>`;
+        }).join('');
+
+        return `
+                                    <div class="aggravating-factor-group" data-group="${escapeHtml(groupKey)}" data-theme="${escapeHtml(normalizedTheme)}">
+                                        <div class="aggravating-factor-group-title">
+                                            <span>${escapeHtml(groupLabels[groupKey] || groupKey)}</span>
+                                            <span class="aggravating-factor-coefficient">Coeff. ${escapeHtml(formatCoefficient(groupConfig.coefficient || 1))}</span>
+                                        </div>${options || '\n                                        <div class="form-helper">No aggravating factors configured.</div>'}
+                                    </div>`;
+    };
+
+    block.innerHTML = `
+                                <div class="aggravating-factors-header">
+                                    <h4>Potential aggravating factors</h4>
+                                    <p>Select relevant factors for the selected theme to automatically adjust gross risk Probability.</p>
+                                    <div class="aggravating-coefficient-summary">
+                                        Applied coefficient: <strong id="aggravatingCoefficientDisplay">1,0</strong>
+                                    </div>
+                                </div>
+                                <div class="aggravating-factor-groups">${Object.keys(groups).map(renderGroup).join('')}
+                                </div>`;
+
+    if (typeof calculateScore === 'function') {
+        calculateScore('brut');
+    }
+}
+window.renderAggravatingFactors = renderAggravatingFactors;
+
+function renderAggravatingFactorsForCurrentTheme(selectedFactors = null) {
+    const riskThemeSelect = document.getElementById('riskTheme');
+    const theme = riskThemeSelect ? riskThemeSelect.value : 'corruption';
+    renderAggravatingFactors(theme || 'corruption', selectedFactors);
+}
+window.renderAggravatingFactorsForCurrentTheme = renderAggravatingFactorsForCurrentTheme;
+
 function setAggravatingFactorsSelection(factors) {
+    const riskThemeSelect = document.getElementById('riskTheme');
+    const fallbackTheme = riskThemeSelect ? riskThemeSelect.value : 'corruption';
+    const normalized = typeof normalizeAggravatingFactors === 'function'
+        ? normalizeAggravatingFactors(factors, fallbackTheme || 'corruption')
+        : { theme: fallbackTheme || 'corruption', group1: [], group2: [] };
+
+    renderAggravatingFactors(normalized.theme || fallbackTheme || 'corruption', normalized);
+
     const groups = (typeof AGGRAVATING_FACTOR_GROUPS === 'object' && AGGRAVATING_FACTOR_GROUPS)
         ? AGGRAVATING_FACTOR_GROUPS
         : {
             group1: { inputName: 'aggravatingGroup1' },
             group2: { inputName: 'aggravatingGroup2' }
         };
-
-    const normalized = typeof normalizeAggravatingFactors === 'function'
-        ? normalizeAggravatingFactors(factors)
-        : { group1: [], group2: [] };
 
     Object.entries(groups).forEach(([groupKey, config]) => {
         const inputName = config?.inputName || '';
@@ -2211,14 +2302,24 @@ function bindEvents() {
         impactNet.addEventListener('change', () => calculateScore('net'));
     }
 
-    const aggravatingInputs = document.querySelectorAll('input[name="aggravatingGroup1"], input[name="aggravatingGroup2"]');
-    if (aggravatingInputs.length) {
-        aggravatingInputs.forEach(input => {
-            input.addEventListener('change', () => {
-                if (typeof calculateScore === 'function') {
-                    calculateScore('brut');
-                }
-            });
+    renderAggravatingFactorsForCurrentTheme();
+
+    const riskThemeSelect = document.getElementById('riskTheme');
+    if (riskThemeSelect) {
+        riskThemeSelect.addEventListener('change', () => {
+            renderAggravatingFactorsForCurrentTheme();
+        });
+    }
+
+    const aggravatingFactorsBlock = document.getElementById('aggravatingFactorsBlock');
+    if (aggravatingFactorsBlock) {
+        aggravatingFactorsBlock.addEventListener('change', (event) => {
+            if (!event.target.matches('input[name="aggravatingGroup1"], input[name="aggravatingGroup2"]')) {
+                return;
+            }
+            if (typeof calculateScore === 'function') {
+                calculateScore('brut');
+            }
         });
     }
 
