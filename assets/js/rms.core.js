@@ -357,10 +357,10 @@ class RiskManagementSystem {
 
         if (!config.riskThemes.length) {
             config.riskThemes = [
-                { value: 'corruption', label: 'Corruption' },
-                { value: 'personal-data', label: 'Données Personnelles' },
-                { value: 'international-sanctions', label: 'Sanctions internationales' },
-                { value: 'discrimination', label: 'Discrimination' }
+                { value: 'corruption', label: 'Corruption', color: '#8b5cf6' },
+                { value: 'personal-data', label: 'Données Personnelles', color: '#0ea5e9' },
+                { value: 'international-sanctions', label: 'Sanctions internationales', color: '#f97316' },
+                { value: 'discrimination', label: 'Discrimination', color: '#ec4899' }
             ];
         }
 
@@ -7937,22 +7937,51 @@ class RiskManagementSystem {
             modere: 'Moderate Risk',
             faible: 'Low Risk'
         };
-        const riskThemeMap = (Array.isArray(this.config?.riskThemes) ? this.config.riskThemes : []).reduce((acc, item) => {
+        const defaultRiskThemeColors = {
+            corruption: '#8b5cf6',
+            'personal-data': '#0ea5e9',
+            'international-sanctions': '#f97316',
+            discrimination: '#ec4899'
+        };
+        const riskThemeFallbackPalette = ['#8b5cf6', '#0ea5e9', '#f97316', '#ec4899', '#22c55e', '#eab308', '#14b8a6', '#ef4444'];
+        const resolveDefaultThemeColor = (value) => {
+            const key = String(value || '').toLowerCase();
+            if (defaultRiskThemeColors[key]) {
+                return defaultRiskThemeColors[key];
+            }
+            const hash = Array.from(key).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            return riskThemeFallbackPalette[hash % riskThemeFallbackPalette.length] || '#64748b';
+        };
+        const isSafeThemeColor = (color) => typeof color === 'string'
+            && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color.trim());
+        const riskThemeMetaMap = (Array.isArray(this.config?.riskThemes) ? this.config.riskThemes : []).reduce((acc, item) => {
             if (!item || item.value === undefined || item.value === null) {
                 return acc;
             }
             const rawValue = String(item.value);
+            const key = rawValue.toLowerCase();
             const label = item.label || rawValue;
-            acc[rawValue] = label;
-            acc[rawValue.toLowerCase()] = label;
+            const defaultColor = resolveDefaultThemeColor(key);
+            const color = isSafeThemeColor(item.color) ? item.color.trim() : defaultColor;
+            const meta = { label, color };
+            acc[rawValue] = meta;
+            acc[key] = meta;
             return acc;
         }, {});
-        const resolveRiskThemeLabel = (value) => {
+        const resolveRiskThemeMeta = (value) => {
             if (value == null || value === '') {
-                return 'Not defined';
+                return { label: 'Not defined', color: '#64748b' };
             }
             const rawValue = String(value);
-            return riskThemeMap[rawValue] || riskThemeMap[rawValue.toLowerCase()] || rawValue;
+            return riskThemeMetaMap[rawValue]
+                || riskThemeMetaMap[rawValue.toLowerCase()]
+                || { label: rawValue, color: resolveDefaultThemeColor(rawValue) };
+        };
+        const applyRiskThemeRing = (point, value) => {
+            const meta = resolveRiskThemeMeta(value);
+            point.dataset.riskTheme = value || '';
+            point.style.setProperty('--risk-theme-color', meta.color);
+            return meta;
         };
         Object.entries(viewConfigs).forEach(([viewKey, config]) => {
             const grid = document.getElementById(config.gridId);
@@ -8075,7 +8104,8 @@ class RiskManagementSystem {
                             .filter(Boolean)
                             .join(', ')
                         : '';
-                    const themeLabel = resolveRiskThemeLabel(risk?.riskTheme || 'corruption');
+                    const themeMeta = applyRiskThemeRing(point, risk?.riskTheme || 'corruption');
+                    const themeLabel = themeMeta.label;
                     const tooltipLines = [
                         `${processOrSubProcess} • ${tiersLabel || 'Not defined'} • Thématique: ${themeLabel}`,
                         `**${displayTitle}**`,
@@ -8171,7 +8201,8 @@ class RiskManagementSystem {
                         .filter(Boolean)
                         .join(', ')
                     : '';
-                const themeLabel = resolveRiskThemeLabel(risk?.riskTheme || 'corruption');
+                const themeMeta = applyRiskThemeRing(point, risk?.riskTheme || 'corruption');
+                const themeLabel = themeMeta.label;
                 const tooltipLines = [
                     `${processOrSubProcess} • ${tiersLabel || 'Not defined'} • Thématique: ${themeLabel}`,
                     `**${displayTitle}**`,
