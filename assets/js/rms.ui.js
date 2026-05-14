@@ -1,5 +1,8 @@
 // Enhanced Risk Management System - UI Interactions
 
+const RISK_THEME_UNDEFINED_FILTER = '__undefined__';
+window.RISK_THEME_UNDEFINED_FILTER = RISK_THEME_UNDEFINED_FILTER;
+
 function switchTab(tabNameOrEvent, maybeTabName) {
     let tabName = tabNameOrEvent;
     let evt = null;
@@ -105,7 +108,7 @@ function syncRiskFilterWidgets(filterKey, value, sourceElement) {
             if (normalizedValue && !Array.from(element.options).some(opt => opt.value === normalizedValue)) {
                 const opt = document.createElement('option');
                 opt.value = normalizedValue;
-                opt.textContent = normalizedValue;
+                opt.textContent = normalizedValue === RISK_THEME_UNDEFINED_FILTER ? 'Non défini' : normalizedValue;
                 element.appendChild(opt);
             }
         }
@@ -173,6 +176,9 @@ function applyFilters(filterKeyOrEvent, value, sourceElement) {
         updateRiskTypeFilterVisibility();
     }
 
+    if (typeof rms.renderRiskThemeLegend === 'function') {
+        rms.renderRiskThemeLegend();
+    }
     rms.renderRiskPoints();
     rms.updateRiskDetailsList();
     rms.updateRisksList();
@@ -181,6 +187,17 @@ function applyFilters(filterKeyOrEvent, value, sourceElement) {
     }
 }
 window.applyFilters = applyFilters;
+
+function toggleRiskThemeLegendFilter(themeValue) {
+    if (!window.rms) return;
+
+    const normalizedTheme = themeValue == null ? '' : String(themeValue);
+    const currentTheme = rms.filters?.theme == null ? '' : String(rms.filters.theme);
+    const nextTheme = currentTheme === normalizedTheme ? '' : normalizedTheme;
+
+    applyFilters('theme', nextTheme, null);
+}
+window.toggleRiskThemeLegendFilter = toggleRiskThemeLegendFilter;
 
 function searchRisks(searchTermOrEvent, sourceElement) {
     if (!window.rms) return;
