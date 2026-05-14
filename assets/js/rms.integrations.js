@@ -104,7 +104,7 @@ function createDashboardPdfWriter() {
 
 async function loadDashboardBrandingAssets() {
     const logoElement = document.querySelector('.header-logo');
-    const fallbackSrc = 'assets/img/al-hiyad-logo.svg';
+    const fallbackSrc = 'assets/img/logo_al_hiyad.png';
     const logoSrc = logoElement?.src || fallbackSrc;
 
     try {
