@@ -405,7 +405,7 @@ function calculateScore(type) {
             const mitigationLabel = typeof formatMitigationCoefficient === 'function'
                 ? formatMitigationCoefficient(coefficient)
                 : coefficient.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            coordElement.textContent = `Gross ${brutLabel} × Coefficient ${mitigationLabel}`;
+            coordElement.textContent = `Brut ${brutLabel} × Coefficient ${mitigationLabel}`;
         } else {
             coordElement.textContent = `P${prob} × I${impact}`;
         }

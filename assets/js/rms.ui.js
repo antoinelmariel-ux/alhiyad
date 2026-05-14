@@ -1725,7 +1725,7 @@ function renderControlSelectionList() {
         const originKey = ctrl?.origin != null ? String(ctrl.origin).toLowerCase() : '';
         const originLabel = originKey ? (originMap[originKey] || ctrl.origin || '') : '';
         const ownerLabel = ctrl?.owner || '';
-        const controlName = ctrl?.name || 'Unnamed';
+        const controlName = ctrl?.name || 'Sans nom';
         return `
             <div class="risk-list-item">
               <input type="checkbox" id="control-${ctrl.id}" ${isSelected ? 'checked' : ''} onchange='toggleControlSelection(${JSON.stringify(ctrl.id)})'>
@@ -1828,14 +1828,14 @@ function updateSelectedControlsDisplay() {
         if (!assignment?.transverse) return null;
         const ctrl = rms.controls.find(c => idsEqual(c.id, id));
         if (!ctrl) return null;
-        return `<span class="transverse-control-chip">#${id} - ${ctrl.name || 'Unnamed'} <button type="button" class="transverse-control-remove-btn" onclick='removeControlFromSelection(${JSON.stringify(id)})' aria-label="Remove cross-functional control #${id}">×</button></span>`;
+        return `<span class="transverse-control-chip">#${id} - ${ctrl.name || 'Sans nom'} <button type="button" class="transverse-control-remove-btn" onclick='removeControlFromSelection(${JSON.stringify(id)})' aria-label="Retirer le contrôle transverse #${id}">×</button></span>`;
     }).filter(Boolean);
     const transverseSection = transverseControls.length
         ? `<div class="transverse-controls-section">
-                <div class="transverse-controls-title">Cross-functional controls</div>
+                <div class="transverse-controls-title">Contrôles transverses</div>
                 <div class="transverse-controls-list">${transverseControls.join('')}</div>
            </div>`
-        : '<div style="color: #7f8c8d; font-style: italic;">No cross-functional control selected</div>';
+        : '<div style="color: #7f8c8d; font-style: italic;">Aucun contrôle transverse sélectionné</div>';
     container.innerHTML = transverseSection;
     renderBenefitFirstAssignment();
 }
@@ -1876,7 +1876,7 @@ function updateSelectedActionPlansDisplay() {
     const container = document.getElementById('riskActionPlans');
     if (!container) return;
     if (selectedActionPlansForRisk.length === 0) {
-        container.innerHTML = '<div style="color: #7f8c8d; font-style: italic;">No action plan selected</div>';
+        container.innerHTML = '<div style="color: #7f8c8d; font-style: italic;">Aucun plan d’action sélectionné</div>';
         return;
     }
     container.innerHTML = selectedActionPlansForRisk.map(id => {
