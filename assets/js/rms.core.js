@@ -7346,7 +7346,7 @@ class RiskManagementSystem {
         if (!this.interviewFolderPicker) {
             const input = document.createElement('input');
             input.type = 'file';
-            input.accept = '.json,application/json';
+            input.accept = '.js,.json,application/javascript,application/json';
             input.multiple = true;
             input.setAttribute('webkitdirectory', '');
             input.setAttribute('directory', '');
@@ -7387,10 +7387,10 @@ class RiskManagementSystem {
         }
 
         const files = Array.from(fileList)
-            .filter(file => file && typeof file.name === 'string' && /interview\d+\.json$/i.test(file.name));
+            .filter(file => file && typeof file.name === 'string' && /interview\d+\.(json|js)$/i.test(file.name));
 
         if (!files.length) {
-            alert('No interviewX.json file found in the selected folder.');
+            alert('No interviewX.js or interviewX.json file found in the selected folder.');
             return;
         }
 
@@ -7404,8 +7404,7 @@ class RiskManagementSystem {
                 continue;
             }
             try {
-                const data = JSON.parse(content);
-                const interview = this.extractInterviewPayload(data);
+                const interview = this.extractInterviewPayloadFromText(content, file.name);
                 if (!interview) {
                     continue;
                 }
@@ -7420,7 +7419,9 @@ class RiskManagementSystem {
                     loadedInterviews.push(normalized);
                     if (fileIndex) {
                         maxIndexFound = Math.max(maxIndexFound, fileIndex);
-                        maxJsonIndexFound = Math.max(maxJsonIndexFound, fileIndex);
+                        if (/\.json$/i.test(file.name)) {
+                            maxJsonIndexFound = Math.max(maxJsonIndexFound, fileIndex);
+                        }
                     }
                 }
             } catch (error) {
@@ -7446,11 +7447,74 @@ class RiskManagementSystem {
 
     async fetchInterviewFile(index) {
         const baseName = `interview${index}`;
+        const registeredInterview = this.getRegisteredInterviewPayload(baseName);
+        if (registeredInterview) {
+            return { interview: registeredInterview, fileName: `${baseName}.js`, isJson: false };
+        }
+
+        const jsInterview = await this.fetchInterviewScript(baseName);
+        if (jsInterview) {
+            return { interview: jsInterview, fileName: `${baseName}.js`, isJson: false };
+        }
+
         const jsonInterview = await this.fetchInterviewJson(`${baseName}.json`);
         if (jsonInterview) {
             return { interview: jsonInterview, fileName: `${baseName}.json`, isJson: true };
         }
         return null;
+    }
+
+    getRegisteredInterviewPayload(baseName) {
+        const registry = typeof window !== 'undefined' ? window.RMS_INTERVIEW_FILES : null;
+        if (!registry || typeof registry !== 'object') {
+            return null;
+        }
+        return registry[baseName] || null;
+    }
+
+    fetchInterviewScript(baseName) {
+        if (typeof document === 'undefined') {
+            return Promise.resolve(null);
+        }
+
+        const existing = this.getRegisteredInterviewPayload(baseName);
+        if (existing) {
+            return Promise.resolve(existing);
+        }
+
+        return new Promise(resolve => {
+            const script = document.createElement('script');
+            script.src = this.getInterviewFilePath(`${baseName}.js`);
+            script.async = false;
+            script.onload = () => resolve(this.getRegisteredInterviewPayload(baseName));
+            script.onerror = () => resolve(null);
+            document.head.appendChild(script);
+        });
+    }
+
+    extractInterviewPayloadFromText(content, fileName = '') {
+        if (!content) {
+            return null;
+        }
+
+        const trimmed = String(content).trim();
+        if (/\.js$/i.test(fileName)) {
+            const match = trimmed.match(/=\s*({[\s\S]*})\s*;?\s*$/);
+            if (!match) {
+                return null;
+            }
+            try {
+                return this.extractInterviewPayload(JSON.parse(match[1]));
+            } catch (error) {
+                return null;
+            }
+        }
+
+        try {
+            return this.extractInterviewPayload(JSON.parse(trimmed));
+        } catch (error) {
+            return null;
+        }
     }
 
     async fetchInterviewJson(path) {
@@ -7567,7 +7631,7 @@ class RiskManagementSystem {
         return fallback;
     }
 
-    saveInterviewFile(interview, format = 'json') {
+    saveInterviewFile(interview, format = 'js') {
         if (!interview) {
             return;
         }
@@ -7623,7 +7687,7 @@ class RiskManagementSystem {
         }
     }
 
-    downloadInterviewFile(interviewId, format = 'json') {
+    downloadInterviewFile(interviewId, format = 'js') {
         if (!Array.isArray(this.interviews)) {
             return;
         }
@@ -12086,7 +12150,7 @@ class RiskManagementSystem {
             : this.getNextInterviewFileIndex();
         const baseFileName = existingInterview?.fileName
             ? existingInterview.fileName
-            : this.getInterviewFileName({ fileIndex }, 'json');
+            : this.getInterviewFileName({ fileIndex }, 'js');
 
         const processesMap = new Map();
         selectedScopes.forEach(scope => {
@@ -12150,10 +12214,7 @@ class RiskManagementSystem {
 
         this.interviewEditorState = null;
         this.saveData();
-        this.saveInterviewFile(normalizedInterview);
-        if (this.getInterviewFileFormat(normalizedInterview, 'json') !== 'json') {
-            this.downloadInterviewJson(normalizedInterview);
-        }
+        this.saveInterviewFile(normalizedInterview, 'js');
         this.clearUnsavedChanges('interviewForm');
         this.updateInterviewsList();
         this.closeInterviewModal();
