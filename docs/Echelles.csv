@@ -1,0 +1,30 @@
+Facteurs aggravants,
+Données personnelles,
+Données sensibles (dont de santé),"1,4"
+Données sur des ersonnes vulnérables (enfant),"1,4"
+Données sur des personnes exposées médiatiquement,"1,4"
+Donnée sensibles (dont intimes),"1,2"
+Fort turn-over parmi les gestionnaires des données,"1,2"
+Difficulté à répondre aux droits des personnes liés à leur données,"1,2"
+,
+Discrimination,
+Forte communication externe de l'entreprise en faveur de la population visée,"1,4"
+Décision à fort enjeu pour la personne,"1,4"
+Discrimination liée à l’origine ethnique ou le sexe,"1,2"
+Processus algorithmique ou scoring automatisé,"1,2"
+,
+Sanction internationale,
+Pays sous sanctions ou pays à exposition géopolitique élevée,"1,4"
+Paiement en dollar ou via banques exposées,"1,4"
+Bénéficiaire effectif difficile à identifier,"1,2"
+Présence d’intermédiaire,"1,2"
+Pression business forte,"1,2"
+,
+Corruption,
+Agent public,"1,4"
+Compétitivité avec entreprise américaine,"1,4"
+Pays à risque de corruption élevé (CPI < 40),"1,4"
+Pays à risque de corruption modéré (40 ≤ CPI < 60),"1,2"
+Fort impact potentiel sur la rémunération,"1,2"
+Culture du pourboire,"1,2"
+Forte présence de cash disponible,"1,2"
