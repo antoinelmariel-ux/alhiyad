@@ -753,15 +753,7 @@ class RiskManagementSystem {
     getVisibleRiskIdSet(risks = []) {
         const limit = this.getVisibleRiskLimit();
         return new Set((Array.isArray(risks) ? risks : [])
-            .slice()
-            .sort((a, b) => {
-                const idComparison = this.getRiskNumericId(a) - this.getRiskNumericId(b);
-                if (idComparison !== 0) {
-                    return idComparison;
-                }
-                return String(a?.id ?? '').localeCompare(String(b?.id ?? ''), undefined, { numeric: true, sensitivity: 'base' });
-            })
-            .slice(0, limit)
+            .filter(risk => this.getRiskNumericId(risk) <= limit)
             .map(risk => String(risk?.id)));
     }
 
@@ -9780,7 +9772,8 @@ class RiskManagementSystem {
                     severity: severityKey,
                     score,
                     date: dateValue || null,
-                    formattedDate: formatDate(dateValue)
+                    formattedDate: formatDate(dateValue),
+                    isBlurred: this.getRiskNumericId(risk) > this.getVisibleRiskLimit()
                 };
             })
             .filter(Boolean)
@@ -9827,7 +9820,9 @@ class RiskManagementSystem {
                 owner: plan?.owner || '-',
                 statusLabel,
                 dueDate: dueDate ? dueDate.toISOString() : null,
-                formattedDueDate: dueDate ? dueDate.toLocaleDateString('en-GB') : (plan?.dueDate || '-')
+                formattedDueDate: dueDate ? dueDate.toLocaleDateString('en-GB') : (plan?.dueDate || '-'),
+                id: plan?.id,
+                isBlurred: Number(plan?.id) > 3
             }));
 
         return { severeRisks, overdueActionPlans };
@@ -9861,16 +9856,19 @@ class RiskManagementSystem {
                     };
                     const badgeClass = badgeClassMap[risk.severity] || 'badge-warning';
 
+                    const rowClass = risk.isBlurred ? ' class="risk-row-blurred" aria-hidden="true"' : '';
+                    const disabledAttr = risk.isBlurred ? ' disabled aria-hidden="true" tabindex="-1"' : '';
+
                     return `
-                        <tr>
+                        <tr${rowClass}>
                             <td>${risk.formattedDate}</td>
                             <td>${risk.description}</td>
                             <td>${risk.process}</td>
                             <td><span class="table-badge ${badgeClass}">${risk.level}</span></td>
                             <td class="table-actions-cell">
                                 <div class="table-actions">
-                                    <button class="action-btn" onclick='rms.selectRisk(${JSON.stringify(risk.id)})'>👁️</button>
-                                    <button class="action-btn" onclick='rms.editRisk(${JSON.stringify(risk.id)})'>✏️</button>
+                                    <button class="action-btn" onclick='rms.selectRisk(${JSON.stringify(risk.id)})'${disabledAttr}>👁️</button>
+                                    <button class="action-btn" onclick='rms.editRisk(${JSON.stringify(risk.id)})'${disabledAttr}>✏️</button>
                                 </div>
                             </td>
                         </tr>
@@ -9887,14 +9885,17 @@ class RiskManagementSystem {
                     </tr>
                 `;
             } else {
-                plansBody.innerHTML = overdueActionPlans.map(plan => `
-                        <tr>
+                plansBody.innerHTML = overdueActionPlans.map(plan => {
+                    const rowClass = plan.isBlurred ? ' class="action-plan-row-blurred" aria-hidden="true"' : '';
+                    return `
+                        <tr${rowClass}>
                             <td>${plan.title}</td>
                             <td>${plan.owner || '-'}</td>
                             <td>${plan.formattedDueDate}</td>
                             <td>${plan.statusLabel}</td>
                         </tr>
-                    `).join('');
+                    `;
+                }).join('');
             }
         }
     }
@@ -9947,6 +9948,7 @@ class RiskManagementSystem {
                 return { risk, score: netInfo.score, brutScore: netInfo.brutScore, coefficient: netInfo.coefficient, reduction: netInfo.reduction, label: netInfo.label };
             }).filter(entry => Number.isFinite(entry.score));
 
+            const visibleRiskIds = this.getVisibleRiskIdSet(filteredRisks);
             const topRisks = enrichedRisks.sort((a, b) => {
                 if (b.score !== a.score) return b.score - a.score;
                 if (b.coefficient !== a.coefficient) return b.coefficient - a.coefficient;
@@ -9977,9 +9979,11 @@ class RiskManagementSystem {
                         : '0';
                     const reductionLabel = `${entry.reduction ?? 0}%${entry.label ? ` (${entry.label})` : ''}`;
                     const meta = `Brut ${brutLabel} → Net ${scoreLabel} • Réduction ${reductionLabel}`;
+                    const isBlurred = !visibleRiskIds.has(String(risk?.id));
+                    const rowClass = isBlurred ? ' class="risk-row-blurred" aria-hidden="true"' : '';
 
                     return `
-                        <tr>
+                        <tr${rowClass}>
                             <td>${rank}</td>
                             <td>
                                 <span class="top-risk-title">${title}</span>
@@ -10765,7 +10769,7 @@ class RiskManagementSystem {
             const statusClass = normalizedStatus ? normalizedStatus.replace(/[^a-z0-9-]+/g, '-') : '';
             const ownerLabel = plan?.owner ? String(plan.owner) : '';
             const dueDateLabel = formatDueDate(plan?.dueDate);
-            const isBlurred = index >= 3;
+            const isBlurred = Number(plan?.id) > 3;
             const rowClass = `controls-table-row${isBlurred ? ' action-plan-row-blurred' : ''}`;
             const rowAttributes = isBlurred ? ' aria-hidden="true"' : '';
             const disabledAttr = isBlurred ? ' disabled aria-hidden="true" tabindex="-1"' : '';

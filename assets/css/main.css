@@ -566,9 +566,9 @@ body.feedback-mode-paused .feedback-panel * {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #4b91c5, #0061af);
-    border: 3px solid var(--legend-theme-color, #64748b);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    background: var(--legend-theme-color, #64748b);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(13, 31, 60, 0.12);
     flex: 0 0 auto;
 }
 
@@ -609,11 +609,13 @@ body.feedback-mode-paused .feedback-panel * {
     align-items: flex-start;
     flex-wrap: wrap;
     justify-content: center;
-    padding-left: 0;
+    padding-left: 4rem;
+    padding-bottom: 3.5rem;
 }
 
-.matrix-container[data-view="net"] .matrix-wrapper {
-    padding-left: 0;
+.matrix-container[data-view="net"] .matrix-wrapper,
+.matrix-container[data-view="post"] .matrix-wrapper {
+    padding-left: 4.5rem;
 }
 
 .matrix {
@@ -1021,7 +1023,7 @@ body.feedback-mode-paused .feedback-panel * {
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 3px solid var(--risk-theme-color, #ffffff);
+    border: 2px solid rgba(255, 255, 255, 0.95);
     z-index: 10;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     display: flex;
@@ -1032,7 +1034,7 @@ body.feedback-mode-paused .feedback-panel * {
     color: #fff;
     line-height: 1;
     user-select: none;
-    background: #0061af;
+    background: var(--risk-theme-color, #0061af);
 }
 
 .risk-point:hover {
@@ -1043,8 +1045,7 @@ body.feedback-mode-paused .feedback-panel * {
 
 .risk-point.brut,
 .risk-point.net {
-      background: linear-gradient(135deg, #4b91c5, #0061af);
-
+    background: var(--risk-theme-color, #0061af);
 }
 
 .risk-point.score-overflow {
@@ -1052,11 +1053,11 @@ body.feedback-mode-paused .feedback-panel * {
 }
 
 .risk-point.brut.aggravating-major {
-    background: linear-gradient(135deg, #ffb347, #ff8c00);
+    box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.45), 0 6px 16px rgba(255, 140, 0, 0.28);
 }
 
 .risk-point.brut.aggravating-critical {
-    background: linear-gradient(135deg, #ff6b6b, #c62828);
+    box-shadow: 0 0 0 2px rgba(198, 40, 40, 0.5), 0 6px 16px rgba(198, 40, 40, 0.32);
 }
 
 .risk-point.inactive {
@@ -1069,9 +1070,9 @@ body.feedback-mode-paused .feedback-panel * {
 
 .risk-point.active-point {
     z-index: 30;
-    background: linear-gradient(135deg, #ff6b6b, #c62828);
-    border-color: var(--risk-theme-color, #ffffff);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--risk-theme-color, #c62828) 35%, transparent), 0 6px 18px rgba(0, 0, 0, 0.28);
+    background: var(--risk-theme-color, #c62828);
+    border-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--risk-theme-color, #c62828) 42%, transparent), 0 6px 18px rgba(0, 0, 0, 0.28);
 }
 
 .risk-point.edit-point {
@@ -1600,30 +1601,35 @@ body.feedback-mode-paused .feedback-panel * {
 }
 
 .axis-label.x-axis {
-    bottom: 0;
+    bottom: -2.6rem;
     left: 50%;
-    transform: translate(-50%, 100%);
+    width: max-content;
+    max-width: calc(100% - 16px);
+    text-align: center;
+    white-space: nowrap;
+    transform: translateX(-50%);
 }
 
 .axis-label.y-axis {
     top: 50%;
-    left: -3.5rem;
-    transform: translateY(-50%) rotate(-90deg);
+    left: -3.1rem;
+    transform: translateY(-50%) rotate(180deg);
     transform-origin: center;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     white-space: nowrap;
+    writing-mode: vertical-rl;
 }
 
 .matrix-container[data-view="net"] .axis-label.y-axis,
 .matrix-container[data-view="post"] .axis-label.y-axis {
-    left: -6.75rem;
+    left: -3.5rem;
 }
 
 .axis-label.y-axis .axis-arrow {
     display: inline-block;
-    transform: rotate(90deg);
+    transform: rotate(180deg);
 }
 
 .app-footer {
@@ -6596,7 +6602,7 @@ tbody tr:hover {
 }
 
 .risk-point.post {
-    background: linear-gradient(135deg, #2ecc71, #1f8f5f);
+    background: var(--risk-theme-color, #1f8f5f);
 }
 
 .risk-score-card.post {
