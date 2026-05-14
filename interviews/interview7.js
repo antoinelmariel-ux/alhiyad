@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview7'] = {
     "id": 7,
     "fileIndex": 7,
     "fileName": "interview7.js",
-    "title": "Interview fictive — Ressources humaines",
+    "title": "Entretien — Ressources humaines",
     "referents": [
         "Claire Dubois — Directrice Ressources Humaines"
     ],

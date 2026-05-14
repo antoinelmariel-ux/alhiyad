@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview3'] = {
     "id": 3,
     "fileIndex": 3,
     "fileName": "interview3.js",
-    "title": "Interview fictive — Recrutement",
+    "title": "Entretien — Recrutement",
     "referents": [
         "Camille Perrin — Responsable Acquisition Talents"
     ],

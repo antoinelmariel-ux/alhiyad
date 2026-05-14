@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview14'] = {
     "id": 14,
     "fileIndex": 14,
     "fileName": "interview14.js",
-    "title": "Interview fictive — Fondation",
+    "title": "Entretien — Fondation",
     "referents": [
         "Romain Delattre — Directeur Fondation"
     ],

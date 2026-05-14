@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview8'] = {
     "id": 8,
     "fileIndex": 8,
     "fileName": "interview8.js",
-    "title": "Interview fictive — Facturation & encaissement",
+    "title": "Entretien — Facturation & encaissement",
     "referents": [
         "Julien Marchand — Responsable Billing & Cash Collection"
     ],

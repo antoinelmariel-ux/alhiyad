@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview13'] = {
     "id": 13,
     "fileIndex": 13,
     "fileName": "interview13.js",
-    "title": "Interview fictive — Communication & réputation",
+    "title": "Entretien — Communication & réputation",
     "referents": [
         "Maya Chevalier — Directrice Communication & Réputation"
     ],
