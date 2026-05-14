@@ -7995,6 +7995,7 @@ class RiskManagementSystem {
             }
         }
 
+        this.renderRiskThemeLegend();
         this.renderRiskPoints();
         this.updateRiskDetailsList();
 
@@ -8003,6 +8004,88 @@ class RiskManagementSystem {
             const isActive = container.dataset.view === activeView;
             container.classList.toggle('active-view', isActive);
         });
+    }
+
+
+    renderRiskThemeLegend() {
+        const container = document.getElementById('riskThemeLegendItems');
+        if (!container) {
+            return;
+        }
+
+        const defaultRiskThemeColors = {
+            corruption: '#8b5cf6',
+            'personal-data': '#0ea5e9',
+            'international-sanctions': '#f97316',
+            discrimination: '#ec4899'
+        };
+        const fallbackPalette = ['#8b5cf6', '#0ea5e9', '#f97316', '#ec4899', '#22c55e', '#eab308', '#14b8a6', '#ef4444'];
+        const resolveDefaultThemeColor = (value) => {
+            const key = String(value || '').toLowerCase();
+            if (defaultRiskThemeColors[key]) {
+                return defaultRiskThemeColors[key];
+            }
+            const hash = Array.from(key).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            return fallbackPalette[hash % fallbackPalette.length] || '#64748b';
+        };
+        const isSafeThemeColor = (color) => typeof color === 'string'
+            && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color.trim());
+
+        const configuredThemes = Array.isArray(this.config?.riskThemes) ? this.config.riskThemes : [];
+        const themes = configuredThemes.length
+            ? configuredThemes
+            : [
+                { value: 'corruption', label: 'Corruption', color: '#8b5cf6' },
+                { value: 'personal-data', label: 'Données Personnelles', color: '#0ea5e9' },
+                { value: 'international-sanctions', label: 'Sanctions internationales', color: '#f97316' },
+                { value: 'discrimination', label: 'Discrimination', color: '#ec4899' }
+            ];
+
+        container.innerHTML = '';
+        const seen = new Set();
+        themes.forEach((theme) => {
+            if (!theme || theme.value === undefined || theme.value === null) {
+                return;
+            }
+            const value = String(theme.value);
+            const normalizedValue = value.toLowerCase();
+            if (seen.has(normalizedValue)) {
+                return;
+            }
+            seen.add(normalizedValue);
+
+            const label = theme.label || value;
+            const color = isSafeThemeColor(theme.color) ? theme.color.trim() : resolveDefaultThemeColor(value);
+            const item = document.createElement('div');
+            item.className = 'risk-theme-legend-item';
+            item.title = `Thématique : ${label}`;
+
+            const dot = document.createElement('span');
+            dot.className = 'risk-theme-legend-dot';
+            dot.style.setProperty('--legend-theme-color', color);
+            dot.setAttribute('aria-hidden', 'true');
+
+            const text = document.createElement('span');
+            text.textContent = label;
+
+            item.append(dot, text);
+            container.appendChild(item);
+        });
+
+        const undefinedItem = document.createElement('div');
+        undefinedItem.className = 'risk-theme-legend-item';
+        undefinedItem.title = 'Thématique non définie';
+
+        const undefinedDot = document.createElement('span');
+        undefinedDot.className = 'risk-theme-legend-dot';
+        undefinedDot.style.setProperty('--legend-theme-color', '#64748b');
+        undefinedDot.setAttribute('aria-hidden', 'true');
+
+        const undefinedText = document.createElement('span');
+        undefinedText.textContent = 'Non défini';
+
+        undefinedItem.append(undefinedDot, undefinedText);
+        container.appendChild(undefinedItem);
     }
 
     renderRiskPoints() {
