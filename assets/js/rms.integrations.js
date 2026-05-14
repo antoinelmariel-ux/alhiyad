@@ -46,7 +46,7 @@ async function exportDashboard() {
         }
 
         if (!data || !data.metrics || !data.metrics.stats) {
-            const message = 'No valid data to export for the dashboard';
+            const message = 'Aucune donnée valide à exporter pour le tableau de bord';
             console.warn(message, data);
             if (typeof showNotification === 'function') {
                 showNotification('warning', message);
@@ -526,7 +526,7 @@ class JsPdfDashboardWriter {
 
         this.drawPanel(this.margin, panelY, columnWidth, panelHeight, 'Répartition des risques', ({ x, y, width }) => {
             if (!distribution.length) {
-                this.doc.text('No data available', x + 15, y + 40);
+                this.doc.text('Aucune donnée disponible', x + 15, y + 40);
                 return;
             }
 
@@ -3408,7 +3408,7 @@ function applyPatch() {
         ensureAllControlReferences();
         const control = state.controls.find(c => c.id == controlId);
         if (!control) {
-          alert('Control not found');
+          alert('Contrôle introuvable');
           return;
         }
 
@@ -3445,7 +3445,7 @@ function applyPatch() {
 
         const controlIndex = state.controls.findIndex(c => c.id == controlId);
         if (controlIndex === -1) {
-          alert('Control not found');
+          alert('Contrôle introuvable');
           return;
         }
 

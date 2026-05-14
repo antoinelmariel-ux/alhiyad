@@ -2,20 +2,20 @@
 
 const RISK_PROBABILITY_INFO = {
     1: {
-        label: 'Unlikely',
-        text: 'Event has not occurred in the past 5 years. Event not expected to occur in the next 5 years.'
+        label: 'Peu probable',
+        text: 'L’événement ne s’est pas produit au cours des 5 dernières années. Il n’est pas attendu au cours des 5 prochaines années.'
     },
     2: {
-        label: 'Moderately likely',
-        text: 'Event that has occurred once in the past 5 years. Event that may occur once in the next 5 years.'
+        label: 'Modérément probable',
+        text: 'Événement survenu une fois au cours des 5 dernières années. Événement susceptible de se produire une fois au cours des 5 prochaines années.'
     },
     3: {
-        label: 'Likely',
-        text: 'Event that has occurred once in the past year. Event that may occur once in the coming year.'
+        label: 'Probable',
+        text: 'Événement survenu une fois au cours de l’année passée. Événement susceptible de se produire une fois dans l’année à venir.'
     },
     4: {
-        label: 'Very likely',
-        text: 'Event that occurred several times in the past year. Event expected to occur once or more times in the coming year.'
+        label: 'Très probable',
+        text: 'Événement survenu plusieurs fois au cours de l’année passée. Événement attendu une ou plusieurs fois dans l’année à venir.'
     }
 };
 
@@ -40,7 +40,7 @@ const RISK_IMPACT_INFO = {
 
 const RISK_STATE_CONFIG = {
     brut: {
-        label: 'Aggravated Gross Risk',
+        label: 'Risque brut aggravé',
         probInput: 'probBrut',
         impactInput: 'impactBrut',
         scoreElement: 'scoreBrut',
@@ -52,7 +52,7 @@ const RISK_STATE_CONFIG = {
         descriptionContainer: 'matrixDescriptionBrut'
     },
     net: {
-        label: 'Net Risk',
+        label: 'Risque net',
         probInput: 'probNet',
         impactInput: 'impactNet',
         scoreElement: 'scoreNet',
@@ -69,7 +69,7 @@ const RISK_STATE_CONFIG = {
         severityLabelId: 'netSeverityLabel'
     },
     post: {
-        label: 'Post Action Plan Net Risk',
+        label: 'Risque net après plan d’action',
         probInput: 'probPost',
         impactInput: 'impactPost',
         scoreElement: 'scorePost',
@@ -89,86 +89,86 @@ const RISK_STATE_CONFIG = {
 
 const MITIGATION_EFFECTIVENESS_DESCRIPTIONS = Object.freeze({
     inefficace: `
-        <p><strong>Governance</strong></p>
+        <p><strong>Gouvernance</strong></p>
         <ul>
-<li>No management commitment</li>
-<li>No ethics and compliance principles communicated or enforced</li>
-<li>No dedicated ethics and compliance function</li>
-<li>No reporting or monitoring of ethics and compliance topics</li>
+<li>Aucun engagement de la direction</li>
+<li>Aucun principe d’éthique et de conformité communiqué ou appliqué</li>
+<li>Aucune fonction éthique et conformité dédiée</li>
+<li>Aucun reporting ni suivi des sujets éthique et conformité</li>
         </ul>
-        <p><strong>Procedures and controls</strong></p>
+        <p><strong>Procédures et contrôles</strong></p>
         <ul>
-<li>Lack of procedures/processes</li>
-<li>Ineffective or irrelevant processes, not implemented or not communicated</li>
-<li>Lack of controls</li>
-<li>Ineffective, irrelevant, or unenforced controls</li>
+<li>Absence de procédures ou de processus</li>
+<li>Processus inefficaces ou non pertinents, non mis en œuvre ou non communiqués</li>
+<li>Absence de contrôles</li>
+<li>Contrôles inefficaces, non pertinents ou non appliqués</li>
 </ul>
-<p><strong>Training</strong></p>
+<p><strong>Formation</strong></p>
 <ul>
-<li>Lack of training or awareness</li>
-<li>Ineffective or irrelevant training</li>
-<li>Very low training rate (≤ 20%)</li>
+<li>Absence de formation ou de sensibilisation</li>
+<li>Formation inefficace ou non pertinente</li>
+<li>Taux de formation très faible (≤ 20 %)</li>
 </ul>
     `,
     insuffisant: `
-        <p><strong>Governance</strong></p>
+        <p><strong>Gouvernance</strong></p>
         <ul>
-<li>Informal commitment from management</li>
-<li>Limited, informal, or partial communication regarding adherence to ethics and compliance principles</li>
-<li>No team officially responsible for the ethics and compliance function</li>
-<li>Informal monitoring of ethics and compliance issues with no reporting to management</li>
+<li>Engagement informel de la direction</li>
+<li>Communication limitée, informelle ou partielle sur l’adhésion aux principes d’éthique et de conformité</li>
+<li>Aucune équipe officiellement responsable de la fonction éthique et conformité</li>
+<li>Suivi informel des sujets éthique et conformité sans reporting à la direction</li>
 </ul>
-<p><strong>Procedures and controls</strong></p>
+<p><strong>Procédures et contrôles</strong></p>
 <ul>
-<li>Informal processes (no formalized procedures), partially communicated verbally and partially implemented</li>
-<li>Ad hoc, non-formalized controls that are partially implemented</li>
+<li>Processus informels (sans procédure formalisée), partiellement communiqués oralement et partiellement mis en œuvre</li>
+<li>Contrôles ad hoc, non formalisés et partiellement mis en œuvre</li>
 </ul>
-<p><strong>Training</strong></p>
+<p><strong>Formation</strong></p>
 <ul>
-<li>Informal (verbal), ad hoc, and/or partial training or awareness-raising for employees and new hires</li>
-<li>Low training rate (between 20% and 50%)</li>
+<li>Formation ou sensibilisation informelle, ad hoc et/ou partielle des collaborateurs et nouveaux arrivants</li>
+<li>Taux de formation faible (entre 20 % et 50 %)</li>
 </ul>
     `,
     ameliorable: `
-        <p><strong>Governance</strong></p>
+        <p><strong>Gouvernance</strong></p>
         <ul>
-<li>Formal/passive management commitment (reactive upon request, limited proactive ownership)</li>
-<li>Irregular communications on ethics and compliance principles (no dedicated communication plan)</li>
-<li>Ethics and compliance team also handling other responsibilities; no dedicated committee</li>
-<li>Irregular reporting to management on action follow-up</li>
+<li>Engagement formel mais passif de la direction (réactif sur demande, appropriation proactive limitée)</li>
+<li>Communications irrégulières sur les principes d’éthique et de conformité (pas de plan de communication dédié)</li>
+<li>Équipe éthique et conformité assumant aussi d’autres responsabilités ; aucun comité dédié</li>
+<li>Reporting irrégulier à la direction sur le suivi des actions</li>
 </ul>
-<p><strong>Procedures and controls</strong></p>
+<p><strong>Procédures et contrôles</strong></p>
 <ul>
-<li>Procedures partially formalized, communicated, implemented, monitored, and/or audited</li>
-<li>Irregular updates to procedures</li>
-<li>Controls partially formalized/documented, without systematic corrective actions or regular reviews/audits</li>
+<li>Procédures partiellement formalisées, communiquées, mises en œuvre, suivies et/ou auditées</li>
+<li>Mises à jour irrégulières des procédures</li>
+<li>Contrôles partiellement formalisés ou documentés, sans actions correctives systématiques ni revues/audits réguliers</li>
 </ul>
-<p><strong>Training</strong></p>
+<p><strong>Formation</strong></p>
 <ul>
-<li>Standard training for all employees (no specific targeting of most exposed groups)</li>
-<li>No training plan established or not updated</li>
-<li>Training completion rate could be improved (between 50% and 90%)</li>
-<li>Lack of systematic follow-ups with employees</li>
+<li>Formation standard pour tous les collaborateurs (pas de ciblage spécifique des populations les plus exposées)</li>
+<li>Plan de formation absent ou non mis à jour</li>
+<li>Taux de réalisation de la formation perfectible (entre 50 % et 90 %)</li>
+<li>Absence de relances systématiques auprès des collaborateurs</li>
 </ul>
     `,
     efficace: `
-        <p><strong>Governance</strong></p>
+        <p><strong>Gouvernance</strong></p>
         <ul>
-<li>Active management commitment with strong involvement in monitoring and decision-making</li>
-<li>Regular communications on adherence to ethics and compliance principles (defined communication plan)</li>
-<li>Dedicated ethics and compliance team and an active committee in place</li>
-<li>Regular reporting to management on action monitoring</li>
+<li>Engagement actif de la direction avec forte implication dans le suivi et la prise de décision</li>
+<li>Communications régulières sur l’adhésion aux principes d’éthique et de conformité (plan de communication défini)</li>
+<li>Équipe éthique et conformité dédiée et comité actif en place</li>
+<li>Reporting régulier à la direction sur le suivi des actions</li>
 </ul>
-<p><strong>Procedures and controls</strong></p>
+<p><strong>Procédures et contrôles</strong></p>
 <ul>
-<li>Procedures systematically formalized, communicated, implemented, monitored, and audited</li>
-<li>Systematic, formalized, and documented controls with corrective actions, internal reviews, and audits</li>
+<li>Procédures systématiquement formalisées, communiquées, mises en œuvre, suivies et auditées</li>
+<li>Contrôles systématiques, formalisés et documentés avec actions correctives, revues internes et audits</li>
 </ul>
-<p><strong>Training</strong></p>
+<p><strong>Formation</strong></p>
 <ul>
-<li>Regular, targeted training tailored to specific groups, prioritizing in-person sessions for most exposed populations</li>
-<li>Training plan established by target groups, integrating new hires and defining training frequencies</li>
-<li>High training rate (≥ 90%)</li>
+<li>Formations régulières, ciblées et adaptées aux groupes concernés, avec priorité au présentiel pour les populations les plus exposées</li>
+<li>Plan de formation établi par groupe cible, intégrant les nouveaux arrivants et définissant les fréquences de formation</li>
+<li>Taux de formation élevé (≥ 90 %)</li>
 </ul>
     `
 });

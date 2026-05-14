@@ -152,7 +152,7 @@ class FeedbackManager {
         this.toggleButton.classList.toggle('active', this.isActive);
         this.toggleButton.classList.toggle('paused', this.isActive && this.isPaused);
         this.toggleButton.setAttribute('aria-pressed', this.isActive ? 'true' : 'false');
-        this.toggleButton.setAttribute('title', this.isActive ? 'Désactiver le mode feed-back' : 'Activer le mode feed-back');
+        this.toggleButton.setAttribute('title', this.isActive ? 'Désactiver le mode retour' : 'Activer le mode retour');
         document.body.classList.toggle('feedback-mode', this.isActive && !this.isPaused);
         document.body.classList.toggle('feedback-mode-paused', this.isActive && this.isPaused);
 

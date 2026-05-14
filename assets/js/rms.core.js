@@ -17,7 +17,7 @@ function ensureEmptyChartMessagePlugin() {
         id: 'emptyChartMessage',
         defaults: {
             display: false,
-            message: 'No data available',
+            message: 'Aucune donnée disponible',
             color: '#95a5a6',
             font: {
                 family: 'Inter, Arial, sans-serif',
@@ -45,7 +45,7 @@ function ensureEmptyChartMessagePlugin() {
             const { left, top, width, height } = chartArea;
             const message = typeof options.message === 'string' && options.message.trim()
                 ? options.message.trim()
-                : 'No data available';
+                : 'Aucune donnée disponible';
             const fontFamily = options.font?.family || 'Inter, Arial, sans-serif';
             const fontSize = options.font?.size || 14;
             const fontStyle = options.font?.style || '600';
@@ -2260,7 +2260,7 @@ class RiskManagementSystem {
             const addButton = document.createElement('button');
             addButton.type = 'button';
             addButton.className = 'btn btn-outline mindmap-add-button';
-            addButton.textContent = '+ Add an idea';
+            addButton.textContent = '+ Ajouter une idée';
             addButton.addEventListener('click', () => {
                 const newId = this.addMindMapNode(column.key);
                 this.renderMindMap(newId);
@@ -2709,7 +2709,7 @@ class RiskManagementSystem {
         deleteButton.type = 'button';
         deleteButton.className = 'mindmap-node-action';
         deleteButton.textContent = '✕';
-        deleteButton.title = 'Delete ce nœud';
+        deleteButton.title = 'Supprimer ce nœud';
         deleteButton.addEventListener('click', () => {
             this.deleteMindMapNode(columnKey, node.id);
         });
@@ -2720,7 +2720,7 @@ class RiskManagementSystem {
         text.contentEditable = 'true';
         text.role = 'textbox';
         text.textContent = node.text || 'Nouvelle idée';
-        text.dataset.placeholder = 'Idea...';
+        text.dataset.placeholder = 'Idée...';
         text.addEventListener('input', () => {
             this.updateMindMapNodeText(columnKey, node.id, text.textContent);
         });
@@ -3245,16 +3245,16 @@ class RiskManagementSystem {
             });
         };
 
-        fill(['matrixThemeFilter', 'risksThemeFilter'], this.config.riskThemes, 'All themes');
-        fill(['matrixProcessFilter', 'risksProcessFilter', 'interviewProcessFilter'], this.config.processes, 'All processes');
-        fill(['matrixRiskTypeFilter', 'risksTypeFilter'], this.config.riskTypes, 'All types');
-        fill(['matrixStatusFilter', 'risksStatusFilter'], this.config.riskStatuses, 'All statuses');
-        fill('riskTheme', this.config.riskThemes, 'Select...');
-        fill('processus', this.config.processes, 'Select...');
+        fill(['matrixThemeFilter', 'risksThemeFilter'], this.config.riskThemes, 'Tous les thèmes');
+        fill(['matrixProcessFilter', 'risksProcessFilter', 'interviewProcessFilter'], this.config.processes, 'Tous les processus');
+        fill(['matrixRiskTypeFilter', 'risksTypeFilter'], this.config.riskTypes, 'Tous les types');
+        fill(['matrixStatusFilter', 'risksStatusFilter'], this.config.riskStatuses, 'Tous les statuts');
+        fill('riskTheme', this.config.riskThemes, 'Sélectionner...');
+        fill('processus', this.config.processes, 'Sélectionner...');
         this.updateSousProcessusOptions();
-        fill('typeCorruption', this.config.riskTypes, 'Select...');
+        fill('typeCorruption', this.config.riskTypes, 'Sélectionner...');
         fill('targetAudience', this.config.targetAudiences);
-        fill('statut', this.config.riskStatuses, 'Select...');
+        fill('statut', this.config.riskStatuses, 'Sélectionner...');
         fill('tiers', this.config.tiers);
         const riskCountriesSelect = document.getElementById('riskCountries');
         const previousCountries = riskCountriesSelect
@@ -3277,13 +3277,13 @@ class RiskManagementSystem {
         if (typeof window !== 'undefined' && typeof window.renderRiskTierFilterOptions === 'function') {
             window.renderRiskTierFilterOptions();
         }
-        fill('controlType', this.config.controlTypes, 'Select...');
-        fill('controlFrequency', this.config.controlFrequencies, 'Select...');
-        fill('controlMode', this.config.controlModes, 'Select...');
-        fill('controlEffectiveness', this.config.controlEffectiveness, 'Select...');
-        fill('controlsTypeFilter', this.config.controlTypes, 'All control types');
-        fill('planStatus', this.config.actionPlanStatuses, 'Select...');
-        fill('actionPlansStatusFilter', this.config.actionPlanStatuses, 'All statuses');
+        fill('controlType', this.config.controlTypes, 'Sélectionner...');
+        fill('controlFrequency', this.config.controlFrequencies, 'Sélectionner...');
+        fill('controlMode', this.config.controlModes, 'Sélectionner...');
+        fill('controlEffectiveness', this.config.controlEffectiveness, 'Sélectionner...');
+        fill('controlsTypeFilter', this.config.controlTypes, 'Tous les types de contrôle');
+        fill('planStatus', this.config.actionPlanStatuses, 'Sélectionner...');
+        fill('actionPlansStatusFilter', this.config.actionPlanStatuses, 'Tous les statuts');
 
         const referentOptions = this.getAllKnownReferents().map(ref => ({ value: ref, label: ref }));
 
@@ -3459,7 +3459,7 @@ class RiskManagementSystem {
         if (!container) return;
 
         const availableSections = [
-            { id: 'processManager', label: 'Processes & referents' },
+            { id: 'processManager', label: 'Processus & référents' },
             { id: 'general', label: 'Other settings' },
             { id: 'history', label: 'Change history' }
         ];
@@ -3472,11 +3472,11 @@ class RiskManagementSystem {
         if (exportButton) {
             if (this.currentConfigSection === 'processManager') {
                 exportButton.style.display = '';
-                exportButton.textContent = '💾 Export processes';
+                exportButton.textContent = '💾 Exporter les processus';
                 exportButton.setAttribute('data-scope', 'processes');
             } else if (this.currentConfigSection === 'general') {
                 exportButton.style.display = '';
-                exportButton.textContent = '💾 Export other settings';
+                exportButton.textContent = '💾 Exporter les autres paramètres';
                 exportButton.setAttribute('data-scope', 'parameters');
             } else {
                 exportButton.style.display = 'none';
@@ -3725,18 +3725,18 @@ class RiskManagementSystem {
                 const labelInput = document.createElement('input');
                 labelInput.type = 'text';
                 labelInput.id = `input-${key}-label`;
-                labelInput.placeholder = 'Enter label';
+                labelInput.placeholder = 'Saisir un libellé';
                 labelInput.classList.add('config-input-label');
 
                 const valueInput = document.createElement('input');
                 valueInput.type = 'text';
                 valueInput.id = `input-${key}-value`;
-                valueInput.placeholder = 'Auto-generated value';
+                valueInput.placeholder = 'Valeur générée automatiquement';
                 valueInput.classList.add('config-input-value');
 
                 const addButton = document.createElement('button');
                 addButton.type = 'button';
-                addButton.textContent = 'Add';
+                addButton.textContent = 'Ajouter';
                 addButton.addEventListener('click', () => {
                     this.addConfigOption(key);
                 });
@@ -3822,7 +3822,7 @@ class RiskManagementSystem {
             const selectButton = document.createElement('button');
             selectButton.type = 'button';
             selectButton.className = 'btn btn-outline btn-small';
-            selectButton.textContent = 'Select all';
+            selectButton.textContent = 'Tout sélectionner';
             selectButton.addEventListener('click', () => {
                 if (typeof selectRiskCountryColumn === 'function' && column?.key) {
                     selectRiskCountryColumn(column.key);
@@ -4323,7 +4323,7 @@ class RiskManagementSystem {
         const themes = this.ensureMindMapThemesArray();
         const name = typeof payload.name === 'string' && payload.name.trim()
             ? payload.name.trim()
-            : 'New theme';
+            : 'Nouveau thème';
         const id = this.generateMindMapThemeId(name);
 
         const template = Array.isArray(payload.columns) && payload.columns.length
@@ -4517,7 +4517,7 @@ class RiskManagementSystem {
         if (!themes.length) {
             const empty = document.createElement('div');
             empty.className = 'config-template-empty';
-            empty.textContent = 'No themes defined yet.';
+            empty.textContent = 'Aucun thème défini pour le moment.';
             list.appendChild(empty);
         } else {
             themes.forEach(theme => {
@@ -4566,7 +4566,7 @@ class RiskManagementSystem {
                     const activateButton = document.createElement('button');
                     activateButton.type = 'button';
                     activateButton.className = 'btn btn-secondary';
-                    activateButton.textContent = theme.id === activeId ? 'Selected theme' : 'Set as active theme';
+                    activateButton.textContent = theme.id === activeId ? 'Thème sélectionné' : 'Définir comme thème actif';
                     activateButton.disabled = theme.id === activeId;
                     activateButton.addEventListener('click', () => {
                         this.setMindMapActiveTheme(theme.id);
@@ -4577,7 +4577,7 @@ class RiskManagementSystem {
                     const editButton = document.createElement('button');
                     editButton.type = 'button';
                     editButton.className = 'btn btn-outline';
-                    editButton.textContent = 'Edit';
+                    editButton.textContent = 'Modifier';
                     editButton.addEventListener('click', () => renderEdit());
                     actions.appendChild(editButton);
 
@@ -4591,7 +4591,7 @@ class RiskManagementSystem {
                     const deleteButton = document.createElement('button');
                     deleteButton.type = 'button';
                     deleteButton.className = 'btn btn-outline';
-                    deleteButton.textContent = 'Delete';
+                    deleteButton.textContent = 'Supprimer';
                     deleteButton.disabled = themes.length <= 1;
                     deleteButton.addEventListener('click', () => {
                         if (themes.length <= 1) {
@@ -4681,7 +4681,7 @@ class RiskManagementSystem {
                             const deleteButton = document.createElement('button');
                             deleteButton.type = 'button';
                             deleteButton.className = 'btn btn-outline btn-small';
-                            deleteButton.textContent = 'Delete';
+                            deleteButton.textContent = 'Supprimer';
                             deleteButton.disabled = theme.columns.length <= 1;
                             deleteButton.addEventListener('click', () => {
                                 this.removeMindMapThemeColumn(theme.id, index);
@@ -4890,7 +4890,7 @@ class RiskManagementSystem {
         const saveButton = document.createElement('button');
         saveButton.type = 'button';
         saveButton.className = 'btn btn-success';
-        saveButton.textContent = 'Save mind map configuration';
+        saveButton.textContent = 'Enregistrer la configuration de la carte mentale';
         actions.appendChild(saveButton);
 
         const frame = document.createElement('iframe');
@@ -4935,7 +4935,7 @@ class RiskManagementSystem {
         if (!templates.length) {
             const empty = document.createElement('div');
             empty.className = 'config-template-empty';
-            empty.textContent = 'No templates defined yet.';
+            empty.textContent = 'Aucun modèle défini pour le moment.';
             listWrapper.appendChild(empty);
         } else {
             templates.forEach((template, index) => {
@@ -4976,7 +4976,7 @@ class RiskManagementSystem {
                     const editButton = document.createElement('button');
                     editButton.type = 'button';
                     editButton.className = 'btn btn-secondary';
-                    editButton.textContent = 'Edit';
+                    editButton.textContent = 'Modifier';
                     editButton.addEventListener('click', () => {
                         renderEditForm();
                     });
@@ -4985,7 +4985,7 @@ class RiskManagementSystem {
                     const deleteButton = document.createElement('button');
                     deleteButton.type = 'button';
                     deleteButton.className = 'btn btn-outline';
-                    deleteButton.textContent = 'Delete';
+                    deleteButton.textContent = 'Supprimer';
                     deleteButton.addEventListener('click', () => {
                         this.removeInterviewTemplate(index);
                     });
@@ -5026,7 +5026,7 @@ class RiskManagementSystem {
                     const saveButton = document.createElement('button');
                     saveButton.type = 'button';
                     saveButton.className = 'btn btn-success';
-                    saveButton.textContent = 'Save';
+                    saveButton.textContent = 'Enregistrer';
                     saveButton.addEventListener('click', () => {
                         const payload = {
                             label: labelInput.value.trim(),
@@ -5050,7 +5050,7 @@ class RiskManagementSystem {
                     const cancelButton = document.createElement('button');
                     cancelButton.type = 'button';
                     cancelButton.className = 'btn btn-outline';
-                    cancelButton.textContent = 'Cancel';
+                    cancelButton.textContent = 'Annuler';
                     cancelButton.addEventListener('click', () => {
                         renderDisplay();
                     });
@@ -5221,7 +5221,7 @@ class RiskManagementSystem {
         header.className = 'process-manager-header';
 
         const title = document.createElement('h3');
-        title.textContent = 'Process and sub-process management';
+        title.textContent = 'Gestion des processus et sous-processus';
         header.appendChild(title);
 
         const subtitle = document.createElement('p');
@@ -5405,7 +5405,7 @@ class RiskManagementSystem {
 
         const entries = this.parseReferentDirectoryInput(textarea.value);
         helper.textContent = entries.length === 0
-            ? 'No referent detected yet.'
+            ? 'Aucun référent détecté pour le moment.'
             : `${entries.length} referent${entries.length > 1 ? 's' : ''} will be suggested while typing.`;
     }
 
@@ -5580,7 +5580,7 @@ class RiskManagementSystem {
         labelInput.className = 'process-insert-input';
         labelInput.placeholder = parentProcess
             ? 'Sub-process label'
-            : 'Process label';
+            : 'Libellé du processus';
 
         const valueInput = document.createElement('input');
         valueInput.type = 'text';
@@ -5588,7 +5588,7 @@ class RiskManagementSystem {
         valueInput.className = 'process-insert-input';
         valueInput.placeholder = parentProcess
             ? 'Sub-process identifier'
-            : 'Process identifier';
+            : 'Identifiant du processus';
 
         this.setupAutoValueSync(labelInput, valueInput);
 
@@ -5603,7 +5603,7 @@ class RiskManagementSystem {
         const cancelButton = document.createElement('button');
         cancelButton.type = 'button';
         cancelButton.className = 'btn btn-outline btn-small';
-        cancelButton.textContent = 'Cancel';
+        cancelButton.textContent = 'Annuler';
         cancelButton.addEventListener('click', () => {
             this.closeActiveInsertionForm({ rerender: true });
         });
@@ -5772,7 +5772,7 @@ class RiskManagementSystem {
         titleInput.type = 'text';
         titleInput.className = 'process-title-input';
         titleInput.value = process.label || '';
-        titleInput.placeholder = 'Process name';
+        titleInput.placeholder = 'Nom du processus';
         titleInput.addEventListener('change', () => {
             this.renameProcess(index, titleInput.value);
         });
@@ -5861,8 +5861,8 @@ class RiskManagementSystem {
             const message = document.createElement('div');
             message.className = 'subprocess-empty';
             message.textContent = totalSubs === 0
-                ? 'No sub-processes yet.'
-                : 'No sub-process matches the active filters.';
+                ? 'Aucun sous-processus pour le moment.'
+                : 'Aucun sous-processus ne correspond aux filtres actifs.';
             list.appendChild(message);
         } else {
             visibleSubs.forEach((entry) => {
@@ -5987,7 +5987,7 @@ class RiskManagementSystem {
         if (normalizedReferents.length === 0) {
             const empty = document.createElement('div');
             empty.className = 'referent-empty';
-            empty.textContent = 'No referent defined';
+            empty.textContent = 'Aucun référent défini';
             chips.appendChild(empty);
         } else {
             normalizedReferents.forEach((referent) => {
@@ -6641,7 +6641,7 @@ class RiskManagementSystem {
                         upButton.type = 'button';
                         upButton.className = 'btn btn-outline';
                         upButton.textContent = '↑';
-                        upButton.title = 'Move up';
+                        upButton.title = 'Déplacer vers le haut';
                         upButton.disabled = idx === 0;
                         upButton.addEventListener('click', () => {
                             this.moveConfigOption(key, idx, -1);
@@ -6651,7 +6651,7 @@ class RiskManagementSystem {
                         downButton.type = 'button';
                         downButton.className = 'btn btn-outline';
                         downButton.textContent = '↓';
-                        downButton.title = 'Move down';
+                        downButton.title = 'Déplacer vers le bas';
                         downButton.disabled = idx >= this.config[key].length - 1;
                         downButton.addEventListener('click', () => {
                             this.moveConfigOption(key, idx, 1);
@@ -6664,7 +6664,7 @@ class RiskManagementSystem {
                     const editButton = document.createElement('button');
                     editButton.type = 'button';
                     editButton.className = 'btn btn-secondary';
-                    editButton.textContent = 'Edit';
+                    editButton.textContent = 'Modifier';
                     editButton.addEventListener('click', () => {
                         renderEditForm();
                     });
@@ -6672,7 +6672,7 @@ class RiskManagementSystem {
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
                     removeButton.className = 'btn btn-outline';
-                    removeButton.textContent = 'Delete';
+                    removeButton.textContent = 'Supprimer';
                     removeButton.addEventListener('click', () => {
                         this.removeConfigOption(key, idx);
                     });
@@ -6698,13 +6698,13 @@ class RiskManagementSystem {
                 const labelInput = document.createElement('input');
                 labelInput.type = 'text';
                 labelInput.value = opt.label;
-                labelInput.placeholder = 'Enter label';
+                labelInput.placeholder = 'Saisir un libellé';
                 labelInput.className = 'config-edit-input config-input-label';
 
                 const valueInput = document.createElement('input');
                 valueInput.type = 'text';
                 valueInput.value = opt.value;
-                valueInput.placeholder = 'Auto-generated value';
+                valueInput.placeholder = 'Valeur générée automatiquement';
                 valueInput.className = 'config-edit-input config-input-value';
 
                 const actions = document.createElement('div');
@@ -6713,7 +6713,7 @@ class RiskManagementSystem {
                 const saveButton = document.createElement('button');
                 saveButton.type = 'button';
                 saveButton.className = 'btn btn-success';
-                saveButton.textContent = 'Save';
+                saveButton.textContent = 'Enregistrer';
                 saveButton.addEventListener('click', () => {
                     const value = valueInput.value.trim();
                     const label = labelInput.value.trim();
@@ -6724,7 +6724,7 @@ class RiskManagementSystem {
                 const cancelButton = document.createElement('button');
                 cancelButton.type = 'button';
                 cancelButton.className = 'btn btn-outline';
-                cancelButton.textContent = 'Cancel';
+                cancelButton.textContent = 'Annuler';
                 cancelButton.addEventListener('click', () => {
                     renderDisplay();
                 });
@@ -6906,7 +6906,7 @@ class RiskManagementSystem {
         if (!this.config.processes.length) {
             const empty = document.createElement('p');
             empty.className = 'config-empty';
-            empty.textContent = 'Add a process to configure its sub-processes.';
+            empty.textContent = 'Ajoutez un processus pour configurer ses sous-processus.';
             container.appendChild(empty);
             this.adjustOpenAccordionBodies(container);
             return;
@@ -6948,18 +6948,18 @@ class RiskManagementSystem {
             const labelInput = document.createElement('input');
             labelInput.type = 'text';
             labelInput.id = `input-sub-${procId}-label`;
-            labelInput.placeholder = 'Enter label';
+            labelInput.placeholder = 'Saisir un libellé';
             labelInput.classList.add('config-input-label');
 
             const valueInput = document.createElement('input');
             valueInput.type = 'text';
             valueInput.id = `input-sub-${procId}-value`;
-            valueInput.placeholder = 'Auto-generated value';
+            valueInput.placeholder = 'Valeur générée automatiquement';
             valueInput.classList.add('config-input-value');
 
             const addButton = document.createElement('button');
             addButton.type = 'button';
-            addButton.textContent = 'Add';
+            addButton.textContent = 'Ajouter';
             addButton.dataset.process = proc.value;
             addButton.addEventListener('click', (event) => {
                 const { process } = event.currentTarget.dataset;
@@ -7011,7 +7011,7 @@ class RiskManagementSystem {
                     const editButton = document.createElement('button');
                     editButton.type = 'button';
                     editButton.className = 'btn btn-secondary';
-                    editButton.textContent = 'Edit';
+                    editButton.textContent = 'Modifier';
                     editButton.addEventListener('click', () => {
                         renderEditForm();
                     });
@@ -7019,7 +7019,7 @@ class RiskManagementSystem {
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
                     removeButton.className = 'btn btn-outline';
-                    removeButton.textContent = 'Delete';
+                    removeButton.textContent = 'Supprimer';
                     removeButton.addEventListener('click', () => {
                         this.removeSubProcess(proc.value, idx);
                     });
@@ -7040,13 +7040,13 @@ class RiskManagementSystem {
                     const labelInput = document.createElement('input');
                     labelInput.type = 'text';
                     labelInput.value = sp.label;
-                    labelInput.placeholder = 'Enter label';
+                    labelInput.placeholder = 'Saisir un libellé';
                     labelInput.className = 'config-edit-input config-input-label';
 
                     const valueInput = document.createElement('input');
                     valueInput.type = 'text';
                     valueInput.value = sp.value;
-                    valueInput.placeholder = 'Auto-generated value';
+                    valueInput.placeholder = 'Valeur générée automatiquement';
                     valueInput.className = 'config-edit-input config-input-value';
 
                     const actions = document.createElement('div');
@@ -7055,7 +7055,7 @@ class RiskManagementSystem {
                     const saveButton = document.createElement('button');
                     saveButton.type = 'button';
                     saveButton.className = 'btn btn-success';
-                    saveButton.textContent = 'Save';
+                    saveButton.textContent = 'Enregistrer';
                     saveButton.addEventListener('click', () => {
                         const value = valueInput.value.trim();
                         const label = labelInput.value.trim();
@@ -7066,7 +7066,7 @@ class RiskManagementSystem {
                     const cancelButton = document.createElement('button');
                     cancelButton.type = 'button';
                     cancelButton.className = 'btn btn-outline';
-                    cancelButton.textContent = 'Cancel';
+                    cancelButton.textContent = 'Annuler';
                     cancelButton.addEventListener('click', () => {
                         renderDisplay();
                     });
@@ -7816,10 +7816,10 @@ class RiskManagementSystem {
             const mitigationOptions = typeof getMitigationEffectivenessOptions === 'function'
                 ? getMitigationEffectivenessOptions()
                 : [
-                    { value: 'efficace', label: 'Effective', coefficient: 0.25 },
-                    { value: 'ameliorable', label: 'Room for improvement', coefficient: 0.5 },
-                    { value: 'insuffisant', label: 'Insufficient', coefficient: 0.75 },
-                    { value: 'inefficace', label: 'Ineffective', coefficient: 1 }
+                    { value: 'efficace', label: 'Efficace', coefficient: 0.25 },
+                    { value: 'ameliorable', label: 'Améliorable', coefficient: 0.5 },
+                    { value: 'insuffisant', label: 'Insuffisant', coefficient: 0.75 },
+                    { value: 'inefficace', label: 'Inefficace', coefficient: 1 }
                 ];
 
             const brutLevels = [
@@ -7896,10 +7896,10 @@ class RiskManagementSystem {
                 const mitigationOptions = typeof getMitigationEffectivenessOptions === 'function'
                     ? getMitigationEffectivenessOptions()
                     : [
-                        { value: 'efficace', label: 'Effective', coefficient: 0.25 },
-                        { value: 'ameliorable', label: 'Room for improvement', coefficient: 0.5 },
-                        { value: 'insuffisant', label: 'Insufficient', coefficient: 0.75 },
-                        { value: 'inefficace', label: 'Ineffective', coefficient: 1 }
+                        { value: 'efficace', label: 'Efficace', coefficient: 0.25 },
+                        { value: 'ameliorable', label: 'Améliorable', coefficient: 0.5 },
+                        { value: 'insuffisant', label: 'Insuffisant', coefficient: 0.75 },
+                        { value: 'inefficace', label: 'Inefficace', coefficient: 1 }
                     ];
                 const brutLevels = [
                     { value: 'critique', label: 'Critical Risk', min: 12, max: 16 },
@@ -7965,10 +7965,10 @@ class RiskManagementSystem {
         const mitigationOptions = typeof getMitigationEffectivenessOptions === 'function'
             ? getMitigationEffectivenessOptions()
             : [
-                { value: 'efficace', label: 'Effective', coefficient: 0.25 },
-                { value: 'ameliorable', label: 'Room for improvement', coefficient: 0.5 },
-                { value: 'insuffisant', label: 'Insufficient', coefficient: 0.75 },
-                { value: 'inefficace', label: 'Ineffective', coefficient: 1 }
+                { value: 'efficace', label: 'Efficace', coefficient: 0.25 },
+                { value: 'ameliorable', label: 'Améliorable', coefficient: 0.5 },
+                { value: 'insuffisant', label: 'Insuffisant', coefficient: 0.75 },
+                { value: 'inefficace', label: 'Inefficace', coefficient: 1 }
             ];
 
         const viewConfigs = {
@@ -8034,7 +8034,7 @@ class RiskManagementSystem {
         }, {});
         const resolveRiskThemeMeta = (value) => {
             if (value == null || value === '') {
-                return { label: 'Not defined', color: '#64748b' };
+                return { label: 'Non défini', color: '#64748b' };
             }
             const rawValue = String(value);
             return riskThemeMetaMap[rawValue]
@@ -8089,7 +8089,7 @@ class RiskManagementSystem {
                         ? getRiskPostActionInfo(risk)
                         : (typeof getRiskNetInfo === 'function'
                             ? getRiskNetInfo(risk)
-                            : { score: 0, brutScore: 0, coefficient: 1, effectiveness: 'inefficace', label: 'Ineffective' });
+                            : { score: 0, brutScore: 0, coefficient: 1, effectiveness: 'inefficace', label: 'Inefficace' });
                     const brutLevel = typeof getRiskBrutLevel === 'function'
                         ? getRiskBrutLevel(risk)
                         : (typeof getRiskSeverityFromScore === 'function'
@@ -8153,11 +8153,11 @@ class RiskManagementSystem {
                         point.classList.add('score-overflow');
                     }
 
-                    const displayTitle = risk.titre || risk.description || 'Not defined';
-                    const displayText = risk.description || 'Not defined';
+                    const displayTitle = risk.titre || risk.description || 'Non défini';
+                    const displayText = risk.description || 'Non défini';
                     const processLabel = risk?.processus && String(risk.processus).trim()
                         ? this.getProcessLabel(String(risk.processus).trim())
-                        : 'Not defined';
+                        : 'Non défini';
                     const selectedSubProcessLabel = risk?.sousProcessus && String(risk.sousProcessus).trim()
                         ? this.getSubProcessLabel(risk?.processus, String(risk.sousProcessus).trim())
                         : '';
@@ -8171,7 +8171,7 @@ class RiskManagementSystem {
                     const themeMeta = applyRiskThemeRing(point, risk?.riskTheme || 'corruption');
                     const themeLabel = themeMeta.label;
                     const tooltipLines = [
-                        `${processOrSubProcess} • ${tiersLabel || 'Not defined'} • Thématique: ${themeLabel}`,
+                        `${processOrSubProcess} • ${tiersLabel || 'Non défini'} • Thématique: ${themeLabel}`,
                         `**${displayTitle}**`,
                         displayText
                     ];
@@ -8250,11 +8250,11 @@ class RiskManagementSystem {
                 if (hasScoreOverflow) {
                     point.classList.add('score-overflow');
                 }
-                const displayTitle = risk.titre || risk.description || 'Not defined';
-                const displayText = risk.description || 'Not defined';
+                const displayTitle = risk.titre || risk.description || 'Non défini';
+                const displayText = risk.description || 'Non défini';
                 const processLabel = risk?.processus && String(risk.processus).trim()
                     ? this.getProcessLabel(String(risk.processus).trim())
-                    : 'Not defined';
+                    : 'Non défini';
                 const selectedSubProcessLabel = risk?.sousProcessus && String(risk.sousProcessus).trim()
                     ? this.getSubProcessLabel(risk?.processus, String(risk.sousProcessus).trim())
                     : '';
@@ -8268,7 +8268,7 @@ class RiskManagementSystem {
                 const themeMeta = applyRiskThemeRing(point, risk?.riskTheme || 'corruption');
                 const themeLabel = themeMeta.label;
                 const tooltipLines = [
-                    `${processOrSubProcess} • ${tiersLabel || 'Not defined'} • Thématique: ${themeLabel}`,
+                    `${processOrSubProcess} • ${tiersLabel || 'Non défini'} • Thématique: ${themeLabel}`,
                     `**${displayTitle}**`,
                     displayText
                 ];
@@ -8602,7 +8602,7 @@ class RiskManagementSystem {
                         ? getRiskPostActionInfo(entry)
                         : (typeof getRiskNetInfo === 'function'
                             ? getRiskNetInfo(entry)
-                            : { score: 0, brutScore: 0, coefficient: 1, label: 'Ineffective', effectiveness: 'inefficace' });
+                            : { score: 0, brutScore: 0, coefficient: 1, label: 'Inefficace', effectiveness: 'inefficace' });
                     return { risk: entry, score: netInfo.score, brutScore: netInfo.brutScore, coefficient: netInfo.coefficient, label: netInfo.label, effectiveness: netInfo.effectiveness };
                 }
 
@@ -8657,7 +8657,7 @@ class RiskManagementSystem {
 
             const resolveTypeLabel = (value) => {
                 if (value == null) {
-                    return 'Not defined';
+                    return 'Non défini';
                 }
                 const rawValue = String(value);
                 return typeMap[rawValue] || typeMap[rawValue.toLowerCase()] || rawValue;
@@ -8676,13 +8676,13 @@ class RiskManagementSystem {
 
             const resolveThemeLabel = (value) => {
                 if (value == null || value === '') {
-                    return 'Not defined';
+                    return 'Non défini';
                 }
                 const rawValue = String(value);
                 return themeMap[rawValue] || themeMap[rawValue.toLowerCase()] || rawValue;
             };
 
-            const renderThemeBadge = (label) => `<span class="table-badge badge-info">${escapeHtml(label || 'Not defined')}</span>`;
+            const renderThemeBadge = (label) => `<span class="table-badge badge-info">${escapeHtml(label || 'Non défini')}</span>`;
 
             const tierMap = (Array.isArray(this.config?.tiers) ? this.config.tiers : []).reduce((acc, item) => {
                 if (!item || item.value === undefined || item.value === null) {
@@ -8712,7 +8712,7 @@ class RiskManagementSystem {
 
                 const processLabel = risk?.processus && String(risk.processus).trim()
                     ? this.getProcessLabel(String(risk.processus).trim())
-                    : 'Not defined';
+                    : 'Non défini';
                 const selectedSubProcessLabel = risk?.sousProcessus && String(risk.sousProcessus).trim()
                     ? this.getSubProcessLabel(risk?.processus, String(risk.sousProcessus).trim())
                     : '';
@@ -8729,7 +8729,7 @@ class RiskManagementSystem {
                     ? score.toLocaleString('fr-FR', { maximumFractionDigits: 2 })
                     : '0';
 
-                const metaDetails = `#${risk.id} • Processus: ${processOrSubProcess} • Tiers: ${tiersLabel || 'Not defined'} • Type: ${typeLabel}`;
+                const metaDetails = `#${risk.id} • Processus: ${processOrSubProcess} • Tiers: ${tiersLabel || 'Non défini'} • Type: ${typeLabel}`;
                 const isBlurred = !visibleRiskIds.has(String(risk?.id));
                 const itemClass = `risk-item${isBlurred ? ' risk-row-blurred' : ''}`;
                 const itemAttributes = isBlurred
@@ -8737,13 +8737,13 @@ class RiskManagementSystem {
                     : ` onclick='rms.selectRisk(${JSON.stringify(risk.id)}, { preferredView: ${JSON.stringify(mode)} })'`;
                 const editButtonAttributes = isBlurred
                     ? ' disabled aria-hidden="true" tabindex="-1"'
-                    : ` title="Éditer le risque" aria-label="Éditer le risque ${escapeHtml(risk.titre || risk.description || 'Untitled')}" onclick='event.stopPropagation(); rms.editRisk(${JSON.stringify(risk.id)})'`;
+                    : ` title="Éditer le risque" aria-label="Éditer le risque ${escapeHtml(risk.titre || risk.description || 'Sans titre')}" onclick='event.stopPropagation(); rms.editRisk(${JSON.stringify(risk.id)})'`;
 
                 return `
                     <div class="${itemClass}" data-risk-id="${risk.id}"${itemAttributes}>
                         <div class="risk-item-header">
                             <div class="risk-item-title-wrap">
-                                <div class="risk-item-title">${escapeHtml(risk.titre || risk.description || 'Untitled')}</div>
+                                <div class="risk-item-title">${escapeHtml(risk.titre || risk.description || 'Sans titre')}</div>
                                 <div class="risk-item-description">${escapeHtml(risk.description || '—')}</div>
                             </div>
                             <div class="risk-item-actions">
@@ -8839,7 +8839,7 @@ class RiskManagementSystem {
 
         const computeDistributionLabel = (entry) => {
             if (!entry) {
-                return 'Not defined';
+                return 'Non défini';
             }
 
             const normalizedValue = entry.value;
@@ -8847,7 +8847,7 @@ class RiskManagementSystem {
                 return controlTypeLabelMap[normalizedValue] || entry.rawValue || normalizedValue;
             }
 
-            return 'Not defined';
+            return 'Non défini';
         };
 
         const controlTypeDistribution = [];
@@ -8949,7 +8949,7 @@ class RiskManagementSystem {
 
             controlEffectivenessDistribution.push({
                 value: effectivenessValue,
-                label: effectivenessLabelMap[effectivenessValue] || entry?.rawValue || effectivenessValue || 'Not defined',
+                label: effectivenessLabelMap[effectivenessValue] || entry?.rawValue || effectivenessValue || 'Non défini',
                 count: entry?.count || 0
             });
 
@@ -8967,7 +8967,7 @@ class RiskManagementSystem {
             const normalizedValue = entry.value || '';
             const label = normalizedValue
                 ? (effectivenessLabelMap[normalizedValue] || entry.rawValue || normalizedValue)
-                : (entry.rawValue || 'Not defined');
+                : (entry.rawValue || 'Non défini');
 
             controlEffectivenessDistribution.push({
                 value: normalizedValue,
@@ -9009,7 +9009,7 @@ class RiskManagementSystem {
         statusOrder.forEach((statusValue) => {
             const key = statusValue || '__undefined__';
             const entry = statusCounts[key];
-            const label = statusLabelMap[statusValue] || entry?.rawValue || statusValue || 'Not defined';
+            const label = statusLabelMap[statusValue] || entry?.rawValue || statusValue || 'Non défini';
 
             actionPlanStatusDistribution.push({
                 value: statusValue,
@@ -9031,7 +9031,7 @@ class RiskManagementSystem {
             const normalizedValue = entry.value || '';
             const label = normalizedValue
                 ? (statusLabelMap[normalizedValue] || entry.rawValue || normalizedValue)
-                : (entry.rawValue || 'Not defined');
+                : (entry.rawValue || 'Non défini');
 
             actionPlanStatusDistribution.push({
                 value: normalizedValue,
@@ -9068,7 +9068,7 @@ class RiskManagementSystem {
         const enrichedRisks = filteredRisks.map(risk => {
             const netInfo = typeof getRiskNetInfo === 'function'
                 ? getRiskNetInfo(risk)
-                : { score: 0, brutScore: 0, coefficient: 1, label: 'Ineffective', reduction: 0 };
+                : { score: 0, brutScore: 0, coefficient: 1, label: 'Inefficace', reduction: 0 };
             return { risk, score: netInfo.score, brutScore: netInfo.brutScore, coefficient: netInfo.coefficient, label: netInfo.label, reduction: netInfo.reduction };
         }).filter(entry => Number.isFinite(entry.score));
 
@@ -9091,8 +9091,8 @@ class RiskManagementSystem {
                 return {
                     rank: index + 1,
                     id: risk.id,
-                    titre: risk.titre || risk.description || 'Untitled risk',
-                    processus: this.getProcessLabel(risk.processus) || 'Not defined',
+                    titre: risk.titre || risk.description || 'Risque sans titre',
+                    processus: this.getProcessLabel(risk.processus) || 'Non défini',
                     sousProcessus: subProcessLabel,
                     score: Number.isFinite(entry.score) ? entry.score : 0,
                     brutScore: Number.isFinite(entry.brutScore) ? entry.brutScore : 0,
@@ -9105,7 +9105,7 @@ class RiskManagementSystem {
             const rawLabel = risk?.processus;
             const label = rawLabel && String(rawLabel).trim()
                 ? this.getProcessLabel(String(rawLabel).trim())
-                : 'Not defined';
+                : 'Non défini';
             if (!acc[label]) {
                 acc[label] = { count: 0, totalScore: 0, maxScore: 0 };
             }
@@ -9218,7 +9218,7 @@ class RiskManagementSystem {
                 const percent = Number.isFinite(item.percentage)
                     ? item.percentage
                     : (total > 0 ? Math.round((Number(item.count) || 0) / total * 100) : 0);
-                const label = item.label || item.value || 'Not defined';
+                const label = item.label || item.value || 'Non défini';
                 return `${percent}% of controls "${label}"`;
             }).join(' ; ');
         };
@@ -9257,7 +9257,7 @@ class RiskManagementSystem {
             return nonZeroDistribution
                 .map((item) => {
                     const count = Number(item.count) || 0;
-                    const label = item.label || item.value || 'Not defined';
+                    const label = item.label || item.value || 'Non défini';
                     return `${count} ${label}`;
                 })
                 .join(' • ');
@@ -9327,7 +9327,7 @@ class RiskManagementSystem {
             if (totalElement) {
                 totalElement.textContent = totalPlans > 0
                     ? `${totalPlans} action plan${totalPlans > 1 ? 's' : ''}`
-                    : "No action plan";
+                    : "Aucun plan d’action";
             }
 
             const palette = [
@@ -9357,7 +9357,7 @@ class RiskManagementSystem {
 
             if (summaryElement) {
                 if (totalPlans === 0 || distribution.length === 0) {
-                    summaryElement.innerHTML = '<div class="plan-status-empty">No action plan recorded</div>';
+                    summaryElement.innerHTML = '<div class="plan-status-empty">Aucun plan d’action enregistré</div>';
                 } else {
                     const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (match) => {
                         const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -9365,7 +9365,7 @@ class RiskManagementSystem {
                     });
 
                     const summaryContent = distribution.map((item, index) => {
-                        const label = escapeHtml(item?.label || 'Not defined');
+                        const label = escapeHtml(item?.label || 'Non défini');
                         const count = Number(item?.count) || 0;
                         const plural = count > 1 ? 'plans' : 'plan';
                         const color = getColor(index, 'border');
@@ -9394,7 +9394,7 @@ class RiskManagementSystem {
 
                 const hasData = totalPlans > 0 && distribution.some(item => (Number(item?.count) || 0) > 0);
                 const chartData = {
-                    labels: distribution.map(item => item?.label || 'Not defined'),
+                    labels: distribution.map(item => item?.label || 'Non défini'),
                     datasets: [
                         {
                             data: distribution.map(item => Number(item?.count) || 0),
@@ -9418,14 +9418,14 @@ class RiskManagementSystem {
                                 label: (context) => {
                                     const value = Number(context.raw) || 0;
                                     const plural = value > 1 ? 'plans' : 'plan';
-                                    const label = context.label || 'Not defined';
+                                    const label = context.label || 'Non défini';
                                     return `${label}: ${value} action ${plural}`;
                                 }
                             }
                         },
                         emptyChartMessage: {
                             display: !hasData,
-                            message: "No action plan"
+                            message: "Aucun plan d’action"
                         }
                     }
                 };
@@ -9717,7 +9717,7 @@ class RiskManagementSystem {
             if (severeRisks.length === 0) {
                 risksBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="table-empty">No recent alerts</td>
+                        <td colspan="5" class="table-empty">Aucune alerte récente</td>
                     </tr>
                 `;
             } else {
@@ -9811,7 +9811,7 @@ class RiskManagementSystem {
             const enrichedRisks = filteredRisks.map(risk => {
                 const netInfo = typeof getRiskNetInfo === 'function'
                     ? getRiskNetInfo(risk)
-                    : { score: 0, brutScore: 0, coefficient: 1, reduction: 0, label: 'Ineffective' };
+                    : { score: 0, brutScore: 0, coefficient: 1, reduction: 0, label: 'Inefficace' };
                 return { risk, score: netInfo.score, brutScore: netInfo.brutScore, coefficient: netInfo.coefficient, reduction: netInfo.reduction, label: netInfo.label };
             }).filter(entry => Number.isFinite(entry.score));
 
@@ -9831,8 +9831,8 @@ class RiskManagementSystem {
                 topRisksBody.innerHTML = topRisks.map((entry, index) => {
                     const risk = entry.risk || {};
                     const rank = index + 1;
-                    const title = risk.titre || risk.description || 'Untitled risk';
-                    const processLabel = this.getProcessLabel(risk.processus) || 'Not defined';
+                    const title = risk.titre || risk.description || 'Risque sans titre';
+                    const processLabel = this.getProcessLabel(risk.processus) || 'Non défini';
                     const subProcessRaw = risk.sousProcessus;
                     const subProcessLabel = subProcessRaw && String(subProcessRaw).trim()
                         ? this.getSubProcessLabel(risk.processus, String(subProcessRaw).trim())
@@ -9890,7 +9890,7 @@ class RiskManagementSystem {
 
         const processMetrics = filteredRisks.reduce((acc, risk) => {
             const rawLabel = risk?.processus;
-            const label = rawLabel && String(rawLabel).trim() ? String(rawLabel).trim() : 'Not defined';
+            const label = rawLabel && String(rawLabel).trim() ? String(rawLabel).trim() : 'Non défini';
             if (!acc[label]) {
                 acc[label] = { count: 0, scores: [], maxScore: 0 };
             }
@@ -9992,7 +9992,7 @@ class RiskManagementSystem {
                 const labels = visibleEntries.map(entry => {
                     const normalized = String(entry.label || '').trim();
                     if (!normalized) {
-                        return 'Not defined';
+                        return 'Non défini';
                     }
                     return normalized.length > 44 ? `${normalized.slice(0, 43).trim()}…` : normalized;
                 });
@@ -10007,7 +10007,7 @@ class RiskManagementSystem {
                     datasets: [
                         {
                             type: 'bar',
-                            label: 'Number of risks',
+                            label: 'Nombre de risques',
                             data: counts,
                             backgroundColor: counts.map(() => 'rgba(52, 152, 219, 0.65)'),
                             borderColor: counts.map(() => 'rgba(52, 152, 219, 1)'),
@@ -10033,7 +10033,7 @@ class RiskManagementSystem {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Number of risks'
+                                text: 'Nombre de risques'
                             },
                             ticks: {
                                 precision: 0
@@ -10075,17 +10075,17 @@ class RiskManagementSystem {
                                 label: (context) => {
                                     const entry = context?.dataset?.metadata?.[context.dataIndex];
                                     const value = Number(context.raw) || 0;
-                                    const plural = value > 1 ? 'risks' : 'risk';
+                                    const plural = value > 1 ? 'risques' : 'risque';
                                     const share = entry ? Math.round(entry.share * 100) : (totalCount > 0 ? Math.round((value / totalCount) * 100) : 0);
-                                    const scoreDescriptor = scoreMode === 'brut' ? 'gross' : 'net';
+                                    const scoreDescriptor = scoreMode === 'brut' ? 'brut' : 'net';
                                     const formattedMedian = Number(entry?.median || 0).toFixed(1).replace('.', ',');
-                                    return `${value} ${plural} (${share}%) • Median ${scoreDescriptor} score: ${formattedMedian}`;
+                                    return `${value} ${plural} (${share}%) • Score ${scoreDescriptor} médian : ${formattedMedian}`;
                                 }
                             }
                         },
                         emptyChartMessage: {
                             display: !hasProcessData,
-                            message: 'No risks to display'
+                            message: 'Aucun risque à afficher'
                         }
                     }
                 };
@@ -10120,17 +10120,17 @@ class RiskManagementSystem {
                 const totalCount = sortedEntries.reduce((sum, entry) => sum + entry.count, 0);
                 const nonZeroEntries = sortedEntries.filter(entry => entry.count > 0);
                 const formatScore = (value) => Number(value || 0).toFixed(1).replace('.', ',');
-                const scoreDescriptor = scoreMode === 'brut' ? 'gross' : 'net';
+                const scoreDescriptor = scoreMode === 'brut' ? 'brut' : 'net';
 
                 if (!totalCount || nonZeroEntries.length === 0) {
-                    summaryElement.textContent = 'No filtered risks to analyze.';
+                    summaryElement.textContent = 'Aucun risque filtré à analyser.';
                 } else if (nonZeroEntries.length === 1) {
                     const [top] = nonZeroEntries;
-                    summaryElement.textContent = `Process ${top.label} accounts for 100% of filtered risks with a median ${scoreDescriptor} score of ${formatScore(top.median)}.`;
+                    summaryElement.textContent = `Le processus ${top.label} représente 100 % des risques filtrés avec un score ${scoreDescriptor} médian de ${formatScore(top.median)}.`;
                 } else {
                     const [first, second] = nonZeroEntries;
                     const share = Math.round(((first.count + second.count) / totalCount) * 100);
-                    summaryElement.textContent = `Processes ${first.label} and ${second.label} account for ${share}% of filtered risks with median ${scoreDescriptor} scores of ${formatScore(first.median)} and ${formatScore(second.median)}.`;
+                    summaryElement.textContent = `Les processus ${first.label} et ${second.label} représentent ${share} % des risques filtrés avec des scores ${scoreDescriptor} médians de ${formatScore(first.median)} et ${formatScore(second.median)}.`;
                 }
             }
         }
@@ -10278,7 +10278,7 @@ class RiskManagementSystem {
             const effectivenessLabel = netInfo.label ? ` (${netInfo.label})` : '';
 
             const typeLabel = resolveLabel(typeMap, risk.typeCorruption);
-            const themeLabel = resolveLabel(themeMap, risk.riskTheme || 'corruption') || 'Not defined';
+            const themeLabel = resolveLabel(themeMap, risk.riskTheme || 'corruption') || 'Non défini';
             const entityLabels = Array.isArray(risk.paysExposes)
                 ? risk.paysExposes.map(entity => resolveLabel(entityMap, entity))
                 : [];
@@ -10320,19 +10320,19 @@ class RiskManagementSystem {
                 <tr${rowClass}>
                     <td>#${risk.id}</td>
                     <td class="risk-description-cell">
-                        <div class="risk-register-title">${escapeHtml(risk.titre || risk.description || 'Untitled')}</div>
+                        <div class="risk-register-title">${escapeHtml(risk.titre || risk.description || 'Sans titre')}</div>
                         <div class="risk-register-description">${escapeHtml(risk.description || '—')}</div>
                     </td>
                     <td>${renderChipList(processChipLabels)}</td>
-                    <td>${renderColorChip(themeLabel, 'Not defined')}</td>
-                    <td>${escapeHtml(typeLabel || 'Not defined')}</td>
+                    <td>${renderColorChip(themeLabel, 'Non défini')}</td>
+                    <td>${escapeHtml(typeLabel || 'Non défini')}</td>
                     <td>${renderChipList(entityLabels)}</td>
                     <td>${renderChipList(tierLabels)}</td>
                     <td>${renderScoreCircle(grossLabel, grossScore)}</td>
                     <td>${renderScoreCircle(aggravatedLabel, aggravatedScore)}</td>
                     <td>${renderScoreCircle(netLabel, netScore, `Reduction ${reductionLabel}${effectivenessLabel}`)}</td>
                     <td${actionTitle}>${actionPlansLabel}</td>
-                    <td><span class="table-badge badge-${riskBadgeClass}">${riskStatusLabel || 'Not defined'}</span></td>
+                    <td><span class="table-badge badge-${riskBadgeClass}">${riskStatusLabel || 'Non défini'}</span></td>
                     <td class="table-actions-cell">
                         <div class="table-actions">
                             <button class="action-btn" title="Dupliquer" onclick='rms.duplicateRisk(${JSON.stringify(risk.id)})'${disabledAttr}>📄</button>
@@ -10448,7 +10448,7 @@ class RiskManagementSystem {
             const controlName = control?.name || 'Contrôle sans nom';
             const rawType = control?.type ?? '';
             const normalizedType = rawType ? String(rawType).toLowerCase() : '';
-            const typeLabel = normalizedType ? (typeMap[normalizedType] || rawType) : 'Not defined';
+            const typeLabel = normalizedType ? (typeMap[normalizedType] || rawType) : 'Non défini';
             const typeClass = normalizedType ? normalizedType.replace(/[^a-z0-9-]+/g, '-') : 'type-undefined';
             const ownerLabel = control?.owner || '';
             const rawEffectiveness = control?.effectiveness ?? '';
@@ -10579,7 +10579,7 @@ class RiskManagementSystem {
         if (!allPlans.length) {
             container.innerHTML = `
                 <div class="controls-empty-state">
-                    <div class="controls-empty-title">No action plan recorded</div>
+                    <div class="controls-empty-title">Aucun plan d’action enregistré</div>
                     <div class="controls-empty-text">Create your first plan to manage corrective actions.</div>
                     <button class="btn btn-secondary" onclick="addNewActionPlan()">+ Add a plan</button>
                 </div>
@@ -12809,7 +12809,7 @@ class RiskManagementSystem {
 
             if (!csv) {
                 if (typeof showNotification === 'function') {
-                    showNotification('warning', "No data available for CSV export.");
+                    showNotification('warning', "Aucune donnée disponible pour l’export CSV.");
                 }
                 return;
             }
