@@ -152,6 +152,7 @@ class RiskManagementSystem {
             key: '',
             direction: 'desc'
         };
+        this.matrixDetailsSort = 'id';
         this.controlFilters = {
             type: '',
             search: ''
@@ -4009,6 +4010,16 @@ class RiskManagementSystem {
     renderMatrixEntityFilterChips() {
         this.renderRiskEntityFilterChips('matrixEntityFilterChips');
         this.renderRiskEntityFilterChips('risksEntityFilterChips');
+    }
+
+    setMatrixDetailsSort(sortKey) {
+        const normalizedSort = sortKey === 'score' ? 'score' : 'id';
+        if (this.matrixDetailsSort === normalizedSort) {
+            return;
+        }
+
+        this.matrixDetailsSort = normalizedSort;
+        this.updateRiskDetailsList();
     }
 
     setRiskRegisterSort(sortKey) {
@@ -8741,9 +8752,27 @@ class RiskManagementSystem {
             const container = document.getElementById(containerId);
             if (!container) return;
 
+            const sortMode = this.matrixDetailsSort === 'score' ? 'score' : 'id';
+            const sortLabel = sortMode === 'score' ? 'score' : 'ID';
             const titleElement = document.getElementById(titleId);
             if (titleElement) {
-                titleElement.textContent = title;
+                titleElement.innerHTML = `
+                    <span>${escapeHtml(title.replace('classés par score', `classés par ${sortLabel}`))}</span>
+                    <span class="risk-details-sort" aria-label="Trier la liste des risques">
+                        <button
+                            type="button"
+                            class="risk-details-sort-btn${sortMode === 'id' ? ' active' : ''}"
+                            onclick="rms.setMatrixDetailsSort('id')"
+                            aria-pressed="${sortMode === 'id' ? 'true' : 'false'}"
+                        >ID</button>
+                        <button
+                            type="button"
+                            class="risk-details-sort-btn${sortMode === 'score' ? ' active' : ''}"
+                            onclick="rms.setMatrixDetailsSort('score')"
+                            aria-pressed="${sortMode === 'score' ? 'true' : 'false'}"
+                        >Score</button>
+                    </span>
+                `;
             }
 
             const scoredRisks = filteredRisks.map(entry => {
@@ -8765,6 +8794,12 @@ class RiskManagementSystem {
                 const baseScore = baseProb * impact;
                 return { risk: entry, prob, impact, coefficient, baseScore, score: prob * impact };
             }).sort((a, b) => {
+                const idComparison = String(a.risk.id).localeCompare(String(b.risk.id), undefined, { numeric: true, sensitivity: 'base' });
+
+                if (sortMode === 'id') {
+                    return idComparison;
+                }
+
                 if (b.score !== a.score) return b.score - a.score;
                 if (mode === 'net' || mode === 'post') {
                     if (b.coefficient !== a.coefficient) return b.coefficient - a.coefficient;
@@ -8773,12 +8808,7 @@ class RiskManagementSystem {
                     if ((b.impact || 0) !== (a.impact || 0)) return (b.impact || 0) - (a.impact || 0);
                 }
 
-                const aTitle = a.risk.titre || a.risk.description || '';
-                const bTitle = b.risk.titre || b.risk.description || '';
-                const descComparison = aTitle.localeCompare(bTitle, undefined, { sensitivity: 'base' });
-                if (descComparison !== 0) return descComparison;
-
-                return String(a.risk.id).localeCompare(String(b.risk.id), undefined, { numeric: true, sensitivity: 'base' });
+                return idComparison;
             });
 
             if (!scoredRisks.length) {

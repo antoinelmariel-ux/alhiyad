@@ -1691,12 +1691,52 @@ body.feedback-mode-paused .feedback-panel * {
 }
 
 .risk-details-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
     font-size: 1.1em;
     font-weight: 600;
     color: var(--text-color);
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--border-color);
+}
+
+.risk-details-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--light-bg);
+}
+
+.risk-details-sort-btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 4px 10px;
+    background: transparent;
+    color: var(--muted-text-color);
+    font: inherit;
+    font-size: 0.75em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.risk-details-sort-btn:hover,
+.risk-details-sort-btn:focus-visible {
+    color: var(--primary-color);
+    background: rgba(13, 31, 60, 0.08);
+}
+
+.risk-details-sort-btn.active {
+    color: var(--surface-color);
+    background: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(13, 31, 60, 0.2);
 }
 
 .risk-item {
