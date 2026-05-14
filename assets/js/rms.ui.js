@@ -58,7 +58,7 @@ function toggleMatrixEditMode(forceState = null) {
     if (button) {
         button.classList.toggle('btn-primary', nextState);
         button.classList.toggle('btn-secondary', !nextState);
-        button.textContent = nextState ? 'Edit mode active' : 'Edit mode';
+        button.textContent = nextState ? 'Mode édition actif' : 'Mode édition';
     }
     document.body.classList.toggle('matrix-edit-mode', nextState);
     if (window.rms) {
@@ -1833,7 +1833,7 @@ function updateSelectedActionPlansDisplay() {
     container.innerHTML = selectedActionPlansForRisk.map(id => {
         const plan = rms.actionPlans.find(p => idsEqual(p.id, id));
         if (!plan) return '';
-        const title = plan.title || 'Untitled';
+        const title = plan.title || 'Sans titre';
         return `
             <div class="selected-control-item">
               #${plan.id} - ${title.substring(0, 50)}${title.length > 50 ? '...' : ''}
@@ -1885,7 +1885,7 @@ function renderActionPlanSelectionList() {
         return String(plan.id).includes(query) || title.includes(query);
     }).map(plan => {
         const isSelected = selectedActionPlansForRisk.some(id => idsEqual(id, plan.id));
-        const title = escapeHtml(plan.title || 'Untitled');
+        const title = escapeHtml(plan.title || 'Sans titre');
         const planId = encodeInlineArgument(plan.id);
         const safePlanId = sanitizeId(String(plan.id));
         return `
@@ -1973,7 +1973,7 @@ function addNewActionPlan() {
         }
         updateSelectedRisksForPlanDisplay();
     }
-    document.getElementById('actionPlanModalTitle').textContent = 'New Action Plan';
+    document.getElementById('actionPlanModalTitle').textContent = 'Nouveau plan d’action';
     populatePlanOwnerSuggestions();
     const modal = document.getElementById('actionPlanModal');
     if (modal) {
@@ -1999,7 +1999,7 @@ function editActionPlan(planId) {
             : (Array.isArray(plan.riskIds) ? [...plan.riskIds] : []);
         updateSelectedRisksForPlanDisplay();
     }
-    document.getElementById('actionPlanModalTitle').textContent = 'Edit Action Plan';
+    document.getElementById('actionPlanModalTitle').textContent = 'Modifier le plan d’action';
     populatePlanOwnerSuggestions();
     const modal = document.getElementById('actionPlanModal');
     if (modal) {
@@ -2161,7 +2161,7 @@ function renderRiskSelectionListForPlan() {
         return String(risk.id).includes(query) || title.includes(query);
     }).map(risk => {
         const isSelected = selectedRisksForPlan.some(id => idsEqual(id, risk.id));
-        const title = escapeHtml(risk.titre || risk.description || 'Untitled');
+        const title = escapeHtml(risk.titre || risk.description || 'Sans titre');
         const process = escapeHtml(risk.processus || '');
         const subProcess = risk.sousProcessus ? ` > ${escapeHtml(risk.sousProcessus)}` : '';
         const type = escapeHtml(risk.typeCorruption || '');
@@ -2218,7 +2218,7 @@ function updateSelectedRisksForPlanDisplay() {
     container.innerHTML = selectedRisksForPlan.map(riskId => {
         const risk = rms.risks.find(r => idsEqual(r.id, riskId));
         if (!risk) return '';
-        const title = risk.titre || risk.description || 'Untitled';
+        const title = risk.titre || risk.description || 'Sans titre';
         const truncatedTitle = `${title.substring(0, 50)}${title.length > 50 ? '...' : ''}`;
         const encodedRiskId = encodeInlineArgument(riskId);
         return `

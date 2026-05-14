@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al Hiyad Risk &amp; Compliance Mapping - v2.14.154</title>
+    <title>Cartographie des risques &amp; de la conformité Al Hiyad - v2.14.155</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <!-- Local dependencies with CDN fallback -->
     <script>
@@ -20,7 +20,7 @@
                 fallbackScript.src = fallbackUrl;
                 fallbackScript.async = false;
                 fallbackScript.crossOrigin = 'anonymous';
-                fallbackScript.onload = () => console.info(`${libName} loaded via CDN`);
+                fallbackScript.onload = () => console.info(`${libName} chargé via le CDN`);
                 fallbackScript.onerror = () => showDependencyWarning(libName, fallbackUrl);
                 document.head.appendChild(fallbackScript);
             } else {
@@ -32,9 +32,9 @@
             const container = document.createElement('div');
             container.className = 'dependency-warning';
             container.innerHTML = `
-                <div class="dependency-warning__title">Unable to load ${libName}</div>
-                <p>Copy libraries into <code>assets/libs</code> or make sure you are connected to the Internet.</p>
-                ${url ? `<p>Fallback attempt failed on: <code>${url}</code></p>` : ''}
+                <div class="dependency-warning__title">Impossible de charger ${libName}</div>
+                <p>Copiez les bibliothèques dans <code>assets/libs</code> ou assurez-vous d’être connecté à Internet.</p>
+                ${url ? `<p>La tentative de secours a échoué sur : <code>${url}</code></p>` : ''}
             `;
             (document.body || document.documentElement).prepend(container);
         }
@@ -55,7 +55,7 @@
                 const script = document.createElement('script');
                 script.src = local;
                 script.async = false;
-                script.onload = () => console.info(`${globalName} loaded locally (optional)`);
+                script.onload = () => console.info(`${globalName} chargé localement (facultatif)`);
                 script.onerror = () => handleOptionalLibFallback(globalName, cdn);
                 document.head.appendChild(script);
             });
@@ -63,15 +63,15 @@
 
         function handleOptionalLibFallback(globalName, cdn) {
             if (!cdn || window[globalName]) {
-                console.info(`${globalName} not available, using native engine.`);
+                console.info(`${globalName} indisponible, moteur natif utilisé.`);
                 return;
             }
 
             const fallbackScript = document.createElement('script');
             fallbackScript.src = cdn;
             fallbackScript.async = false;
-            fallbackScript.onload = () => console.info(`${globalName} loaded via CDN (optional)`);
-            fallbackScript.onerror = () => console.info(`${globalName} missing, native rendering used.`);
+            fallbackScript.onload = () => console.info(`${globalName} chargé via le CDN (facultatif)`);
+            fallbackScript.onerror = () => console.info(`${globalName} manquant, rendu natif utilisé.`);
             document.head.appendChild(fallbackScript);
         }
 
@@ -87,46 +87,46 @@
         <!-- Enhanced header -->
         <div class="header">
             <div class="header-left">
-                <img src="assets/img/logo_al_hiyad.png" alt="Al Hiyad - luxury concierge risk and compliance" class="header-logo">
+                <img src="assets/img/logo_al_hiyad.png" alt="Al Hiyad - risques et conformité de conciergerie de luxe" class="header-logo">
                 <div class="header-title">
-                    <h1>Al Hiyad Risk &amp; Compliance Mapping</h1>
-                    <p>Luxury concierge B2B/B2C compliance &amp; service integrity management</p>
+                    <h1>Cartographie des risques &amp; de la conformité Al Hiyad</h1>
+                    <p>Gestion de la conformité et de l’intégrité des services de conciergerie de luxe B2B/B2C</p>
                 </div>
             </div>
             <div class="header-right">
 
                 <div class="header-actions">
-                    <div class="last-save">Last save: <span id="lastSaveTime">-</span></div>
+                    <div class="last-save">Dernière sauvegarde : <span id="lastSaveTime">-</span></div>
                     <div class="header-buttons">
                         <button class="btn btn-feedback" id="feedbackToggleButton" type="button" aria-pressed="false" hidden>
-                            <span class="btn-icon">📝</span> Feed-back
+                            <span class="btn-icon">📝</span> Retour
                         </button>
                         <button class="btn btn-primary" onclick="exportOperationalData()">
-                            <span class="btn-icon">💾</span> Save
+                            <span class="btn-icon">💾</span> Enregistrer
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="feedbackPanel" class="feedback-panel" aria-hidden="true" role="dialog" aria-modal="false" aria-label="Feedback panel">
+        <div id="feedbackPanel" class="feedback-panel" aria-hidden="true" role="dialog" aria-modal="false" aria-label="Panneau de retour">
             <div class="feedback-panel-header">
-                <div class="feedback-panel-title">Feedback mode</div>
-                <button type="button" class="feedback-panel-close" id="feedbackCloseButton" aria-label="Disable feedback mode">&times;</button>
+                <div class="feedback-panel-title">Mode retour</div>
+                <button type="button" class="feedback-panel-close" id="feedbackCloseButton" aria-label="Désactiver le mode retour">&times;</button>
             </div>
-            <p class="feedback-panel-instructions">Click anywhere on the page to add a sticky note. You can pause the mode to navigate freely.</p>
+            <p class="feedback-panel-instructions">Cliquez n’importe où sur la page pour ajouter une note. Vous pouvez mettre le mode en pause pour naviguer librement.</p>
             <div class="feedback-panel-actions">
-                <button type="button" class="btn btn-secondary" id="feedbackPauseButton" aria-pressed="false" disabled title="Pause feedback mode">
+                <button type="button" class="btn btn-secondary" id="feedbackPauseButton" aria-pressed="false" disabled title="Mettre le mode retour en pause">
                     <span class="feedback-action-icon" aria-hidden="true">⏸</span>
                     <span class="visually-hidden feedback-action-label">Pause</span>
                 </button>
-                <button type="button" class="btn btn-outline" id="feedbackExportButton" aria-label="Export comments" title="Export comments">
+                <button type="button" class="btn btn-outline" id="feedbackExportButton" aria-label="Exporter les commentaires" title="Exporter les commentaires">
                     <span class="feedback-action-icon" aria-hidden="true">💾</span>
-                    <span class="visually-hidden">Export comments</span>
+                    <span class="visually-hidden">Exporter les commentaires</span>
                 </button>
-                <label class="btn btn-secondary feedback-import-label" for="feedbackImportInput" aria-label="Import comments (multiple files supported)" title="Import comments (multiple files supported)">
+                <label class="btn btn-secondary feedback-import-label" for="feedbackImportInput" aria-label="Importer les commentaires (plusieurs fichiers pris en charge)" title="Importer les commentaires (plusieurs fichiers pris en charge)">
                     <span class="feedback-action-icon" aria-hidden="true">📂</span>
-                    <span class="visually-hidden">Import comments (multiple files supported)</span>
+                    <span class="visually-hidden">Importer les commentaires (plusieurs fichiers pris en charge)</span>
                 </label>
                 <input type="file" id="feedbackImportInput" accept="application/json" multiple hidden>
             </div>
@@ -137,23 +137,23 @@
         <div class="nav-tabs">
             <div class="tabs-container">
                 <button class="tab active" onclick="switchTab('dashboard')">
-                    📊 Dashboard
+                    📊 Tableau de bord
                     <span class="tab-badge">0</span>
                 </button>
                 <button class="tab" onclick="switchTab('interviews')">
-                    🗣️ Interviews
+                    🗣️ Entretiens
                 </button>
                 <button class="tab" onclick="switchTab('matrix')">
-                    📈 Risk Matrix
+                    📈 Matrice des risques
                 </button>
                 <button class="tab" onclick="switchTab('risks')">
-                    📋 Risk Register
+                    📋 Registre des risques
                 </button>
                 <button class="tab" onclick="switchTab('controls')">
-                    🔒 Controls & Mitigation
+                    🔒 Contrôles & atténuation
                 </button>
                 <button class="tab" onclick="switchTab('plans')">
-                    📝 Action Plans
+                    📝 Plans d’action
                 </button>
                 <button class="tab" onclick="switchTab('config')">
                     ⚙️ Administration
@@ -165,13 +165,13 @@
         <div id="dashboard-tab" class="tab-content active">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Overview</div>
+                    <div class="toolbar-title">Vue d’ensemble</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-outline" onclick="refreshDashboard()">
-                            Refresh
+                            Actualiser
                         </button>
                         <button class="btn btn-primary" onclick="exportDashboard()">
-                            Export PDF
+                            Exporter PDF
                         </button>
                     </div>
                 </div>
@@ -182,16 +182,16 @@
                         <div class="dashboard-stats-column">
                             <div class="stat-card danger">
                                 <div class="stat-header">
-                                    <span class="stat-title">Critical Risks</span>
+                                    <span class="stat-title">Risques critiques</span>
                                     <span class="stat-icon">⚠️</span>
                                 </div>
                                 <div class="stat-value danger">2</div>
-                                <div class="stat-change negative">↑ +1 vs last month</div>
+                                <div class="stat-change negative">↑ +1 vs le mois dernier</div>
                             </div>
 
                             <div class="stat-card warning">
                                 <div class="stat-header">
-                                    <span class="stat-title">High Risks</span>
+                                    <span class="stat-title">Risques élevés</span>
                                     <span class="stat-icon">⚡</span>
                                 </div>
                                 <div class="stat-value warning">5</div>
@@ -200,25 +200,25 @@
 
                             <div class="stat-card success">
                                 <div class="stat-header">
-                                    <span class="stat-title">Controls by effectiveness</span>
+                                    <span class="stat-title">Contrôles par efficacité</span>
                                     <span class="stat-icon">✓</span>
                                 </div>
                                 <div class="stat-value success">0</div>
-                                <div class="stat-change">No active control</div>
+                                <div class="stat-change">Aucun contrôle actif</div>
                             </div>
                         </div>
 
                         <div class="stat-card plan-status-card">
                             <div class="stat-header">
-                                <span class="stat-title">Action Plans by status</span>
+                                <span class="stat-title">Plans d’action par statut</span>
                                 <span class="stat-icon">🗂️</span>
                             </div>
-                            <div class="plan-status-total" id="actionPlanStatusTotal">No action plan</div>
+                            <div class="plan-status-total" id="actionPlanStatusTotal">Aucun plan d’action</div>
                             <div class="plan-status-chart">
                                 <canvas id="actionPlanStatusChart" height="160"></canvas>
                             </div>
                             <div class="plan-status-summary" id="actionPlanStatusSummary">
-                                <div class="plan-status-empty">No action plan recorded</div>
+                                <div class="plan-status-empty">Aucun plan d’action enregistré</div>
                             </div>
                         </div>
                     </div>
@@ -226,31 +226,31 @@
                     <!-- Charts -->
                     <div class="charts-row">
                         <div class="chart-container top-risks-container">
-                            <div class="chart-title">Net risks ranked by score</div>
+                            <div class="chart-title">Risques nets classés par score</div>
                             <div class="top-risks-content" id="topRisksContent">
                                 <table class="top-risks-table">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Titre</th>
-                                            <th>Process</th>
-                                            <th>Sub-process</th>
-                                            <th>Net score</th>
+                                            <th>Processus</th>
+                                            <th>Sous-processus</th>
+                                            <th>Score net</th>
                                         </tr>
                                     </thead>
                                     <tbody id="topRisksTableBody"></tbody>
                                 </table>
-                                <div class="top-risks-empty">No risk to display</div>
+                                <div class="top-risks-empty">Aucun risque à afficher</div>
                             </div>
                         </div>
                         <div class="chart-container process-charts">
                             <div class="chart-title-row">
-                                <div class="chart-title">Process ranking (readable view)</div>
+                                <div class="chart-title">Classement des processus (vue lisible)</div>
                                 <div class="process-chart-controls">
-                                    <label for="processScoreMode">Score analyzed:</label>
+                                    <label for="processScoreMode">Score analysé :</label>
                                     <select id="processScoreMode" class="process-score-select">
-                                        <option value="net">Net scores</option>
-                                        <option value="brut">Gross scores</option>
+                                        <option value="net">Scores nets</option>
+                                        <option value="brut">Scores bruts</option>
                                     </select>
                                 </div>
                             </div>
@@ -264,18 +264,18 @@
                     <!-- Recent Alerts -->
                     <div class="table-container">
                         <div class="table-header">
-                            <div class="table-title">🚨 Recent Alerts</div>
+                            <div class="table-title">🚨 Alertes récentes</div>
                         </div>
                         <div class="alerts-sections">
                             <section class="alerts-section">
-                                <div class="alerts-section-title">Moderate, high, or critical risks without action plans</div>
+                                <div class="alerts-section-title">Risques modérés, élevés ou critiques sans plan d’action</div>
                                 <table class="alerts-table">
                                     <thead>
                                         <tr>
                                             <th>Date</th>
-                                            <th>Risk</th>
-                                            <th>Process</th>
-                                            <th>Level</th>
+                                            <th>Risque</th>
+                                            <th>Processus</th>
+                                            <th>Niveau</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -283,14 +283,14 @@
                                 </table>
                             </section>
                             <section class="alerts-section">
-                                <div class="alerts-section-title">Overdue action plans</div>
+                                <div class="alerts-section-title">Plans d’action en retard</div>
                                 <table class="alerts-table">
                                     <thead>
                                         <tr>
-                                            <th>Action plan</th>
-                                            <th>Owner</th>
-                                            <th>Due date</th>
-                                            <th>Status</th>
+                                            <th>Plan d’action</th>
+                                            <th>Responsable</th>
+                                            <th>Échéance</th>
+                                            <th>Statut</th>
                                         </tr>
                                     </thead>
                                     <tbody id="recentAlertsPlansBody"></tbody>
@@ -304,50 +304,50 @@
         <div id="interviews-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Referent interviews</div>
+                    <div class="toolbar-title">Entretiens avec les référents</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-primary" onclick="rms.openInterviewModal()">
-                            + New interview report
+                            + Nouveau compte rendu d’entretien
                         </button>
                         <button class="btn btn-outline" type="button" onclick="rms.openInterviewFolderPicker()">
-                            📂 Load interview folder
+                            📂 Charger un dossier d’entretiens
                         </button>
                         <button class="btn btn-secondary" type="button" onclick="rms.openMentionsModal()">
-                            To clarify
+                            À clarifier
                         </button>
                     </div>
                 </div>
                 <div class="content-area">
                     <div class="interview-filters">
                         <div class="interview-filter">
-                            <label class="filter-label" for="interviewProcessFilter">Process</label>
+                            <label class="filter-label" for="interviewProcessFilter">Processus</label>
                             <select id="interviewProcessFilter" class="filter-select" onchange="rms.setInterviewFilter('process', this.value)">
-                                <option value="">All processes</option>
+                                <option value="">Tous les processus</option>
                             </select>
                         </div>
                         <div class="interview-filter">
-                            <label class="filter-label" for="interviewSubProcessFilter">Sub-process</label>
+                            <label class="filter-label" for="interviewSubProcessFilter">Sous-processus</label>
                             <select id="interviewSubProcessFilter" class="filter-select" onchange="rms.setInterviewFilter('subProcess', this.value)">
-                                <option value="">All sub-processes</option>
+                                <option value="">Tous les sous-processus</option>
                             </select>
                         </div>
                         <div class="interview-filter">
-                            <label class="filter-label" for="interviewReferentFilter">Referents</label>
+                            <label class="filter-label" for="interviewReferentFilter">Référents</label>
                             <select id="interviewReferentFilter" class="filter-select" onchange="rms.setInterviewFilter('referent', this.value)">
-                                <option value="">All referents</option>
+                                <option value="">Tous les référents</option>
                             </select>
                         </div>
                         <div class="interview-filter search-box">
-                            <label class="filter-label" for="interviewSearchInput">Search</label>
-                            <input type="search" class="search-input" id="interviewSearchInput" placeholder="🔍 Search an interview report..." oninput="rms.setInterviewFilter('search', this.value)" onsearch="rms.setInterviewFilter('search', this.value)">
+                            <label class="filter-label" for="interviewSearchInput">Recherche</label>
+                            <input type="search" class="search-input" id="interviewSearchInput" placeholder="🔍 Rechercher un compte rendu d’entretien..." oninput="rms.setInterviewFilter('search', this.value)" onsearch="rms.setInterviewFilter('search', this.value)">
                         </div>
                     </div>
                     <div class="interview-summary" id="interviewSummary">
-                        <span id="interviewCount">0 interview report</span>
+                        <span id="interviewCount">0 compte rendu d’entretien</span>
                     </div>
                     <div id="interviewLoading" class="interview-loading" hidden>
                         <div class="interview-spinner" aria-hidden="true"></div>
-                        <div class="interview-loading-text">Loading interview reports...</div>
+                        <div class="interview-loading-text">Chargement des comptes rendus d’entretien...</div>
                     </div>
                     <div id="interviewList" class="interview-list"></div>
                 </div>
@@ -358,43 +358,43 @@
         <div id="matrix-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Risk Matrix</div>
+                    <div class="toolbar-title">Risque Matrix</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-secondary" onclick="resetMatrixView()">
-                            Reset view
+                            Réinitialiser la vue
                         </button>
                         <button class="btn btn-primary" onclick="addNewRisk()">
-                            + New Risk
+                            + Nouveau risque
                         </button>
                     </div>
                 </div>
 
                 <div class="filters-bar">
                     <div class="filter-group filter-group-entities">
-                        <label class="filter-label" for="matrixEntityFilterChips">Relevant entities</label>
-                        <div id="matrixEntityFilterChips" class="filter-chip-group" aria-label="Filter matrix by entities"></div>
+                        <label class="filter-label" for="matrixEntityFilterChips">Entités concernées</label>
+                        <div id="matrixEntityFilterChips" class="filter-chip-group" aria-label="Filtrer la matrice par entités"></div>
                     </div>
                     <div class="filter-group">
-                        <label class="filter-label" for="matrixThemeFilter">Theme</label>
+                        <label class="filter-label" for="matrixThemeFilter">Thème</label>
                         <select class="filter-select" id="matrixThemeFilter" data-risk-filter="theme" onchange="applyFilters('theme', this.value, this)">
-                            <option value="">All themes</option>
+                            <option value="">Tous les thèmes</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label class="filter-label" for="matrixProcessFilter">Process</label>
+                        <label class="filter-label" for="matrixProcessFilter">Processus</label>
                         <select class="filter-select" id="matrixProcessFilter" data-risk-filter="process" onchange="applyFilters('process', this.value, this)">
-                            <option value="">All processes</option>
+                            <option value="">Tous les processus</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label class="filter-label" for="matrixStatusFilter">Status</label>
+                        <label class="filter-label" for="matrixStatusFilter">Statut</label>
                         <select class="filter-select" id="matrixStatusFilter" data-risk-filter="status" onchange="applyFilters('status', this.value, this)">
-                            <option value="">All statuses</option>
+                            <option value="">Tous les statuts</option>
                         </select>
                     </div>
                     <div class="search-box filter-group">
-                        <label class="filter-label" for="matrixRiskSearch">Search</label>
-                        <input type="search" class="search-input" id="matrixRiskSearch" data-risk-filter="search" placeholder="🔍 Search a risk..." oninput="searchRisks(this.value, this)">
+                        <label class="filter-label" for="matrixRiskSearch">Recherche</label>
+                        <input type="search" class="search-input" id="matrixRiskSearch" data-risk-filter="search" placeholder="🔍 Rechercher un risque..." oninput="searchRisks(this.value, this)">
                     </div>
                 </div>
 
@@ -402,13 +402,13 @@
                     <div class="matrix-dual-layout">
                         <section class="matrix-container" data-view="brut">
                             <div class="matrix-header">
-                                <h3 class="matrix-title" id="matrixTitleBrut">Gross Risk Matrix</h3>
+                                <h3 class="matrix-title" id="matrixTitleBrut">Matrice du risque brut</h3>
                                 <div class="matrix-actions">
                                     <button class="btn btn-secondary" onclick="exportMatrix('brut')">
-                                        📸 Capture
+                                        📸 Capturer
                                     </button>
                                     <button class="btn btn-secondary" onclick="toggleFullScreen('brut')">
-                                        🔍 Full screen
+                                        🔍 Plein écran
                                     </button>
                                 </div>
                             </div>
@@ -416,7 +416,7 @@
                             <div class="matrix-wrapper">
                                 <div class="matrix">
                                     <div class="matrix-grid" id="matrixGridBrut"></div>
-                                    <div class="axis-label x-axis">Probability →</div>
+                                    <div class="axis-label x-axis">Probabilité →</div>
                                     <div class="axis-label y-axis">
                                         <span class="axis-text">Impact</span>
                                         <span class="axis-arrow" aria-hidden="true">↑</span>
@@ -424,7 +424,7 @@
                                 </div>
 
                                 <div class="risk-details-panel">
-                                    <div class="risk-details-title" id="riskDetailsTitleBrut">Gross risks ranked by score</div>
+                                    <div class="risk-details-title" id="riskDetailsTitleBrut">Risques bruts classés par score</div>
                                     <div id="riskDetailsListBrut"></div>
                                 </div>
                             </div>
@@ -432,32 +432,32 @@
                             <div class="legend">
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(46, 204, 113, 0.6));"></div>
-                                    <span>Low (< 3)</span>
+                                    <span>Faible (< 3)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(241, 196, 15, 0.4), rgba(241, 196, 15, 0.6));"></div>
-                                    <span>Medium (≥ 3 ; < 6)</span>
+                                    <span>Moyen (≥ 3 ; < 6)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.6));"></div>
-                                    <span>High (≥ 6 ; < 12)</span>
+                                    <span>Élevé (≥ 6 ; < 12)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.5), rgba(231, 76, 60, 0.7));"></div>
-                                    <span>Critical (≥ 12)</span>
+                                    <span>Critique (≥ 12)</span>
                                 </div>
                             </div>
                         </section>
 
                         <section class="matrix-container" data-view="net">
                             <div class="matrix-header">
-                                <h3 class="matrix-title" id="matrixTitleNet">Net Risk Matrix</h3>
+                                <h3 class="matrix-title" id="matrixTitleNet">Matrice du risque net</h3>
                                 <div class="matrix-actions">
                                     <button class="btn btn-secondary" onclick="exportMatrix('net')">
-                                        📸 Capture
+                                        📸 Capturer
                                     </button>
                                     <button class="btn btn-secondary" onclick="toggleFullScreen('net')">
-                                        🔍 Full screen
+                                        🔍 Plein écran
                                     </button>
                                 </div>
                             </div>
@@ -466,15 +466,15 @@
                                 <div class="matrix">
                                     <div class="matrix-grid" id="matrixGridNet"></div>
                                     <div class="matrix-net-col-labels" id="matrixNetColLabels"></div>
-                                    <div class="axis-label x-axis">Control effectiveness →</div>
+                                    <div class="axis-label x-axis">Efficacité des contrôles →</div>
                                     <div class="axis-label y-axis">
-                                        <span class="axis-text">Gross risk level</span>
+                                        <span class="axis-text">Niveau de risque brut</span>
                                         <span class="axis-arrow" aria-hidden="true">↑</span>
                                     </div>
                                 </div>
 
                                 <div class="risk-details-panel">
-                                    <div class="risk-details-title" id="riskDetailsTitleNet">Net risks ranked by score</div>
+                                    <div class="risk-details-title" id="riskDetailsTitleNet">Risques nets classés par score</div>
                                     <div id="riskDetailsListNet"></div>
                                 </div>
                             </div>
@@ -482,32 +482,32 @@
                             <div class="legend">
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(46, 204, 113, 0.6));"></div>
-                                    <span>Low (< 3)</span>
+                                    <span>Faible (< 3)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(241, 196, 15, 0.4), rgba(241, 196, 15, 0.6));"></div>
-                                    <span>Medium (≥ 3 ; < 6)</span>
+                                    <span>Moyen (≥ 3 ; < 6)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.6));"></div>
-                                    <span>High (≥ 6 ; < 12)</span>
+                                    <span>Élevé (≥ 6 ; < 12)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.5), rgba(231, 76, 60, 0.7));"></div>
-                                    <span>Critical (≥ 12)</span>
+                                    <span>Critique (≥ 12)</span>
                                 </div>
                             </div>
                         </section>
 
                         <section class="matrix-container" data-view="post">
                             <div class="matrix-header">
-                                <h3 class="matrix-title" id="matrixTitlePost">Post Action Plan Risk Matrix</h3>
+                                <h3 class="matrix-title" id="matrixTitlePost">Matrice des risques après plan d’action</h3>
                                 <div class="matrix-actions">
                                     <button class="btn btn-secondary" onclick="exportMatrix('post')">
-                                        📸 Capture
+                                        📸 Capturer
                                     </button>
                                     <button class="btn btn-secondary" onclick="toggleFullScreen('post')">
-                                        🔍 Full screen
+                                        🔍 Plein écran
                                     </button>
                                 </div>
                             </div>
@@ -516,15 +516,15 @@
                                 <div class="matrix">
                                     <div class="matrix-grid" id="matrixGridPost"></div>
                                     <div class="matrix-net-col-labels" id="matrixPostColLabels"></div>
-                                    <div class="axis-label x-axis">Control effectiveness →</div>
+                                    <div class="axis-label x-axis">Efficacité des contrôles →</div>
                                     <div class="axis-label y-axis">
-                                        <span class="axis-text">Gross risk level</span>
+                                        <span class="axis-text">Niveau de risque brut</span>
                                         <span class="axis-arrow" aria-hidden="true">↑</span>
                                     </div>
                                 </div>
 
                                 <div class="risk-details-panel">
-                                    <div class="risk-details-title" id="riskDetailsTitlePost">Post action plan risks ranked by score</div>
+                                    <div class="risk-details-title" id="riskDetailsTitlePost">Risques après plan d’action classés par score</div>
                                     <div id="riskDetailsListPost"></div>
                                 </div>
                             </div>
@@ -532,19 +532,19 @@
                             <div class="legend">
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(46, 204, 113, 0.6));"></div>
-                                    <span>Low (&lt; 3)</span>
+                                    <span>Faible (&lt; 3)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(241, 196, 15, 0.4), rgba(241, 196, 15, 0.6));"></div>
-                                    <span>Medium (≥ 3 ; &lt; 6)</span>
+                                    <span>Moyen (≥ 3 ; &lt; 6)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.6));"></div>
-                                    <span>High (≥ 6 ; &lt; 12)</span>
+                                    <span>Élevé (≥ 6 ; &lt; 12)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.5), rgba(231, 76, 60, 0.7));"></div>
-                                    <span>Critical (≥ 12)</span>
+                                    <span>Critique (≥ 12)</span>
                                 </div>
                             </div>
                         </section>
@@ -553,17 +553,17 @@
             </div>
         </div>
 
-        <!-- Risks List Tab -->
+        <!-- Risques List Tab -->
         <div id="risks-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Risk Register</div>
+                    <div class="toolbar-title">Risque Register</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-secondary" onclick="exportRisks()">
-                            📤 Export
+                            📤 Exporter
                         </button>
                         <button class="btn btn-success" onclick="addNewRisk()">
-                            + New Risk
+                            + Nouveau risque
                         </button>
                     </div>
                 </div>
@@ -571,36 +571,36 @@
                 <div class="content-area">
                     <div class="filters-bar">
                         <div class="filter-group filter-group-entities">
-                            <label class="filter-label" for="risksEntityFilterChips">Relevant entities</label>
-                            <div id="risksEntityFilterChips" class="filter-chip-group" aria-label="Filter register by entities"></div>
+                            <label class="filter-label" for="risksEntityFilterChips">Entités concernées</label>
+                            <div id="risksEntityFilterChips" class="filter-chip-group" aria-label="Filtrer le registre par entités"></div>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label" for="risksThemeFilter">Theme</label>
+                            <label class="filter-label" for="risksThemeFilter">Thème</label>
                             <select class="filter-select" id="risksThemeFilter" data-risk-filter="theme" onchange="applyFilters('theme', this.value, this)">
-                                <option value="">All themes</option>
+                                <option value="">Tous les thèmes</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label" for="risksProcessFilter">Process</label>
+                            <label class="filter-label" for="risksProcessFilter">Processus</label>
                             <select class="filter-select" id="risksProcessFilter" data-risk-filter="process" onchange="applyFilters('process', this.value, this)">
-                                <option value="">All processes</option>
+                                <option value="">Tous les processus</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label" for="risksTypeFilter">Risk Type</label>
+                            <label class="filter-label" for="risksTypeFilter">Risque Type</label>
                             <select class="filter-select" id="risksTypeFilter" data-risk-filter="type" onchange="applyFilters('type', this.value, this)">
-                                <option value="">All types</option>
+                                <option value="">Tous les types</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label" for="risksStatusFilter">Status</label>
+                            <label class="filter-label" for="risksStatusFilter">Statut</label>
                             <select class="filter-select" id="risksStatusFilter" data-risk-filter="status" onchange="applyFilters('status', this.value, this)">
-                                <option value="">All statuses</option>
+                                <option value="">Tous les statuts</option>
                             </select>
                         </div>
                         <div class="search-box filter-group">
-                            <label class="filter-label" for="risksSearchInput">Search</label>
-                            <input type="search" class="search-input" id="risksSearchInput" data-risk-filter="search" placeholder="🔍 Search a risk..." oninput="searchRisks(this.value, this)">
+                            <label class="filter-label" for="risksSearchInput">Recherche</label>
+                            <input type="search" class="search-input" id="risksSearchInput" data-risk-filter="search" placeholder="🔍 Rechercher un risque..." oninput="searchRisks(this.value, this)">
                         </div>
                     </div>
                     <div class="table-container">
@@ -609,10 +609,10 @@
                                 <tr>
                                     <th class="sortable-header" onclick="rms.setRiskRegisterSort('id')">ID <span id="riskSortArrow-id" class="sort-arrow">↕</span></th>
                                     <th class="risk-description-column">Description</th>
-                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('process')">Process / Sub-process <span id="riskSortArrow-process" class="sort-arrow">↕</span></th>
+                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('process')">Processus / sous-processus <span id="riskSortArrow-process" class="sort-arrow">↕</span></th>
                                     <th>Thématique</th>
                                     <th>Type</th>
-                                    <th>Entities</th>
+                                    <th>Entités</th>
                                     <th class="tiers-header-cell">
                                         <div class="risk-tier-filter-header">
                                             <span>Tiers</span>
@@ -620,7 +620,7 @@
                                                 class="risk-tier-filter-toggle"
                                                 id="riskTierFilterToggle"
                                                 type="button"
-                                                aria-label="Filter by tiers"
+                                                aria-label="Filtrer par tiers"
                                                 aria-expanded="false"
                                                 onclick="toggleRiskTierFilterDropdown()"
                                             >
@@ -629,18 +629,18 @@
                                             </button>
                                             <div id="riskTierFilterMenu" class="risk-tier-filter-menu" hidden>
                                                 <div class="risk-tier-filter-menu-header">
-                                                    <span>Filter tiers</span>
-                                                    <button type="button" class="risk-tier-filter-clear" onclick="clearRiskTierFilters()">Reset</button>
+                                                    <span>Filtrer les tiers</span>
+                                                    <button type="button" class="risk-tier-filter-clear" onclick="clearRiskTierFilters()">Réinitialiser</button>
                                                 </div>
                                                 <div id="riskTierFilterOptions" class="risk-tier-filter-options"></div>
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('gross')">Gross score <span id="riskSortArrow-gross" class="sort-arrow">↕</span></th>
-                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('aggravated')">Aggravated score <span id="riskSortArrow-aggravated" class="sort-arrow">↕</span></th>
-                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('net')">Net score <span id="riskSortArrow-net" class="sort-arrow">↕</span></th>
-                                    <th>Action plans</th>
-                                    <th>Status</th>
+                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('gross')">Score brut <span id="riskSortArrow-gross" class="sort-arrow">↕</span></th>
+                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('aggravated')">Score aggravé <span id="riskSortArrow-aggravated" class="sort-arrow">↕</span></th>
+                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('net')">Score net <span id="riskSortArrow-net" class="sort-arrow">↕</span></th>
+                                    <th>Plan d’actions</th>
+                                    <th>Statut</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -657,10 +657,10 @@
         <div id="controls-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Controls and Mitigation Measures</div>
+                    <div class="toolbar-title">Contrôles et mesures d’atténuation</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-primary" onclick="addNewControl()">
-                            + New Control
+                            + Nouveau contrôle
                         </button>
                     </div>
                 </div>
@@ -668,24 +668,24 @@
                 <div class="content-area">
                     <div class="filters-bar">
                         <div class="filter-group">
-                            <label class="filter-label" for="controlsTypeFilter">Control type</label>
+                            <label class="filter-label" for="controlsTypeFilter">Type de contrôle</label>
                             <select id="controlsTypeFilter" class="filter-select" data-filter-key="type" onchange="applyControlFilters('type', this.value, this)">
-                                <option value="">All control types</option>
+                                <option value="">Tous les types de contrôle</option>
                             </select>
                         </div>
                         <div class="search-box">
-                            <label class="filter-label" for="controlsSearchInput">Search</label>
-                            <input type="search" id="controlsSearchInput" class="search-input" placeholder="Search by owner or label" data-filter-key="search" oninput="searchControls(this.value, this)">
+                            <label class="filter-label" for="controlsSearchInput">Recherche</label>
+                            <input type="search" id="controlsSearchInput" class="search-input" placeholder="Rechercher par responsable ou libellé" data-filter-key="search" oninput="searchControls(this.value, this)">
                         </div>
                     </div>
                     <div class="controls-section">
-                        <div class="form-section-title">Active Controls</div>
+                        <div class="form-section-title">Contrôles actifs</div>
                             <div class="controls-table">
                             <div class="controls-table-header">
-                                <div>Control name</div>
+                                <div>Nom du contrôle</div>
                                 <div>Type</div>
-                                <div>Owner</div>
-                                <div>Control evaluation</div>
+                                <div>Responsable</div>
+                                <div>Évaluation du contrôle</div>
                                 <div class="controls-table-actions">Actions</div>
                             </div>
                             <div class="controls-table-body" id="controlsList">
@@ -697,51 +697,51 @@
             </div>
         </div>
 
-        <!-- Action Plans Tab -->
+        <!-- Plans d’action Tab -->
         <div id="plans-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Action Plans</div>
+                    <div class="toolbar-title">Plans d’action</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-primary" onclick="addNewActionPlan()">
-                            + New Plan
+                            + Nouveau plan
                         </button>
                     </div>
                 </div>
 
                 <div class="content-area">
                     <div class="controls-section">
-                        <div class="form-section-title">Action Plans</div>
+                        <div class="form-section-title">Plans d’action</div>
                         <div class="filters-bar">
                             <div class="filter-group">
-                                <label class="filter-label" for="actionPlansNameFilter">Name</label>
-                                <input type="search" id="actionPlansNameFilter" class="search-input" placeholder="Search by name" data-action-plan-filter="name" oninput="applyActionPlanFilters('name', this.value, this)">
+                                <label class="filter-label" for="actionPlansNameFilter">Nom</label>
+                                <input type="search" id="actionPlansNameFilter" class="search-input" placeholder="Rechercher par nom" data-action-plan-filter="name" oninput="applyActionPlanFilters('name', this.value, this)">
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label" for="actionPlansOwnerFilter">Owner</label>
-                                <input type="search" id="actionPlansOwnerFilter" class="search-input" placeholder="Filter by owner" data-action-plan-filter="owner" oninput="applyActionPlanFilters('owner', this.value, this)">
+                                <label class="filter-label" for="actionPlansOwnerFilter">Responsable</label>
+                                <input type="search" id="actionPlansOwnerFilter" class="search-input" placeholder="Filtrer par responsable" data-action-plan-filter="owner" oninput="applyActionPlanFilters('owner', this.value, this)">
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label" for="actionPlansStatusFilter">Status</label>
+                                <label class="filter-label" for="actionPlansStatusFilter">Statut</label>
                                 <select id="actionPlansStatusFilter" class="filter-select" data-action-plan-filter="status" onchange="applyActionPlanFilters('status', this.value, this)">
-                                    <option value="">All statuses</option>
+                                    <option value="">Tous les statuts</option>
                                 </select>
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label" for="actionPlansDueDateSort">Due date</label>
+                                <label class="filter-label" for="actionPlansDueDateSort">Échéance</label>
                                 <select id="actionPlansDueDateSort" class="filter-select" data-action-plan-filter="dueDateOrder" onchange="applyActionPlanFilters('dueDateOrder', this.value, this)">
-                                    <option value="">No sort</option>
-                                    <option value="asc">Oldest first</option>
-                                    <option value="desc">Newest first</option>
+                                    <option value="">Aucun tri</option>
+                                    <option value="asc">Plus anciens d’abord</option>
+                                    <option value="desc">Plus récents d’abord</option>
                                 </select>
                             </div>
                         </div>
                         <div class="controls-table">
                             <div class="controls-table-header">
-                                <div>Action plan name</div>
-                                <div>Owner</div>
-                                <div>Due date</div>
-                                <div>Status</div>
+                                <div>Nom du plan d’action</div>
+                                <div>Responsable</div>
+                                <div>Échéance</div>
+                                <div>Statut</div>
                                 <div class="controls-table-actions">Actions</div>
                             </div>
                             <div class="controls-table-body" id="actionPlansList">
@@ -759,25 +759,25 @@
                     <div class="toolbar-title">Administration</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-outline" type="button" onclick="importRisksAssessmentXlsx()">
-                            ⬆️ Import risques (XLSX)
+                            ⬆️ Importer les risques (XLSX)
                         </button>
                         <button class="btn btn-outline" type="button" onclick="importRisksAssessmentCsv()">
-                            ⬆️ Import risques (CSV legacy)
+                            ⬆️ Importer les risques (CSV historique)
                         </button>
                         <button class="btn btn-outline" type="button" onclick="exportReportsRisksXlsx()">
-                            ⬇️ Export risques (XLSX)
+                            ⬇️ Exporter les risques (XLSX)
                         </button>
                         <button class="btn btn-outline" type="button" onclick="exportRisksAssessmentCsv()">
-                            ⬇️ Export risques (CSV legacy)
+                            ⬇️ Exporter les risques (CSV historique)
                         </button>
                         <button class="btn btn-outline" type="button" onclick="importControlsCsv()">
-                            ⬆️ Import controls (CSV)
+                            ⬆️ Importer les contrôles (CSV)
                         </button>
                         <button class="btn btn-outline" type="button" onclick="exportControlsCsv()">
-                            ⬇️ Export controls (CSV)
+                            ⬇️ Exporter les contrôles (CSV)
                         </button>
                         <button class="btn btn-outline" id="configExportButton" onclick="handleConfigExport()">
-                            💾 Export processes
+                            💾 Exporter les processus
                         </button>
                     </div>
                 </div>
@@ -791,27 +791,27 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.154</span>
+            <span class="app-version">Version 2.14.155</span>
         </footer>
     </div>
 
     <div id="referentDirectoryModal" class="modal">
         <div class="modal-content medium">
             <div class="modal-header">
-                <h3 class="modal-title">Preload referents</h3>
+                <h3 class="modal-title">Précharger les référents</h3>
                 <button class="modal-close" onclick="rms.closeReferentDirectoryModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-section">
-                    <div class="form-section-title">Paste your list</div>
-                    <p class="referent-directory-hint">Add multiple names separated by line breaks, commas, or semicolons.</p>
+                    <div class="form-section-title">Collez votre liste</div>
+                    <p class="referent-directory-hint">Ajoutez plusieurs noms séparés par des retours à la ligne, des virgules ou des points-virgules.</p>
                     <textarea id="referentDirectoryInput" class="form-textarea" rows="6" placeholder="Ex. Jean Dupont&#10;Marie Martin&#10;Service Achats"></textarea>
-                    <div id="referentDirectoryHelper" class="referent-directory-helper">No referent detected yet.</div>
+                    <div id="referentDirectoryHelper" class="referent-directory-helper">Aucun référent détecté pour le moment.</div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" onclick="rms.closeReferentDirectoryModal()">Cancel</button>
-                <button class="btn btn-primary" type="button" onclick="rms.saveReferentDirectoryFromModal()">Save</button>
+                <button class="btn btn-secondary" type="button" onclick="rms.closeReferentDirectoryModal()">Annuler</button>
+                <button class="btn btn-primary" type="button" onclick="rms.saveReferentDirectoryFromModal()">Enregistrer</button>
             </div>
         </div>
     </div>
@@ -819,54 +819,54 @@
     <div id="interviewModal" class="modal">
         <div class="modal-content large">
             <div class="modal-header">
-                <h3 class="modal-title" id="interviewModalTitle">New interview report</h3>
+                <h3 class="modal-title" id="interviewModalTitle">Nouveau compte rendu d’entretien</h3>
                 <button class="modal-close" onclick="rms.closeInterviewModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="interviewForm" onsubmit="rms.saveInterview(); return false;">
                     <div class="form-section">
-                        <div class="form-section-title">Main information</div>
+                        <div class="form-section-title">Informations principales</div>
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label" for="interviewTitle">Interview topic (optional)</label>
-                                <input class="form-input" type="text" id="interviewTitle" name="title" placeholder="e.g. Discussion with Procurement referent">
+                                <label class="form-label" for="interviewTitle">Sujet de l’entretien (facultatif)</label>
+                                <input class="form-input" type="text" id="interviewTitle" name="title" placeholder="ex. Discussion avec le référent achats">
                             </div>
                             <div class="form-group">
-                                <label class="form-label required" for="interviewReferents">Interviewed referents</label>
+                                <label class="form-label required" for="interviewReferents">Référents interrogés</label>
                                 <select id="interviewReferents" class="form-select" multiple size="6" onchange="rms.handleInterviewReferentsChange(this)"></select>
-                                <div class="form-helper">Hold Ctrl (Windows) or ⌘ (Mac) for multiple selection.</div>
+                                <div class="form-helper">Maintenez Ctrl (Windows) ou ⌘ (Mac) pour une sélection multiple.</div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label required" for="interviewDate">Interview date</label>
+                                <label class="form-label required" for="interviewDate">Date de l’entretien</label>
                                 <input class="form-input" type="date" id="interviewDate" name="date" required>
                             </div>
                         </div>
                     </div>
                     <div class="form-section">
-                        <div class="form-section-title">Associated process & sub-process</div>
+                        <div class="form-section-title">Processus et sous-processus associés</div>
                         <div class="interview-scope-helper" id="interviewScopeHelper">
-                            Select one or more referents to display matching sub-processes.
+                            Sélectionnez un ou plusieurs référents pour afficher les sous-processus correspondants.
                         </div>
                         <div id="interviewScopeSelection" class="interview-scope-selection"></div>
                     </div>
                     <div class="form-section">
-                        <div class="form-section-title">Detailed interview report</div>
+                        <div class="form-section-title">Compte rendu détaillé de l’entretien</div>
                         <div class="template-select-bar">
                             <button type="button" class="btn btn-outline" onclick="rms.openInterviewTemplateModal()">
-                                📄 Choose a template
+                                📄 Choisir un modèle
                             </button>
                             <button type="button" class="btn btn-secondary" id="openMindmapButton">
-                                🧠 Mind mapping workshop
+                                🧠 Atelier de cartographie mentale
                             </button>
                         </div>
                         <div class="wysiwyg-editor">
                             <div class="wysiwyg-toolbar">
-                                <button type="button" class="wysiwyg-button" title="Bold" onclick="rms.applyInterviewFormat('bold')"><strong>B</strong></button>
-                                <button type="button" class="wysiwyg-button" title="Italic" onclick="rms.applyInterviewFormat('italic')"><em>I</em></button>
-                                <button type="button" class="wysiwyg-button" title="Bullet list" onclick="rms.applyInterviewFormat('insertUnorderedList')">• List</button>
-                                <button type="button" class="wysiwyg-button" title="Numbered list" onclick="rms.applyInterviewFormat('insertOrderedList')">1. Liste</button>
-                                <button type="button" class="wysiwyg-button" title="Link" onclick="rms.applyInterviewLink()">🔗</button>
-                                <button type="button" class="wysiwyg-button" title="Clear formatting" onclick="rms.clearInterviewFormatting()">🧹</button>
+                                <button type="button" class="wysiwyg-button" title="Gras" onclick="rms.applyInterviewFormat('bold')"><strong>B</strong></button>
+                                <button type="button" class="wysiwyg-button" title="Italique" onclick="rms.applyInterviewFormat('italic')"><em>I</em></button>
+                                <button type="button" class="wysiwyg-button" title="Liste à puces" onclick="rms.applyInterviewFormat('insertUnorderedList')">• Liste</button>
+                                <button type="button" class="wysiwyg-button" title="Liste numérotée" onclick="rms.applyInterviewFormat('insertOrderedList')">1. Liste</button>
+                                <button type="button" class="wysiwyg-button" title="Lien" onclick="rms.applyInterviewLink()">🔗</button>
+                                <button type="button" class="wysiwyg-button" title="Effacer la mise en forme" onclick="rms.clearInterviewFormatting()">🧹</button>
                             </div>
                             <div id="interviewNotes" class="wysiwyg-content" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Enter your interview summary here..."></div>
                         </div>
@@ -874,17 +874,17 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewModal()">Cancel</button>
-                <button class="btn btn-primary" type="submit" form="interviewForm">Save</button>
+                <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewModal()">Annuler</button>
+                <button class="btn btn-primary" type="submit" form="interviewForm">Enregistrer</button>
             </div>
         </div>
     </div>
 
     <div id="mindmapModal" class="modal mindmap-modal">
         <div class="modal-content fullscreen mindmap-content">
-            <button class="mindmap-modal-close modal-close" type="button" aria-label="Close mindmap workshop" onclick="rms.closeMindMapModal()">&times;</button>
+            <button class="mindmap-modal-close modal-close" type="button" aria-label="Fermer l’atelier de cartographie mentale" onclick="rms.closeMindMapModal()">&times;</button>
             <div class="modal-body mindmap-body">
-                <iframe id="mindmapFrame" class="mindmap-iframe" title="Mind mapping workshop" src="mindmap/index.html"></iframe>
+                <iframe id="mindmapFrame" class="mindmap-iframe" title="Atelier de cartographie mentale" src="mindmap/index.html"></iframe>
             </div>
         </div>
     </div>
@@ -892,15 +892,15 @@
     <div id="interviewTemplateModal" class="modal">
         <div class="modal-content medium">
             <div class="modal-header">
-                <h3 class="modal-title">Interview templates</h3>
+                <h3 class="modal-title">Modèles d’entretien</h3>
                 <button class="modal-close" onclick="rms.closeInterviewTemplateModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <p class="template-modal-helper">Select a configured template to prefill the report.</p>
+                <p class="template-modal-helper">Sélectionnez un modèle configuré pour préremplir le compte rendu.</p>
                 <div id="interviewTemplateList" class="template-choice-list"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewTemplateModal()">Close</button>
+                <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewTemplateModal()">Fermer</button>
             </div>
         </div>
     </div>
@@ -908,22 +908,22 @@
     <div id="interviewViewModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="interviewViewModalTitle">Interview report</h3>
+                <h3 class="modal-title" id="interviewViewModalTitle">Compte rendu d’entretien</h3>
                 <button class="modal-close" onclick="rms.closeInterviewViewModal()">&times;</button>
             </div>
             <div class="modal-body interview-view-body">
                 <div class="interview-view-meta" id="interviewViewDate"></div>
                 <div class="interview-view-meta" id="interviewViewUpdated"></div>
                 <div class="interview-view-section">
-                    <div class="interview-view-section-title">Interviewed referents</div>
+                    <div class="interview-view-section-title">Référents interrogés</div>
                     <div class="interview-view-section-content" id="interviewViewReferents"></div>
                 </div>
                 <div class="interview-view-section">
-                    <div class="interview-view-section-title">Process & sub-process</div>
+                    <div class="interview-view-section-title">Processus & sous-processus</div>
                     <div class="interview-view-section-content" id="interviewViewTags"></div>
                 </div>
                 <div class="interview-view-section">
-                    <div class="interview-view-section-title">Detailed interview report</div>
+                    <div class="interview-view-section-title">Compte rendu détaillé de l’entretien</div>
                     <div class="interview-view-notes" id="interviewViewNotes"></div>
                 </div>
                 <div class="interview-view-section">
@@ -932,8 +932,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" id="openInterviewMindmapButton" onclick="rms.openInterviewMindMapViewer()" disabled>View mindmap</button>
-                <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewViewModal()">Close</button>
+                <button class="btn btn-secondary" type="button" id="openInterviewMindmapButton" onclick="rms.openInterviewMindMapViewer()" disabled>Voir la carte mentale</button>
+                <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewViewModal()">Fermer</button>
             </div>
         </div>
     </div>
@@ -941,13 +941,13 @@
     <div id="mentionsModal" class="modal">
         <div class="modal-content large">
             <div class="modal-header">
-                <h3 class="modal-title">To clarify</h3>
+                <h3 class="modal-title">À clarifier</h3>
                 <button class="modal-close" type="button" onclick="rms.closeMentionsModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="mention-modal-filters">
-                    <button class="btn btn-secondary mention-filter is-active" type="button" data-mention-filter="active">To clarify</button>
-                    <button class="btn btn-outline mention-filter" type="button" data-mention-filter="archived">Archived</button>
+                    <button class="btn btn-secondary mention-filter is-active" type="button" data-mention-filter="active">À clarifier</button>
+                    <button class="btn btn-outline mention-filter" type="button" data-mention-filter="archived">Archivés</button>
                 </div>
                 <div id="mentionsModalList" class="mention-modal-list" aria-live="polite"></div>
             </div>
@@ -958,66 +958,66 @@
     <div id="controlModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="controlModalTitle">New Control</h3>
+                <h3 class="modal-title" id="controlModalTitle">Nouveau contrôle</h3>
                 <button class="modal-close" onclick="closeControlModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="controlForm" onsubmit="saveControl(); return false;" novalidate>
                     <div class="form-section">
-                        <div class="form-section-title">General Information</div>
+                        <div class="form-section-title">Informations générales</div>
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label required" for="controlName">Control name</label>
-                                <input class="form-input" type="text" id="controlName" name="name" required placeholder="e.g. Cross-checking invoices">
+                                <label class="form-label required" for="controlName">Nom du contrôle</label>
+                                <input class="form-input" type="text" id="controlName" name="name" required placeholder="ex. Contrôle croisé des factures">
                             </div>
 
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Risk(s) couvert(s)</label>
+                                <label class="form-label">Risque(s) couvert(s)</label>
                                 <div class="risk-selection">
                                     <div class="selected-risks" id="selectedRisks"></div>
-                                    <button type="button" class="btn btn-secondary" onclick="openRiskSelector()">+ Select risks</button>
+                                    <button type="button" class="btn btn-secondary" onclick="openRiskSelector()">+ Sélectionner des risques</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Control settings</div>
+                        <div class="form-section-title">Paramètres du contrôle</div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label class="form-label" for="controlReference">Reference</label>
+                                <label class="form-label" for="controlReference">Référence</label>
                                 <input class="form-input" type="text" id="controlReference" name="reference" placeholder="Ex. GEN.01">
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label" for="controlGroupCode">Group Framework or Procedure CODE</label>
+                                <label class="form-label" for="controlGroupCode">CODE référentiel groupe ou procédure</label>
                                 <input class="form-input" type="text" id="controlGroupCode" name="groupCode" placeholder="Ex. VE13">
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="controlType">Type</label>
                                 <select class="form-select" id="controlType" name="type">
-                                    <option value="">Select...</option>
+                                    <option value="">Sélectionner...</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label" for="controlOwner">Owner</label>
-                                <input class="form-input" type="text" id="controlOwner" name="owner" list="controlOwnerSuggestions" placeholder="Ex. Internal Control">
+                                <label class="form-label" for="controlOwner">Responsable</label>
+                                <input class="form-input" type="text" id="controlOwner" name="owner" list="controlOwnerSuggestions" placeholder="Ex. Contrôle interne">
                                 <datalist id="controlOwnerSuggestions"></datalist>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label" for="controlMode">Execution Frequency</label>
+                                <label class="form-label" for="controlMode">Fréquence d’exécution</label>
                                 <select class="form-select" id="controlMode" name="mode">
-                                    <option value="">Select...</option>
+                                    <option value="">Sélectionner...</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label" for="controlEffectiveness">Control evaluation</label>
+                                <label class="form-label" for="controlEffectiveness">Évaluation du contrôle</label>
                                 <select class="form-select" id="controlEffectiveness" name="effectiveness">
-                                    <option value="">Select...</option>
+                                    <option value="">Sélectionner...</option>
                                 </select>
                             </div>
 
@@ -1025,19 +1025,19 @@
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Details</div>
+                        <div class="form-section-title">Détails</div>
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label" for="controlDescription">Description / Procedure</label>
-                                <textarea class="form-textarea" id="controlDescription" name="description" rows="4" placeholder="Describe the control steps and key watch points"></textarea>
+                                <label class="form-label" for="controlDescription">Description / procédure</label>
+                                <textarea class="form-textarea" id="controlDescription" name="description" rows="4" placeholder="Décrivez les étapes du contrôle et les points de vigilance clés"></textarea>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeControlModal()">Cancel</button>
-                <button class="btn btn-success" onclick="saveControl()">Save</button>
+                <button class="btn btn-secondary" onclick="closeControlModal()">Annuler</button>
+                <button class="btn btn-success" onclick="saveControl()">Enregistrer</button>
             </div>
     </div>
     </div>
@@ -1046,183 +1046,183 @@
     <div id="actionPlanModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="actionPlanModalTitle">New Action Plan</h3>
+                <h3 class="modal-title" id="actionPlanModalTitle">Nouveau plan d’action</h3>
                 <button class="modal-close" onclick="closeActionPlanModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="actionPlanForm" onsubmit="saveActionPlan(); return false;" novalidate>
                     <div class="form-section">
-                        <div class="form-section-title">General Information</div>
+                        <div class="form-section-title">Informations générales</div>
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label required" for="planTitle">Plan title</label>
-                                <input class="form-input" type="text" id="planTitle" name="title" required placeholder="e.g. Strengthen segregation of duties">
+                                <label class="form-label required" for="planTitle">Titre du plan</label>
+                                <input class="form-input" type="text" id="planTitle" name="title" required placeholder="ex. Renforcer la séparation des tâches">
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Associated risk(s)</label>
+                                <label class="form-label">Risque(s) associé(s)</label>
                                 <div class="risk-selection">
                                     <div class="selected-risks" id="selectedRisksForPlan"></div>
-                                    <button type="button" class="btn btn-secondary" onclick="openRiskSelectorForPlan()">+ Select risks</button>
+                                    <button type="button" class="btn btn-secondary" onclick="openRiskSelectorForPlan()">+ Sélectionner des risques</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Details</div>
+                        <div class="form-section-title">Détails</div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label class="form-label" for="planOwner">Owner</label>
+                                <label class="form-label" for="planOwner">Responsable</label>
                                 <input class="form-input" type="text" id="planOwner" name="owner" placeholder="Personne responsable du suivi" list="planOwnerSuggestions">
                                 <datalist id="planOwnerSuggestions"></datalist>
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="planDueDate">Due date</label>
+                                <label class="form-label" for="planDueDate">Échéance</label>
                                 <input class="form-input" type="date" id="planDueDate" name="dueDate">
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label" for="planStatus">Status</label>
+                                <label class="form-label" for="planStatus">Statut</label>
                                 <select class="form-select" id="planStatus" name="status">
-                                    <option value="">Select...</option>
+                                    <option value="">Sélectionner...</option>
                                 </select>
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label class="form-label" for="planDescription">Description</label>
-                                <textarea class="form-textarea" id="planDescription" name="description" rows="4" placeholder="Specify key milestones and expected deliverables"></textarea>
+                                <textarea class="form-textarea" id="planDescription" name="description" rows="4" placeholder="Précisez les jalons clés et les livrables attendus"></textarea>
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label" for="planComment">Comment</label>
-                                <textarea class="form-textarea" id="planComment" name="comment" rows="5" placeholder="Add context, blockers, or useful notes"></textarea>
+                                <label class="form-label" for="planComment">Commentaire</label>
+                                <textarea class="form-textarea" id="planComment" name="comment" rows="5" placeholder="Ajouter context, blockers, or useful notes"></textarea>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeActionPlanModal()">Cancel</button>
-                <button class="btn btn-success" onclick="saveActionPlan()">Save</button>
+                <button class="btn btn-secondary" onclick="closeActionPlanModal()">Annuler</button>
+                <button class="btn btn-success" onclick="saveActionPlan()">Enregistrer</button>
             </div>
         </div>
     </div>
 
-    <!-- Risk Selector Modal for Action Plans -->
+    <!-- Risque Selector Modal for Plans d’action -->
     <div id="riskSelectorPlanModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Link a risk</h3>
+                <h3 class="modal-title">Lien a risk</h3>
                 <button class="modal-close" onclick="closeRiskSelectorForPlan()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-section">
-                    <div class="form-section-title">Search in the register</div>
+                    <div class="form-section-title">Recherche in the register</div>
                     <div class="form-grid">
                         <div class="form-group" style="grid-column: 1 / -1;">
-                            <label class="form-label" for="riskSearchInputPlan">Filter risks</label>
-                            <input class="form-input" type="text" id="riskSearchInputPlan" placeholder="Search by identifier, title, or description" onkeyup="filterRisksForPlan(this.value)">
+                            <label class="form-label" for="riskSearchInputPlan">Filtrer les risques</label>
+                            <input class="form-input" type="text" id="riskSearchInputPlan" placeholder="Rechercher par identifiant, titre ou description" onkeyup="filterRisksForPlan(this.value)">
                         </div>
                     </div>
                 </div>
                 <div class="form-section">
-                    <div class="form-section-title">Available risks</div>
+                    <div class="form-section-title">Risques disponibles</div>
                     <div class="risk-list" id="riskListForPlan"></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeRiskSelectorForPlan()">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="confirmRiskSelectionForPlan()">Confirm</button>
+                <button type="button" class="btn btn-secondary" onclick="closeRiskSelectorForPlan()">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="confirmRiskSelectionForPlan()">Confirmer</button>
             </div>
         </div>
     </div>
 
-    <!-- Risk Selector Modal for Controls -->
+    <!-- Risque Selector Modal for Controls -->
     <div id="riskSelectorModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Select covered risks</h2>
+                <h2>Sélectionner les risques couverts</h2>
                 <span class="close" onclick="closeRiskSelector()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="search-box">
-                    <input type="text" class="search-input" id="riskSearchInput" placeholder="Filter by ID or title..." onkeyup="filterRisksForControl(this.value)">
+                    <input type="text" class="search-input" id="riskSearchInput" placeholder="Filtrer par ID ou titre..." onkeyup="filterRisksForControl(this.value)">
                 </div>
                 <div class="risk-list" id="riskList">
-                    <!-- Risk list will be populated by JavaScript -->
+                    <!-- Risque list will be populated by JavaScript -->
                 </div>
             </div>
             <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeRiskSelector()">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="confirmRiskSelection()">Confirm</button>
+                <button type="button" class="btn btn-secondary" onclick="closeRiskSelector()">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="confirmRiskSelection()">Confirmer</button>
             </div>
     </div>
     </div>
 
-    <!-- Control Selector Modal for Risks -->
+    <!-- Control Selector Modal for Risques -->
     <div id="controlSelectorModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Select associated controls</h2>
+                <h2>Sélectionner les contrôles associés</h2>
                 <span class="close" onclick="closeControlSelector()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="search-box">
-                    <input type="text" class="search-input" id="controlSearchInput" placeholder="Filter by ID or name..." onkeyup="filterControlsForRisk(this.value)">
+                    <input type="text" class="search-input" id="controlSearchInput" placeholder="Filtrer par ID ou nom..." onkeyup="filterControlsForRisk(this.value)">
                 </div>
                 <div class="control-benefit-focus" id="controlBenefitFocus"></div>
                 <div class="modal-secondary-actions">
-                    <button type="button" class="btn btn-outline" onclick="createControlFromRisk()">+ New control</button>
+                    <button type="button" class="btn btn-outline" onclick="createControlFromRisk()">+ Nouveau contrôle</button>
                 </div>
                 <div class="risk-list" id="controlList">
                     <!-- Control list populated by JavaScript -->
                 </div>
             </div>
             <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeControlSelector()">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="confirmControlSelection()">Confirm</button>
+                <button type="button" class="btn btn-secondary" onclick="closeControlSelector()">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="confirmControlSelection()">Confirmer</button>
             </div>
         </div>
     </div>
 
-    <!-- Action Plan Selector Modal for Risks -->
+    <!-- Action Plan Selector Modal for Risques -->
     <div id="actionPlanSelectorModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Select associated action plans</h2>
+                <h2>Sélectionner les plans d’action associés</h2>
                 <span class="close" onclick="closeActionPlanSelector()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="search-box">
-                    <input type="text" class="search-input" id="actionPlanSearchInput" placeholder="Filter by ID or title..." onkeyup="filterActionPlansForRisk(this.value)">
+                    <input type="text" class="search-input" id="actionPlanSearchInput" placeholder="Filtrer par ID ou titre..." onkeyup="filterActionPlansForRisk(this.value)">
                 </div>
                 <div class="modal-secondary-actions">
-                    <button type="button" class="btn btn-outline" onclick="createActionPlanFromRisk()">+ New action plan</button>
+                    <button type="button" class="btn btn-outline" onclick="createActionPlanFromRisk()">+ Nouveau plan d’action</button>
                 </div>
                 <div class="risk-list" id="actionPlanList">
-                    <!-- Action plan list populated by JavaScript -->
+                    <!-- Plan d’action list populated by JavaScript -->
                 </div>
             </div>
             <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeActionPlanSelector()">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="confirmActionPlanSelection()">Confirm</button>
+                <button type="button" class="btn btn-secondary" onclick="closeActionPlanSelector()">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="confirmActionPlanSelection()">Confirmer</button>
             </div>
         </div>
     </div>
 
-    <!-- Risk Form Modal -->
+    <!-- Risque Form Modal -->
     <div id="riskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">New Integrity Risk</h3>
+                <h3 class="modal-title">Nouveau risque d’intégrité</h3>
                 <button class="modal-close" onclick="closeModal('riskModal')">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="riskForm">
                     <div class="form-section">
-                        <div class="form-section-title">General Information</div>
+                        <div class="form-section-title">Informations générales</div>
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label class="form-label" for="riskTheme">Thématique du risque</label>
                                 <select class="form-select" id="riskTheme" required>
-                                    <option value="">Select...</option>
+                                    <option value="">Sélectionner...</option>
                                     <option value="corruption">Corruption</option>
                                     <option value="personal-data">Données Personnelles</option>
                                     <option value="international-sanctions">Sanctions internationales</option>
@@ -1232,132 +1232,132 @@
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label class="form-label">Process</label>
+                                <label class="form-label">Processus</label>
                                 <select class="form-select visually-hidden" id="processus" multiple size="5" onchange="rms.updateSousProcessusOptions()" aria-hidden="true" tabindex="-1">
                                 </select>
-                                <div id="processusChips" class="risk-multi-chip-list" aria-label="Selectable processes"></div>
+                                <div id="processusChips" class="risk-multi-chip-list" aria-label="Processus sélectionnables"></div>
                                 <div class="form-helper">You can select multiple processes.</div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Sub-process</label>
+                                <label class="form-label">Sous-processus</label>
                                 <select class="form-select visually-hidden" id="sousProcessus" multiple size="5" aria-hidden="true" tabindex="-1">
                                 </select>
-                                <div id="sousProcessChips" class="risk-multi-chip-list" aria-label="Selectable sub-processes"></div>
+                                <div id="sousProcessChips" class="risk-multi-chip-list" aria-label="Sous-processus sélectionnables"></div>
                                 <div class="form-helper">Displayed sub-processes depend on selected processes.</div>
                             </div>
                         </div>
 
                         <div class="form-grid">
                             <div class="form-group" data-corruption-specific>
-                                <label class="form-label">Corruption Type</label>
+                                <label class="form-label">Type de corruption</label>
                                 <select class="form-select visually-hidden" id="typeCorruption" multiple size="5" aria-hidden="true" tabindex="-1">
                                 </select>
-                                <div id="typeCorruptionChips" class="risk-multi-chip-list" aria-label="Selectable corruption types"></div>
-                                <div class="form-helper">Multiple selection allowed.</div>
+                                <div id="typeCorruptionChips" class="risk-multi-chip-list" aria-label="Types de corruption sélectionnables"></div>
+                                <div class="form-helper">Sélection multiple autorisée.</div>
                             </div>
                             <div class="form-group" data-corruption-specific>
-                                <label class="form-label">Public / Private corruption</label>
+                                <label class="form-label">Corruption publique / privée</label>
                                 <select class="form-select visually-hidden" id="corruptionExposure" multiple size="2" aria-hidden="true" tabindex="-1">
-                                    <option value="public">Public corruption</option>
-                                    <option value="private">Private corruption</option>
+                                    <option value="public">Corruption publique</option>
+                                    <option value="private">Corruption privée</option>
                                 </select>
-                                <div id="corruptionExposureChips" class="risk-multi-chip-list" aria-label="Selectable public or private corruption"></div>
-                                <div class="form-helper">Multiple selection allowed.</div>
+                                <div id="corruptionExposureChips" class="risk-multi-chip-list" aria-label="Corruption publique ou privée sélectionnable"></div>
+                                <div class="form-helper">Sélection multiple autorisée.</div>
                             </div>
                         </div>
 
                         <div class="form-grid">
                             <div class="form-group" data-corruption-specific>
-                                <label class="form-label">Direct / Indirect corruption</label>
+                                <label class="form-label">Corruption directe / indirecte</label>
                                 <select class="form-select visually-hidden" id="corruptionMode" multiple size="2" aria-hidden="true" tabindex="-1">
-                                    <option value="direct">Direct corruption</option>
-                                    <option value="indirect">Indirect corruption</option>
+                                    <option value="direct">Corruption directe</option>
+                                    <option value="indirect">Corruption indirecte</option>
                                 </select>
-                                <div id="corruptionModeChips" class="risk-multi-chip-list" aria-label="Selectable direct or indirect corruption"></div>
-                                <div class="form-helper">Multiple selection allowed.</div>
+                                <div id="corruptionModeChips" class="risk-multi-chip-list" aria-label="Corruption directe ou indirecte sélectionnable"></div>
+                                <div class="form-helper">Sélection multiple autorisée.</div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Risk status</label>
+                                <label class="form-label">Statut du risque</label>
                                 <select class="form-select" id="statut">
-                                    <option value="">Select...</option>
+                                    <option value="">Sélectionner...</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Target audience</label>
+                                <label class="form-label">Public cible</label>
                                 <select class="form-select visually-hidden" id="targetAudience" multiple size="5" aria-hidden="true" tabindex="-1">
                                 </select>
-                                <div id="targetAudienceChips" class="risk-multi-chip-list" aria-label="Selectable target audience"></div>
+                                <div id="targetAudienceChips" class="risk-multi-chip-list" aria-label="Public cible sélectionnable"></div>
                             </div>
                         </div>
 
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Relevant third parties</label>
+                                <label class="form-label">Tiers concernés</label>
                                 <select class="form-select visually-hidden" id="tiers" multiple size="5" aria-hidden="true" tabindex="-1">
                                 </select>
-                                <div id="tiersChips" class="risk-multi-chip-list" aria-label="Selectable relevant third parties"></div>
+                                <div id="tiersChips" class="risk-multi-chip-list" aria-label="Tiers concernés sélectionnables"></div>
                             </div>
                         </div>
 
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Title</label>
-                                <input class="form-input" type="text" id="titre" placeholder="Short risk title shown in tables, lists, and matrix tooltips">
+                                <label class="form-label">Titre</label>
+                                <input class="form-input" type="text" id="titre" placeholder="Titre court du risque affiché dans les tableaux, listes et infobulles de matrice">
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Risk description</label>
-                                <textarea class="form-textarea" id="description" placeholder="(Actor) (Action using a corruption mechanism) toward (Target) to achieve (Objective). &#10;Example: An Al Hiyad concierge partner offers an undue advantage to secure a VIP service contract"></textarea>
+                                <label class="form-label">Description du risque</label>
+                                <textarea class="form-textarea" id="description" placeholder="(Acteur) (Action utilisant un mécanisme de corruption) envers (Cible) pour atteindre (Objectif). &#10;Exemple: An Al Hiyad concierge partner offers an undue advantage to secure a VIP service contract"></textarea>
                             </div>
                             <div class="form-grid form-grid-two-cols" style="grid-column: 1 / -1;">
                                 <div class="form-group">
-                                    <label class="form-label">Undue benefits</label>
+                                    <label class="form-label">Avantages indus</label>
                                     <div class="chip-input-wrapper">
-                                        <input class="form-input" id="undueBenefitsInput" type="text" list="undueBenefitsSuggestions" placeholder="Enter an undue benefit">
+                                        <input class="form-input" id="undueBenefitsInput" type="text" list="undueBenefitsSuggestions" placeholder="Saisir un avantage indu">
                                         <datalist id="undueBenefitsSuggestions"></datalist>
-                                        <button class="btn btn-outline" type="button" onclick="addRiskChip('undue')">Add</button>
+                                        <button class="btn btn-outline" type="button" onclick="addRiskChip('undue')">Ajouter</button>
                                     </div>
                                     <div class="risk-chip-list" id="undueBenefitsChips"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Expected Outcomes</label>
+                                    <label class="form-label">Résultats attendus</label>
                                     <div class="chip-input-wrapper">
-                                        <input class="form-input" id="expectedBenefitsInput" type="text" list="expectedBenefitsSuggestions" placeholder="Enter an expected outcome">
+                                        <input class="form-input" id="expectedBenefitsInput" type="text" list="expectedBenefitsSuggestions" placeholder="Saisir un résultat attendu">
                                         <datalist id="expectedBenefitsSuggestions"></datalist>
-                                        <button class="btn btn-outline" type="button" onclick="addRiskChip('expected')">Add</button>
+                                        <button class="btn btn-outline" type="button" onclick="addRiskChip('expected')">Ajouter</button>
                                     </div>
                                     <div class="risk-chip-list" id="expectedBenefitsChips"></div>
                                 </div>
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Example</label>
-                                <textarea class="form-textarea" id="example" rows="4" placeholder="Add a concrete example that will be displayed on matrix hover."></textarea>
+                                <label class="form-label">Exemple</label>
+                                <textarea class="form-textarea" id="example" rows="4" placeholder="Ajouter a concrete example that will be displayed on matrix hover."></textarea>
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label class="form-label">Relevant entities</label>
+                                <label class="form-label">Entités concernées</label>
                                 <div class="multi-select-toolbar">
-                                    <button type="button" class="btn btn-outline" onclick="selectAllRiskCountries()">Select all</button>
-                                    <button type="button" class="btn btn-outline" onclick="deselectAllRiskCountries()">Deselect all</button>
+                                    <button type="button" class="btn btn-outline" onclick="selectAllRiskCountries()">Tout sélectionner</button>
+                                    <button type="button" class="btn btn-outline" onclick="deselectAllRiskCountries()">Tout désélectionner</button>
                                 </div>
                                 <div id="riskCountryColumns" class="risk-country-columns"></div>
                                 <select class="form-select visually-hidden" id="riskCountries" multiple size="6" aria-hidden="true" tabindex="-1"></select>
-                                <div class="form-helper">Select entities using checkboxes or use the quick actions above.</div>
+                                <div class="form-helper">Sélectionnez les entités avec les cases à cocher ou utilisez les actions rapides ci-dessus.</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Risk assessment</div>
+                        <div class="form-section-title">Évaluation du risque</div>
                         <div class="risk-matrix-editor">
                             <div class="matrix-info-row risk-matrix-layout">
                                 <div class="edit-matrix-group" data-state="brut">
-                                    <div class="edit-matrix-heading">Gross Risk</div>
+                                    <div class="edit-matrix-heading">Risque brut</div>
                                     <div class="edit-matrix-container">
                                         <div class="matrix edit-matrix" id="riskMatrixEditBrut" data-state="brut">
                                             <div class="matrix-grid" id="riskMatrixEditGridBrut"></div>
-                                            <div class="axis-label x-axis">Probability →</div>
+                                            <div class="axis-label x-axis">Probabilité →</div>
                                             <div class="axis-label y-axis">
                                                 <span class="axis-text">Impact</span>
                                                 <span class="axis-arrow" aria-hidden="true">↑</span>
@@ -1367,14 +1367,14 @@
                                 </div>
                                 <div id="matrixDescriptionBrut" class="matrix-description">
                                     <div class="matrix-description-empty">
-                                        Select a level and move the marker in the matrix to display Probability and impact definitions.
+                                        Sélectionnez un niveau et déplacez le marqueur dans la matrice pour afficher les définitions de probabilité et d’impact.
                                     </div>
                                 </div>
                             </div>
                             <div class="aggravating-factors" id="aggravatingFactorsBlock" aria-live="polite"></div>
                             <div class="risk-score-cards">
                                 <div class="risk-score-card brut active" data-state="brut">
-                                    <div class="risk-score-title">Gross Risk</div>
+                                    <div class="risk-score-title">Risque brut</div>
                                     <div class="risk-score-value" id="scoreBrut">Score: 1</div>
                                     <div class="risk-score-meta" id="coordBrut">P1 × I1</div>
                                 </div>
@@ -1391,12 +1391,12 @@
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Associated Controls</div>
+                        <div class="form-section-title">Contrôles associés</div>
                         <div class="controls-section">
                             <button type="button" class="btn btn-secondary" onclick="openControlSelector()">
-                                + Add a transverse control
+                                + Ajouter un contrôle transverse
                             </button>
-                            <div class="form-helper">Tip: use “Add a transverse control” for a global control, or “Add a control” from an undue benefit for targeted linkage.</div>
+                            <div class="form-helper">Astuce : utilisez « Ajouter un contrôle transverse » pour un contrôle global, ou « Ajouter un contrôle » depuis un avantage indu pour un lien ciblé.</div>
                             <div class="benefit-first-assignment" id="benefitFirstAssignment"></div>
                             <div class="controls-grid" id="riskControls" style="margin-top: 15px;">
                                 <!-- Selected controls will appear here -->
@@ -1405,43 +1405,43 @@
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Risk assessment Net</div>
+                        <div class="form-section-title">Évaluation du risque Net</div>
                         <div class="net-matrix-editor">
                             <div class="net-matrix-wrapper">
                                 <div class="net-slider-layout">
                                     <div class="net-slider-panel" data-state="net">
                                         <div class="net-slider-header">
-                                            <div class="net-slider-title">Applied control level</div>
+                                            <div class="net-slider-title">Niveau de contrôle appliqué</div>
                                         </div>
                                         <div class="net-slider-track">
-                                            <input type="range" id="netMitigationSlider" class="net-slider-input" min="1" max="4" step="1" value="2" aria-label="Net risk control level">
+                                            <input type="range" id="netMitigationSlider" class="net-slider-input" min="1" max="4" step="1" value="2" aria-label="Niveau de contrôle du risque net">
                                             <div class="net-slider-marks" id="netMitigationMarks"></div>
                                         </div>
                                         <div class="net-slider-footer">
                                             <span class="net-slider-percent" id="netMitigationPercentLabel">Coefficient 0,50</span>
-                                            <span class="net-severity-badge" id="netSeverityLabel" data-severity="faible">Low Risk</span>
+                                            <span class="net-severity-badge" id="netSeverityLabel" data-severity="faible">Risque faible</span>
                                         </div>
                                     </div>
                                     <div id="matrixDescriptionNet" class="matrix-description">
                                         <div class="matrix-description-empty">
-                                            Adjust control level to visualize effectiveness applied to risk.
+                                            Ajustez le niveau de contrôle pour visualiser l’efficacité appliquée au risque.
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="risk-score-card" data-state="net">
-                                <div class="risk-score-title">Net Risk</div>
+                                <div class="risk-score-title">Risque net</div>
                                 <div class="risk-score-value" id="scoreNet">Score: 0</div>
-                                <div class="risk-score-meta" id="coordNet">Gross 0 × Coefficient 1,00</div>
+                                <div class="risk-score-meta" id="coordNet">Brut 0 × Coefficient 1,00</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Associated action plans</div>
+                        <div class="form-section-title">Plans d’action associés</div>
                         <div class="controls-section">
                             <button type="button" class="btn btn-secondary" onclick="openActionPlanSelector()">
-                                + Add an action plan
+                                + Ajouter un plan d’action
                             </button>
                             <div class="controls-grid" id="riskActionPlans" style="margin-top: 15px;">
                                 <!-- Selected action plans will appear here -->
@@ -1453,47 +1453,47 @@
                                     <div class="net-slider-layout">
                                         <div class="net-slider-panel" data-state="post">
                                             <div class="net-slider-header">
-                                                <div class="net-slider-title">Post action plan control level</div>
-                                                <div class="form-helper">Select a control level equal to or stronger than the net risk control level.</div>
+                                                <div class="net-slider-title">Niveau de contrôle après plan d’action</div>
+                                                <div class="form-helper">Sélectionnez un niveau de contrôle égal ou supérieur au niveau de contrôle du risque net.</div>
                                             </div>
                                             <div class="net-slider-track">
-                                                <input type="range" id="postActionMitigationSlider" class="net-slider-input" min="1" max="4" step="1" value="2" aria-label="Post action plan control level">
+                                                <input type="range" id="postActionMitigationSlider" class="net-slider-input" min="1" max="4" step="1" value="2" aria-label="Niveau de contrôle après plan d’action">
                                                 <div class="net-slider-marks" id="postActionMitigationMarks"></div>
                                             </div>
                                             <div class="net-slider-footer">
                                                 <span class="net-slider-percent" id="postActionMitigationPercentLabel">Coefficient 0,50</span>
-                                                <span class="net-severity-badge" id="postActionSeverityLabel" data-severity="faible">Low Risk</span>
+                                                <span class="net-severity-badge" id="postActionSeverityLabel" data-severity="faible">Risque faible</span>
                                             </div>
                                         </div>
                                         <div id="matrixDescriptionPost" class="matrix-description">
                                             <div class="matrix-description-empty">
-                                                Adjust post action plan control level to visualize expected residual risk after implementation.
+                                                Ajustez le niveau de contrôle après plan d’action pour visualiser le risque résiduel attendu après mise en œuvre.
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="risk-score-card" data-state="post">
-                                    <div class="risk-score-title">Post Action Plan Net Risk</div>
+                                    <div class="risk-score-title">Risque net après plan d’action</div>
                                     <div class="risk-score-value" id="scorePost">Score: 0</div>
-                                    <div class="risk-score-meta" id="coordPost">Gross 0 × Coefficient 1,00</div>
+                                    <div class="risk-score-meta" id="coordPost">Brut 0 × Coefficient 1,00</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <div class="form-section-title">Comment</div>
+                        <div class="form-section-title">Commentaire</div>
                         <div class="form-group">
-                            <label class="form-label" for="comment">Comment</label>
-                            <textarea class="form-textarea" id="comment" rows="4" placeholder="Add a comment"></textarea>
+                            <label class="form-label" for="comment">Commentaire</label>
+                            <textarea class="form-textarea" id="comment" rows="4" placeholder="Ajouter a comment"></textarea>
                         </div>
                     </div>
 
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('riskModal')">Cancel</button>
-                <button class="btn btn-success" onclick="saveRisk()">Save</button>
+                <button class="btn btn-secondary" onclick="closeModal('riskModal')">Annuler</button>
+                <button class="btn btn-success" onclick="saveRisk()">Enregistrer</button>
             </div>
         </div>
     </div>
