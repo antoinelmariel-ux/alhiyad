@@ -8051,9 +8051,19 @@ class RiskManagementSystem {
 
             const label = theme.label || value;
             const color = isSafeThemeColor(theme.color) ? theme.color.trim() : resolveDefaultThemeColor(value);
-            const item = document.createElement('div');
+            const isActive = String(this.filters?.theme || '').toLowerCase() === normalizedValue;
+            const item = document.createElement('button');
+            item.type = 'button';
             item.className = 'risk-theme-legend-item';
-            item.title = `Thématique : ${label}`;
+            item.classList.toggle('active', isActive);
+            item.title = isActive ? `Retirer le filtre : ${label}` : `Filtrer les risques : ${label}`;
+            item.dataset.themeFilterValue = value;
+            item.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            item.addEventListener('click', () => {
+                if (typeof window !== 'undefined' && typeof window.toggleRiskThemeLegendFilter === 'function') {
+                    window.toggleRiskThemeLegendFilter(value);
+                }
+            });
 
             const dot = document.createElement('span');
             dot.className = 'risk-theme-legend-dot';
@@ -8067,9 +8077,20 @@ class RiskManagementSystem {
             container.appendChild(item);
         });
 
-        const undefinedItem = document.createElement('div');
+        const undefinedFilterValue = (typeof window !== 'undefined' && window.RISK_THEME_UNDEFINED_FILTER) || '__undefined__';
+        const isUndefinedActive = String(this.filters?.theme || '') === undefinedFilterValue;
+        const undefinedItem = document.createElement('button');
+        undefinedItem.type = 'button';
         undefinedItem.className = 'risk-theme-legend-item';
-        undefinedItem.title = 'Thématique non définie';
+        undefinedItem.classList.toggle('active', isUndefinedActive);
+        undefinedItem.title = isUndefinedActive ? 'Retirer le filtre : Non défini' : 'Filtrer les risques : Non défini';
+        undefinedItem.dataset.themeFilterValue = undefinedFilterValue;
+        undefinedItem.setAttribute('aria-pressed', isUndefinedActive ? 'true' : 'false');
+        undefinedItem.addEventListener('click', () => {
+            if (typeof window !== 'undefined' && typeof window.toggleRiskThemeLegendFilter === 'function') {
+                window.toggleRiskThemeLegendFilter(undefinedFilterValue);
+            }
+        });
 
         const undefinedDot = document.createElement('span');
         undefinedDot.className = 'risk-theme-legend-dot';
@@ -8511,8 +8532,13 @@ class RiskManagementSystem {
             }
 
             if (themeFilter) {
+                const undefinedFilterValue = (typeof window !== 'undefined' && window.RISK_THEME_UNDEFINED_FILTER) || '__undefined__';
                 const riskTheme = String(risk?.riskTheme || '').toLowerCase();
-                if (riskTheme !== themeFilter) {
+                if (themeFilter === undefinedFilterValue) {
+                    if (riskTheme) {
+                        return false;
+                    }
+                } else if (riskTheme !== themeFilter) {
                     return false;
                 }
             }
