@@ -10755,7 +10755,7 @@ class RiskManagementSystem {
             return rawValue;
         };
 
-        container.innerHTML = filteredPlans.map(plan => {
+        container.innerHTML = filteredPlans.map((plan, index) => {
             const planTitle = plan?.title || 'Untitled plan';
             const rawStatus = plan?.status ?? plan?.statut ?? plan?.statusLabel ?? '';
             const normalizedStatus = this.normalizeStatusValue('actionPlan', rawStatus);
@@ -10765,24 +10765,28 @@ class RiskManagementSystem {
             const statusClass = normalizedStatus ? normalizedStatus.replace(/[^a-z0-9-]+/g, '-') : '';
             const ownerLabel = plan?.owner ? String(plan.owner) : '';
             const dueDateLabel = formatDueDate(plan?.dueDate);
+            const isBlurred = index >= 3;
+            const rowClass = `controls-table-row${isBlurred ? ' action-plan-row-blurred' : ''}`;
+            const rowAttributes = isBlurred ? ' aria-hidden="true"' : '';
+            const disabledAttr = isBlurred ? ' disabled aria-hidden="true" tabindex="-1"' : '';
 
             return `
-                <div class="controls-table-row" data-plan-id="${plan.id}">
+                <div class="${rowClass}" data-plan-id="${escapeHtml(plan.id)}"${rowAttributes}>
                     <div class="controls-table-cell control-name-cell">
-                        <div class="control-name" title="${planTitle}">${planTitle}</div>
+                        <div class="control-name" title="${escapeHtml(planTitle)}">${escapeHtml(planTitle)}</div>
                     </div>
                     <div class="controls-table-cell control-owner-cell">
-                        ${ownerLabel ? `<span class="control-owner">${ownerLabel}</span>` : `<span class="text-placeholder">Not defined</span>`}
+                        ${ownerLabel ? `<span class="control-owner">${escapeHtml(ownerLabel)}</span>` : `<span class="text-placeholder">Not defined</span>`}
                     </div>
                     <div class="controls-table-cell control-due-date-cell">
-                        ${dueDateLabel ? `<span class="control-due-date">${dueDateLabel}</span>` : `<span class="text-placeholder">Not defined</span>`}
+                        ${dueDateLabel ? `<span class="control-due-date">${escapeHtml(dueDateLabel)}</span>` : `<span class="text-placeholder">Not defined</span>`}
                     </div>
                     <div class="controls-table-cell control-status-cell">
-                        ${statusLabel ? `<span class="control-status-badge ${statusClass}">${statusLabel}</span>` : `<span class="text-placeholder">Not defined</span>`}
+                        ${statusLabel ? `<span class="control-status-badge ${statusClass}">${escapeHtml(statusLabel)}</span>` : `<span class="text-placeholder">Not defined</span>`}
                     </div>
                     <div class="controls-table-cell controls-table-actions">
-                        <button class="action-btn" onclick="editActionPlan(${plan.id})" title="Edit">✏️</button>
-                        <button class="action-btn" onclick="deleteActionPlan(${plan.id})" title="Delete">🗑️</button>
+                        <button class="action-btn" onclick="editActionPlan(${plan.id})" title="Edit"${disabledAttr}>✏️</button>
+                        <button class="action-btn" onclick="deleteActionPlan(${plan.id})" title="Delete"${disabledAttr}>🗑️</button>
                     </div>
                 </div>
             `;

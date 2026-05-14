@@ -1791,6 +1791,28 @@ tbody tr.risk-row-blurred:hover {
     cursor: not-allowed;
 }
 
+.action-plan-row-blurred {
+    filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.72;
+}
+
+.action-plan-row-blurred * {
+    user-select: none;
+    pointer-events: none;
+}
+
+.action-plan-row-blurred:hover {
+    background: inherit;
+    box-shadow: none;
+    transform: none;
+}
+
+.action-plan-row-blurred .action-btn {
+    cursor: not-allowed;
+}
+
 /* Legend améliorée */
 .legend {
     display: flex;
