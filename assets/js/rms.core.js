@@ -777,15 +777,13 @@ class RiskManagementSystem {
         let changed = false;
 
         const targetTierValues = [
-            'palace-hotels',
-            'private-villas',
-            'premium-chauffeurs',
-            'partner-concierges',
-            'lifestyle-agents',
-            'yacht-jet-operators',
-            'exclusive-experience-suppliers',
-            'b2b-corporate-clients',
-            'b2c-ultra-high-net-worth-clients'
+            'autorites-locales',
+            'agences-de-tourisme',
+            'groupes-hoteliers',
+            'vip',
+            'touristes-hors-vip',
+            'concierges-partenaires',
+            'prestataires'
         ];
         const legacyTierValues = [
             'HealthcareProfessionals',
@@ -3652,7 +3650,6 @@ class RiskManagementSystem {
                 label: 'Répartition des entités',
                 renderer: (body) => this.renderCountryColumnManager(body)
             },
-            { key: 'targetAudiences', label: 'Publics concernés' },
             { key: 'tiers', label: 'Tiers' },
             { key: 'riskStatuses', label: 'Statuts des risques' },
             { key: 'controlTypes', label: 'Types de contrôle' },

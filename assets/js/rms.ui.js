@@ -652,6 +652,14 @@ function getAssignedControlsForBenefit(label) {
     }).filter(Boolean);
 }
 
+
+function getRiskUndueBenefitTerminology() {
+    const riskThemeSelect = document.getElementById('riskTheme');
+    return riskThemeSelect && riskThemeSelect.value === 'personal-data'
+        ? { bare: 'système de stockage', demonstrative: 'ce système de stockage' }
+        : { bare: 'avantage indu', demonstrative: 'cet avantage indu' };
+}
+
 function renderBenefitFirstAssignment() {
     const container = document.getElementById('benefitFirstAssignment');
     if (!container) return;
@@ -661,8 +669,10 @@ function renderBenefitFirstAssignment() {
         return;
     }
 
+    const benefitTerm = getRiskUndueBenefitTerminology();
+
     container.innerHTML = `
-        <div class="benefit-first-assignment-title">Assignment guided by undue benefit</div>
+        <div class="benefit-first-assignment-title">Affectation guidée par ${benefitTerm.bare}</div>
         <div class="benefit-first-assignment-grid">
             ${undueBenefits.map(label => {
                 const linkedControls = getAssignedControlsForBenefit(label);
@@ -1093,11 +1103,47 @@ const RISK_MULTI_SELECT_CHIP_CONFIG = {
     typeCorruption: { containerId: 'typeCorruptionChips', defaultColor: '#db2777' },
     corruptionExposure: { containerId: 'corruptionExposureChips', defaultColor: '#7c3aed' },
     corruptionMode: { containerId: 'corruptionModeChips', defaultColor: '#0ea5e9' },
-    targetAudience: { containerId: 'targetAudienceChips', defaultColor: '#0891b2' },
     tiers: { containerId: 'tiersChips', defaultColor: '#16a34a' }
 };
 
 const CORRUPTION_SPECIFIC_SELECT_IDS = ['typeCorruption', 'corruptionExposure', 'corruptionMode'];
+
+const BENEFIT_BLOCK_HIDDEN_THEMES = new Set(['international-sanctions', 'discrimination']);
+
+function updateRiskBenefitsBlockForTheme(options = {}) {
+    const riskThemeSelect = document.getElementById('riskTheme');
+    const theme = riskThemeSelect ? riskThemeSelect.value : 'corruption';
+    const benefitsBlock = document.getElementById('riskBenefitsBlock');
+    const undueLabel = document.getElementById('undueBenefitsLabel');
+    const expectedLabel = document.getElementById('expectedBenefitsLabel');
+    const undueInput = document.getElementById('undueBenefitsInput');
+    const expectedInput = document.getElementById('expectedBenefitsInput');
+    const shouldClearHiddenValues = options.clearHiddenValues !== false;
+    const shouldHideBenefits = BENEFIT_BLOCK_HIDDEN_THEMES.has(theme);
+
+    if (benefitsBlock) {
+        benefitsBlock.hidden = shouldHideBenefits;
+        benefitsBlock.setAttribute('aria-hidden', shouldHideBenefits ? 'true' : 'false');
+    }
+
+    if (theme === 'personal-data') {
+        if (undueLabel) undueLabel.textContent = 'Système de stockage';
+        if (expectedLabel) expectedLabel.textContent = 'Type de données';
+        if (undueInput) undueInput.placeholder = 'Saisir un système de stockage';
+        if (expectedInput) expectedInput.placeholder = 'Saisir un type de données';
+    } else {
+        if (undueLabel) undueLabel.textContent = 'Avantages indus';
+        if (expectedLabel) expectedLabel.textContent = 'Résultats attendus';
+        if (undueInput) undueInput.placeholder = 'Saisir un avantage indu';
+        if (expectedInput) expectedInput.placeholder = 'Saisir un résultat attendu';
+    }
+
+    if (shouldHideBenefits && shouldClearHiddenValues) {
+        setRiskBenefitChips('undue', []);
+        setRiskBenefitChips('expected', []);
+    }
+}
+window.updateRiskBenefitsBlockForTheme = updateRiskBenefitsBlockForTheme;
 
 function clearRiskMultiSelectValues(selectId) {
     const select = document.getElementById(selectId);
@@ -1347,6 +1393,7 @@ function addNewRisk() {
         document.getElementById('comment').value = '';
         renderAllRiskMultiSelectChips();
         updateCorruptionSpecificFieldsVisibility();
+        updateRiskBenefitsBlockForTheme();
 
         if (statutSelect) {
             const defaultStatus = rms?.config?.riskStatuses?.[0]?.value || '';
@@ -1437,7 +1484,6 @@ function saveRisk() {
     let typesCorruption = getSelectedValues('typeCorruption');
     let corruptionExposure = getSelectedValues('corruptionExposure');
     let corruptionMode = getSelectedValues('corruptionMode');
-    const targetAudience = getSelectedValues('targetAudience');
 
     if (riskTheme !== 'corruption') {
         typesCorruption = [];
@@ -1445,11 +1491,13 @@ function saveRisk() {
         corruptionMode = [];
     }
 
+    const shouldPersistBenefits = !BENEFIT_BLOCK_HIDDEN_THEMES.has(riskTheme);
+
     const controlAssignments = selectedControlsForRisk.map(controlId => {
         const key = String(controlId);
         const assignment = controlAssignmentsForRisk[key] || {};
         const selectedUndueBenefits = Array.isArray(assignment.avantagesIndus)
-            ? assignment.avantagesIndus.filter(label => (riskBenefitsState.undue || []).includes(label))
+            ? assignment.avantagesIndus.filter(label => shouldPersistBenefits && (riskBenefitsState.undue || []).includes(label))
             : [];
         return {
             controlId,
@@ -1474,12 +1522,12 @@ function saveRisk() {
         corruptionExposureTypes: corruptionExposure,
         corruptionMode: corruptionMode[0] || '',
         corruptionModes: corruptionMode,
-        targetAudience: targetAudience[0] || '',
-        targetAudiences: targetAudience,
+        targetAudience: '',
+        targetAudiences: [],
         statut: document.getElementById('statut').value,
         tiers: Array.from(document.getElementById('tiers').selectedOptions).map(o => o.value),
-        avantagesIndus: [...(riskBenefitsState.undue || [])],
-        avantagesAttendus: [...(riskBenefitsState.expected || [])],
+        avantagesIndus: shouldPersistBenefits ? [...(riskBenefitsState.undue || [])] : [],
+        avantagesAttendus: shouldPersistBenefits ? [...(riskBenefitsState.expected || [])] : [],
         paysExposes: countriesSelect
             ? Array.from(countriesSelect.selectedOptions).map(o => o.value)
             : [],
@@ -1662,6 +1710,7 @@ function renderControlSelectionList() {
     const recommendedControls = focusLabel
         ? availableControls.filter(ctrl => recommendedSet.has(ctrl.id))
         : [];
+    const benefitTerm = getRiskUndueBenefitTerminology();
     const otherControls = focusLabel
         ? availableControls.filter(ctrl => !recommendedSet.has(ctrl.id))
         : availableControls;
@@ -1683,7 +1732,7 @@ function renderControlSelectionList() {
               <div class="risk-item-info">
                 <div class="risk-item-title">#${ctrl.id} - ${controlName}</div>
                 <div class="risk-item-meta">Type: ${typeLabel || 'Undefined'} | Origin: ${originLabel || 'Undefined'} | Owner: ${ownerLabel || 'Undefined'}</div>
-                ${focusLabel && recommendedSet.has(ctrl.id) ? '<div class="risk-item-hint">Recommended for this undue benefit</div>' : ''}
+                ${focusLabel && recommendedSet.has(ctrl.id) ? `<div class="risk-item-hint">Recommandé pour ${benefitTerm.demonstrative}</div>` : ''}
               </div>
             </div>`;
     };
@@ -1691,7 +1740,7 @@ function renderControlSelectionList() {
     if (focusLabel) {
         sections.push(`
             <div class="risk-list-section-title">
-                Controls already assigned to this benefit in other risks (${recommendedControls.length})
+                Contrôles déjà affectés à ${benefitTerm.demonstrative} dans d’autres risques (${recommendedControls.length})
             </div>
             ${recommendedControls.length ? recommendedControls.map(renderControlItem).join('') : '<div class="risk-list-empty">No recommended control found.</div>'}
         `);
@@ -2346,12 +2395,14 @@ function bindEvents() {
 
     renderAggravatingFactorsForCurrentTheme();
     updateCorruptionSpecificFieldsVisibility({ clearHiddenValues: false });
+    updateRiskBenefitsBlockForTheme({ clearHiddenValues: false });
 
     const riskThemeSelect = document.getElementById('riskTheme');
     if (riskThemeSelect) {
         riskThemeSelect.addEventListener('change', () => {
             renderAggravatingFactorsForCurrentTheme();
             updateCorruptionSpecificFieldsVisibility();
+            updateRiskBenefitsBlockForTheme();
         });
     }
 
