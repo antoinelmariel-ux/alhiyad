@@ -1977,10 +1977,6 @@ function exportReportsRisksXlsx() {
         const corruptionModes = Array.isArray(risk?.corruptionModes) && risk.corruptionModes.length
             ? risk.corruptionModes
             : (risk?.corruptionMode ? [risk.corruptionMode] : []);
-        const targetAudiences = Array.isArray(risk?.targetAudiences) && risk.targetAudiences.length
-            ? risk.targetAudiences
-            : (risk?.targetAudience ? [risk.targetAudience] : []);
-
         const probBrut = Number(risk?.probBrut) || 0;
         const impactBrut = Number(risk?.impactBrut) || 0;
         const probNet = Number(risk?.probNet) || 0;
@@ -2062,10 +2058,9 @@ function exportReportsRisksXlsx() {
             'Types de corruption (multi)': mapListToLabels(corruptionTypes, rms?.config?.riskTypes),
             "Exposition à la corruption": mapListToLabels(corruptionExposureTypes, rms?.config?.corruptionExposureTypes),
             'Mode de corruption': mapListToLabels(corruptionModes, rms?.config?.corruptionModes),
-            'Population cible': mapListToLabels(targetAudiences, rms?.config?.targetAudiences),
             'Tiers': tiers,
-            'Avantages indus': stringifyList(risk?.avantagesIndus || []),
-            'Avantages attendus': stringifyList(risk?.avantagesAttendus || []),
+            [risk?.riskTheme === 'personal-data' ? 'Système de stockage' : 'Avantages indus']: stringifyList(risk?.avantagesIndus || []),
+            [risk?.riskTheme === 'personal-data' ? 'Type de données' : 'Résultats attendus']: stringifyList(risk?.avantagesAttendus || []),
             'Scénario': risk?.description || risk?.titre || '',
             'Probabilité brut': probBrut || '',
             'Impact brut': impactBrut || '',

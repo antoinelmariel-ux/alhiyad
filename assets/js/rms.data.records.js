@@ -25,15 +25,12 @@
             "corruptionModes": [
                 "cadeaux-invitations"
             ],
-            "targetAudiences": [
-                "dubai-luxury-operations"
-            ],
             "paysExposes": [
                 "Dubai Operations"
             ],
             "tiers": [
-                "palace-hotels",
-                "exclusive-experience-suppliers"
+                "groupes-hoteliers",
+                "prestataires"
             ],
             "probBrut": 4,
             "impactBrut": 4,
@@ -82,15 +79,12 @@
                 "confidentialite-surete-protection-des-donnees",
                 "delivery-service-brief-mission"
             ],
-            "targetAudiences": [
-                "guest-privacy-confidentiality"
-            ],
             "paysExposes": [
                 "HQ Dubai",
                 "Dubai Operations"
             ],
             "tiers": [
-                "b2c-ultra-high-net-worth-clients"
+                "vip"
             ],
             "probBrut": 3,
             "impactBrut": 5,
@@ -139,15 +133,11 @@
                 "juridique-compliance-kyc-sanctions",
                 "developpement-client-qualification-client"
             ],
-            "targetAudiences": [
-                "b2b-partnerships"
-            ],
             "paysExposes": [
                 "Turkey Subsidiary"
             ],
             "tiers": [
-                "lifestyle-agents",
-                "b2b-corporate-clients"
+                "agences-de-tourisme"
             ],
             "probBrut": 3,
             "impactBrut": 5,
@@ -196,9 +186,6 @@
             "sousProcessusAssocies": [
                 "recrutement-selection",
                 "ressources-humaines-discipline-contentieux"
-            ],
-            "targetAudiences": [
-                "hq-dubai-leadership"
             ],
             "paysExposes": [
                 "HQ Dubai"
@@ -254,15 +241,12 @@
                 "conflit-interet",
                 "favoritisme"
             ],
-            "targetAudiences": [
-                "b2b-partnerships"
-            ],
             "paysExposes": [
                 "Dubai Operations"
             ],
             "tiers": [
-                "partner-concierges",
-                "b2b-corporate-clients"
+                "concierges-partenaires",
+                "agences-de-tourisme"
             ],
             "probBrut": 4,
             "impactBrut": 3,
@@ -309,14 +293,11 @@
                 "si-cybersecurite-habilitations",
                 "confidentialite-surete-gestion-des-acces"
             ],
-            "targetAudiences": [
-                "guest-privacy-confidentiality"
-            ],
             "paysExposes": [
                 "HQ Dubai"
             ],
             "tiers": [
-                "b2c-ultra-high-net-worth-clients"
+                "vip"
             ],
             "probBrut": 4,
             "impactBrut": 4,
@@ -364,14 +345,11 @@
                 "facturation-encaissement-facturation",
                 "juridique-compliance-kyc-sanctions"
             ],
-            "targetAudiences": [
-                "turkey-europe-americas-middle-east"
-            ],
             "paysExposes": [
                 "Turkey Subsidiary"
             ],
             "tiers": [
-                "yacht-jet-operators"
+                "prestataires"
             ],
             "probBrut": 2,
             "impactBrut": 5,
@@ -419,15 +397,12 @@
                 "communication-reputation-communication-de-crise",
                 "qualite-incidents-qualite"
             ],
-            "targetAudiences": [
-                "hq-dubai-leadership"
-            ],
             "paysExposes": [
                 "HQ Dubai",
                 "Indonesia Subsidiary"
             ],
             "tiers": [
-                "b2c-ultra-high-net-worth-clients"
+                "vip"
             ],
             "probBrut": 2,
             "impactBrut": 4,
