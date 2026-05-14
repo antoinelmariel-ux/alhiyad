@@ -395,11 +395,11 @@ class RiskManagementSystem {
 
         if (!Array.isArray(config.riskStatuses) || config.riskStatuses.length === 0) {
             config.riskStatuses = [
-                { value: 'brouillon', label: 'Draft' },
-                { value: 'a-valider', label: 'To validate' },
-                { value: 'validated', label: 'Validated' },
-                { value: 'archive', label: 'Archived' },
-                { value: 'not-included', label: 'Not included' }
+                { value: 'brouillon', label: 'Brouillon' },
+                { value: 'a-valider', label: 'À valider' },
+                { value: 'validated', label: 'Validé' },
+                { value: 'archive', label: 'Archivé' },
+                { value: 'not-included', label: 'Non retenu' }
             ];
         }
 
@@ -522,24 +522,44 @@ class RiskManagementSystem {
             return Boolean(value);
         };
 
+        const fallbackRiskStatuses = (fallback && Array.isArray(fallback.riskStatuses))
+            ? fallback.riskStatuses
+            : [
+                { value: 'brouillon', label: 'Brouillon' },
+                { value: 'a-valider', label: 'À valider' },
+                { value: 'validated', label: 'Validé' },
+                { value: 'archive', label: 'Archivé' },
+                { value: 'not-included', label: 'Non retenu' }
+            ];
+
         const fallbackStatuses = (fallback && Array.isArray(fallback.actionPlanStatuses))
             ? fallback.actionPlanStatuses
             : [
-                { value: 'brouillon', label: 'Draft' },
-                { value: 'a-demarrer', label: 'To start' },
-                { value: 'en-cours', label: 'In progress' },
-                { value: 'delayed', label: 'Delayed' },
-                { value: 'abandoned', label: 'Abandoned' },
-                { value: 'termine', label: 'Completed' }
+                { value: 'brouillon', label: 'Brouillon' },
+                { value: 'a-demarrer', label: 'À démarrer' },
+                { value: 'en-cours', label: 'En cours' },
+                { value: 'delayed', label: 'En retard' },
+                { value: 'abandoned', label: 'Abandonné' },
+                { value: 'termine', label: 'Terminé' }
             ];
 
-        if (!Array.isArray(baseConfig.actionPlanStatuses)) {
-            this.config.actionPlanStatuses = fallbackStatuses.map(status => ({ ...status }));
-            if (baseConfig.actionPlanStatuses !== undefined) {
-                updated = true;
-            }
-        } else {
-            this.config.actionPlanStatuses = baseConfig.actionPlanStatuses.map(status => ({ ...status }));
+        const replaceKnownStatusLabels = (source, fallbackList) => {
+            const fallbackByValue = new Map(fallbackList.map(status => [status.value, status]));
+            const entries = Array.isArray(source) ? source : fallbackList;
+            return entries.map(status => {
+                const fallbackStatus = fallbackByValue.get(status?.value);
+                return fallbackStatus ? { ...status, label: fallbackStatus.label } : { ...status };
+            });
+        };
+
+        this.config.riskStatuses = replaceKnownStatusLabels(baseConfig.riskStatuses, fallbackRiskStatuses);
+        if (JSON.stringify(baseConfig.riskStatuses) !== JSON.stringify(this.config.riskStatuses)) {
+            updated = true;
+        }
+
+        this.config.actionPlanStatuses = replaceKnownStatusLabels(baseConfig.actionPlanStatuses, fallbackStatuses);
+        if (JSON.stringify(baseConfig.actionPlanStatuses) !== JSON.stringify(this.config.actionPlanStatuses)) {
+            updated = true;
         }
 
         if (!baseConfig.subProcesses || typeof baseConfig.subProcesses !== 'object' || Array.isArray(baseConfig.subProcesses)) {
@@ -877,18 +897,18 @@ class RiskManagementSystem {
 
     applyEntityModelMigration() {
         const targetEntities = [
-            { value: 'HQ Dubai', label: 'HQ Dubai', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
-            { value: 'Dubai Operations', label: 'Dubai Operations', referents: ['Karim Haddad — VP Luxury Operations'] },
+            { value: 'HQ Dubai', label: 'Siège de Dubaï', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
+            { value: 'Dubai Operations', label: 'Opérations de Dubaï', referents: ['Karim Haddad — VP Luxury Operations'] },
             {
                 value: 'Turkey Subsidiary',
-                label: 'Turkey Subsidiary',
+                label: 'Filiale Turquie',
                 markets: ['Europe', 'Americas', 'Middle East'],
                 referents: ['Leila Demir — Turkey Market Director']
             },
             {
                 value: 'Indonesia Subsidiary',
-                label: 'Indonesia Subsidiary',
-                markets: ['Growing Asian premium markets'],
+                label: 'Filiale Indonésie',
+                markets: ['Marchés premium asiatiques en croissance'],
                 referents: ['Raka Santoso — Indonesia Premium Markets Lead']
             }
         ];
@@ -896,17 +916,17 @@ class RiskManagementSystem {
         const targetColumns = [
             {
                 key: 'dubai-platform',
-                label: 'Dubai platform',
+                label: 'Plateforme de Dubaï',
                 countries: ['HQ Dubai', 'Dubai Operations']
             },
             {
                 key: 'turkey-covered-markets',
-                label: 'Turkey — Europe, Americas, Middle East',
+                label: 'Turquie — Europe, Amériques, Moyen-Orient',
                 countries: ['Turkey Subsidiary']
             },
             {
                 key: 'indonesia-premium-markets',
-                label: 'Indonesia — growing Asian premium markets',
+                label: 'Indonésie — marchés premium asiatiques en croissance',
                 countries: ['Indonesia Subsidiary']
             }
         ];
@@ -943,6 +963,22 @@ class RiskManagementSystem {
         if (shouldMigrateEntities) {
             this.config.countries = targetEntities.map(entity => ({ ...entity }));
             changed = true;
+        } else {
+            const targetByValue = new Map(targetEntities.map(entity => [entity.value, entity]));
+            this.config.countries = (Array.isArray(this.config.countries) ? this.config.countries : []).map(entity => {
+                const target = targetByValue.get(entity?.value);
+                if (!target) {
+                    return entity;
+                }
+                const normalized = { ...entity, label: target.label };
+                if (Array.isArray(target.markets)) {
+                    normalized.markets = [...target.markets];
+                }
+                if (entity?.label !== normalized.label || JSON.stringify(entity?.markets) !== JSON.stringify(normalized.markets)) {
+                    changed = true;
+                }
+                return normalized;
+            });
         }
 
         const normalizedTargets = this.normalizeCountryColumns(
@@ -964,6 +1000,19 @@ class RiskManagementSystem {
         if (shouldMigrateColumns) {
             this.config.countryColumns = normalizedTargets;
             changed = true;
+        } else if (hasTargetColumns) {
+            const targetColumnByKey = new Map(normalizedTargets.map(column => [column.key, column]));
+            this.config.countryColumns = existing.map(column => {
+                const target = targetColumnByKey.get(column?.key);
+                if (!target) {
+                    return column;
+                }
+                if (column.label !== target.label) {
+                    changed = true;
+                    return { ...column, label: target.label };
+                }
+                return column;
+            });
         }
 
         return changed;
@@ -1006,7 +1055,7 @@ class RiskManagementSystem {
                 .toLowerCase();
 
             if (['hq', 'entites transverses', 'transversal entities'].includes(normalized)) {
-                return 'Transversal entities';
+                return 'Entités transverses';
             }
 
             return label;
@@ -7973,17 +8022,17 @@ class RiskManagementSystem {
                 gridId: 'matrixGridBrut',
                 probKey: 'probBrut',
                 impactKey: 'impactBrut',
-                label: 'Gross risk',
+                label: 'Risque brut',
                 mode: 'brut'
             },
             net: {
                 gridId: 'matrixGridNet',
-                label: 'Net risk',
+                label: 'Risque net',
                 mode: 'net'
             },
             post: {
                 gridId: 'matrixGridPost',
-                label: 'Post action plan risk',
+                label: 'Risque après plan d’action',
                 mode: 'post'
             }
         };
@@ -8181,9 +8230,9 @@ class RiskManagementSystem {
                     const formattedNet = Number.isFinite(netInfo.score)
                         ? netInfo.score.toLocaleString('fr-FR', { maximumFractionDigits: 2 })
                         : '0';
-                    tooltipLines.push(`Gross ${formattedBrut} → Net ${formattedNet}`);
+                    tooltipLines.push(`Brut ${formattedBrut} → Net ${formattedNet}`);
                     tooltipLines.push(`Coefficient ${formatMitigationCoefficient(netInfo.coefficient)} (${netInfo.label})`);
-                    tooltipLines.push(`Gross level: ${severityLabelMap[brutLevel] || brutLevel}`);
+                    tooltipLines.push(`Niveau brut : ${severityLabelMap[brutLevel] || brutLevel}`);
 
                     point.title = tooltipLines.join('\n');
                     point.textContent = String(risk.id ?? '');
@@ -8566,19 +8615,19 @@ class RiskManagementSystem {
                 titleId: 'riskDetailsTitleBrut',
                 probKey: 'probBrut',
                 impactKey: 'impactBrut',
-                title: 'Gross risks ranked by score',
+                title: 'Risques bruts classés par score',
                 mode: 'brut'
             },
             net: {
                 containerId: 'riskDetailsListNet',
                 titleId: 'riskDetailsTitleNet',
-                title: 'Net risks ranked by score',
+                title: 'Risques nets classés par score',
                 mode: 'net'
             },
             post: {
                 containerId: 'riskDetailsListPost',
                 titleId: 'riskDetailsTitlePost',
-                title: 'Post action plan risks ranked by score',
+                title: 'Risques après plan d’action classés par score',
                 mode: 'post'
             }
         };
@@ -9835,13 +9884,13 @@ class RiskManagementSystem {
                         ? this.getSubProcessLabel(risk.processus, String(subProcessRaw).trim())
                         : '—';
                     const scoreLabel = Number.isFinite(entry.score)
-                        ? entry.score.toLocaleString('en-GB')
+                        ? entry.score.toLocaleString('fr-FR')
                         : '0';
                     const brutLabel = Number.isFinite(entry.brutScore)
-                        ? entry.brutScore.toLocaleString('en-GB')
+                        ? entry.brutScore.toLocaleString('fr-FR')
                         : '0';
                     const reductionLabel = `${entry.reduction ?? 0}%${entry.label ? ` (${entry.label})` : ''}`;
-                    const meta = `Gross ${brutLabel} → Net ${scoreLabel} • Reduction ${reductionLabel}`;
+                    const meta = `Brut ${brutLabel} → Net ${scoreLabel} • Réduction ${reductionLabel}`;
 
                     return `
                         <tr>
