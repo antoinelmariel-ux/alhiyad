@@ -1642,13 +1642,13 @@ body.feedback-mode-paused .feedback-panel * {
 .axis-label.y-axis {
     top: 50%;
     left: -3.1rem;
-    transform: translateY(-50%) rotate(180deg);
+    transform: translate(-50%, -50%) rotate(-90deg);
     transform-origin: center;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     white-space: nowrap;
-    writing-mode: vertical-rl;
+    writing-mode: horizontal-tb;
 }
 
 .matrix-container[data-view="net"] .axis-label.y-axis,
@@ -1658,7 +1658,8 @@ body.feedback-mode-paused .feedback-panel * {
 
 .axis-label.y-axis .axis-arrow {
     display: inline-block;
-    transform: rotate(180deg);
+    transform: rotate(90deg);
+    transform-origin: center;
 }
 
 .app-footer {
