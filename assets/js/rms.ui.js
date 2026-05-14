@@ -117,6 +117,27 @@ function syncRiskFilterWidgets(filterKey, value, sourceElement) {
 }
 window.syncRiskFilterWidgets = syncRiskFilterWidgets;
 
+function updateRiskTypeFilterVisibility(options = {}) {
+    if (!window.rms) return;
+
+    const themeValue = String(rms.filters?.theme || '');
+    const isCorruptionTheme = themeValue === 'corruption';
+    const typeFilterGroup = document.getElementById('risksTypeFilterGroup');
+    const typeFilter = document.getElementById('risksTypeFilter');
+    const shouldClearHiddenValue = options.clearHiddenValue !== false;
+
+    if (typeFilterGroup) {
+        typeFilterGroup.hidden = !isCorruptionTheme;
+        typeFilterGroup.setAttribute('aria-hidden', isCorruptionTheme ? 'false' : 'true');
+    }
+
+    if (!isCorruptionTheme && shouldClearHiddenValue && rms.filters?.type) {
+        rms.filters.type = '';
+        syncRiskFilterWidgets('type', '', typeFilter || null);
+    }
+}
+window.updateRiskTypeFilterVisibility = updateRiskTypeFilterVisibility;
+
 function applyFilters(filterKeyOrEvent, value, sourceElement) {
     if (!window.rms) return;
 
@@ -142,10 +163,14 @@ function applyFilters(filterKeyOrEvent, value, sourceElement) {
             : (filterValue == null ? '' : String(filterValue));
         rms.filters[normalizedKey] = normalizedValue;
         syncRiskFilterWidgets(normalizedKey, normalizedValue, originElement);
+        if (normalizedKey === 'theme') {
+            updateRiskTypeFilterVisibility();
+        }
     } else {
         Object.entries(rms.filters).forEach(([key, currentValue]) => {
             syncRiskFilterWidgets(key, currentValue, null);
         });
+        updateRiskTypeFilterVisibility();
     }
 
     rms.renderRiskPoints();

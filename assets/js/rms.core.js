@@ -3296,6 +3296,9 @@ class RiskManagementSystem {
         fill(['matrixProcessFilter', 'risksProcessFilter', 'interviewProcessFilter'], this.config.processes, 'Tous les processus');
         fill(['matrixRiskTypeFilter', 'risksTypeFilter'], this.config.riskTypes, 'Tous les types');
         fill(['matrixStatusFilter', 'risksStatusFilter'], this.config.riskStatuses, 'Tous les statuts');
+        if (typeof updateRiskTypeFilterVisibility === 'function') {
+            updateRiskTypeFilterVisibility({ clearHiddenValue: false });
+        }
         fill('riskTheme', this.config.riskThemes, 'Sélectionner...');
         fill('processus', this.config.processes, 'Sélectionner...');
         this.updateSousProcessusOptions();
