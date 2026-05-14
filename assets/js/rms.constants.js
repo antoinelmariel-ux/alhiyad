@@ -3,38 +3,38 @@
 const RISK_PROBABILITY_INFO = {
     1: {
         label: 'Peu probable',
-        text: 'L’événement ne s’est pas produit au cours des 5 dernières années. Il n’est pas attendu au cours des 5 prochaines années.'
+        text: 'Pourrait survenir une fois tous les 5 ans en l’absence de mesures de maîtrise.'
     },
     2: {
-        label: 'Modérément probable',
-        text: 'Événement survenu une fois au cours des 5 dernières années. Événement susceptible de se produire une fois au cours des 5 prochaines années.'
+        label: 'Moyennement probable',
+        text: 'Pourrait survenir une fois tous les 3 ans en l’absence de mesures de maîtrise.'
     },
     3: {
         label: 'Probable',
-        text: 'Événement survenu une fois au cours de l’année passée. Événement susceptible de se produire une fois dans l’année à venir.'
+        text: 'Pourrait survenir une fois par an en l’absence de mesures de maîtrise.'
     },
     4: {
         label: 'Très probable',
-        text: 'Événement survenu plusieurs fois au cours de l’année passée. Événement attendu une ou plusieurs fois dans l’année à venir.'
+        text: 'Pourrait survenir plusieurs fois au cours de l’année en l’absence de mesures de maîtrise.'
     }
 };
 
 const RISK_IMPACT_INFO = {
     1: {
         label: 'Faible',
-        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>&lt; 250 k$</li></ul><p><strong>Réputationnel</strong></p><ul><li>plainte client VIP isolée</li></ul><p><strong>Opérationnel</strong></p><ul><li>retard service isolé</li></ul><p><strong>Juridique</strong></p><ul><li>réclamation contractuelle</li></ul><p><strong>Humain</strong></p><ul><li>inconfort client/staff</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>&lt; 5% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Sanction interne disciplinaire envers un collaborateur</li></ul><p><strong>Réputationnel</strong></p><ul><li>Mécontentement isolé, sans exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Perturbation ponctuelle, résolue localement</li></ul><p><strong>Humain</strong></p><ul><li>Malaise ponctuel et baisse limitée de motivation sans impact durable</li></ul>"
     },
     2: {
         label: 'Modéré',
-        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>250 k$ à 2,5 M$</li></ul><p><strong>Réputationnel</strong></p><ul><li>impact sur partenaire palace</li></ul><p><strong>Opérationnel</strong></p><ul><li>incident séjour VIP</li></ul><p><strong>Juridique</strong></p><ul><li>contrôle autorité locale</li></ul><p><strong>Humain</strong></p><ul><li>atteinte limitée à la sécurité</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>&lt; 10% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Procédure judiciaire ou administrative à l’échelle d’un collaborateur</li></ul><p><strong>Réputationnel</strong></p><ul><li>Réclamation client sensible, risque de bouche-à-oreille négatif dans un cercle restreint</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation locale ou sur plusieurs missions ; intervention HQ</li></ul><p><strong>Humain</strong></p><ul><li>Tensions récurrentes et désengagement individuel nécessitant une intervention managériale</li></ul>"
     },
     3: {
-        label: 'Élevé',
-        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>2,5 M$ à 25 M$</li></ul><p><strong>Réputationnel</strong></p><ul><li>crise média régionale</li></ul><p><strong>Opérationnel</strong></p><ul><li>rupture fournisseur clé</li></ul><p><strong>Juridique</strong></p><ul><li>contentieux multi-juridictions</li></ul><p><strong>Humain</strong></p><ul><li>dommage physique ou psychologique sérieux</li></ul>"
+        label: 'Fort',
+        text: "<p><strong>Financier</strong></p><ul><li>&lt; 25% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Sanctions à l’échelle d’une filiale</li></ul><p><strong>Réputationnel</strong></p><ul><li>Atteinte à l’image auprès de clients B2B ou clients VIP ; début d’exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation importante d’une filiale, d’un service ou d’un portefeuille client</li></ul><p><strong>Humain</strong></p><ul><li>Dégradation du climat de travail, absentéisme, conflit ouvert</li></ul>"
     },
     4: {
         label: 'Critique',
-        text: "<p><strong>Financier (base CA 1 Md $)</strong></p><ul><li>≥ 25 M$</li></ul><p><strong>Réputationnel</strong></p><ul><li>atteinte internationale à la marque Al Hiyad</li></ul><p><strong>Opérationnel</strong></p><ul><li>interruption d’activité multi-marchés</li></ul><p><strong>Juridique</strong></p><ul><li>sanctions, interdiction d’opérer ou poursuites pénales</li></ul><p><strong>Humain</strong></p><ul><li>risque vital ou atteinte grave à une personne</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>≥ 25% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Poursuites pénales majeures, interdiction d’opérer ou sanctions lourdes</li></ul><p><strong>Réputationnel</strong></p><ul><li>Forte exposition médiatique ; perte de confiance durable des clients</li></ul><p><strong>Opérationnel</strong></p><ul><li>Arrêt prolongé d’une activité critique ou rupture systémique du modèle opérationnel</li></ul><p><strong>Humain</strong></p><ul><li>Désengagement collectif, départs multiples et perte durable d’attractivité employeur</li></ul>"
     }
 };
 

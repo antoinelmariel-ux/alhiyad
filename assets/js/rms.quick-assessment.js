@@ -19,56 +19,60 @@
     const PROBABILITY_DETAILS = {
         1: {
             title: 'Probability 1 - Unlikely',
-            description: 'Event has not occurred in the past 5 years. Event not expected to occur in the next 5 years.'
+            description: 'Could occur once every 5 years in the absence of control measures.'
         },
         2: {
             title: 'Probability 2 - Moderately likely',
-            description: 'Event that has occurred once in the past 5 years. Event that may occur once in the next 5 years.'
+            description: 'Could occur once every 3 years in the absence of control measures.'
         },
         3: {
             title: 'Probability 3 - Likely',
-            description: 'Event that has occurred once in the past year. Event that may occur once in the coming year.'
+            description: 'Could occur once per year in the absence of control measures.'
         },
         4: {
             title: 'Probability 4 - Very likely',
-            description: 'Event that occurred several times in the past year. Event expected to occur once or more times in the coming year.'
+            description: 'Could occur several times during the year in the absence of control measures.'
         }
     };
     const IMPACT_DETAILS = {
         1: {
             title: 'Impact 1 - Low',
             points: [
-                'Financial (base): < 300K€',
-                'Legal: internal disciplinary action against an employee',
-                'Reputational: no impact, internal or local external (e.g., partners); disruption limited to a few days',
-                'Operational: little or no disruption; slowdown in operations'
+                'Financial: < 5% of profits',
+                'Legal: internal disciplinary sanction against an employee',
+                'Reputational: isolated dissatisfaction, with no external exposure',
+                'Operational: punctual disruption, resolved locally',
+                'Human: punctual discomfort and limited decrease in motivation with no lasting impact'
             ]
         },
         2: {
             title: 'Impact 2 - Moderate',
             points: [
-                'Financial (base): [300K ; 3M€[',
-                'Legal: legal or administrative proceedings involving an individual employee',
-                'Reputational: regional external impact; disruption limited to a few weeks',
-                'Operational: minor disruptions; temporary loss of business or contracts'
+                'Financial: < 10% of profits',
+                'Legal: judicial or administrative procedure at employee level',
+                'Reputational: sensitive customer complaint, risk of negative word-of-mouth within a restricted circle',
+                'Operational: local disorganization or across several missions; HQ intervention',
+                'Human: recurring tensions and individual disengagement requiring managerial intervention'
             ]
         },
         3: {
             title: 'Impact 3 - High',
             points: [
-                'Financial (base): [3M€ ; 30M€[',
-                'Legal: sanctions at the affiliate level; Judicial Public Interest Agreement (CJIP)',
-                'Reputational: national external impact (e.g., Department of Health); national media crisis; impact lasting several months',
-                'Operational: significant disruptions; permanent loss of business or contracts'
+                'Financial: < 25% of profits',
+                'Legal: sanctions at subsidiary level',
+                'Reputational: image damage among B2B customers or VIP customers; start of external exposure',
+                'Operational: significant disorganization of a subsidiary, service, or customer portfolio',
+                'Human: degradation of working climate, absenteeism, open conflict'
             ]
         },
         4: {
             title: 'Impact 4 - Critical',
             points: [
-                'Financial (base): ≥ 30M€',
-                'Legal: group-wide sanctions; criminal conviction',
-                'Reputational: international external impact (e.g., EMA, FDA, etc.); international media crisis; long-term damage lasting several years',
-                'Operational: cessation of operations'
+                'Financial: ≥ 25% of profits',
+                'Legal: major criminal proceedings, prohibition to operate, or heavy sanctions',
+                'Reputational: strong media exposure; lasting loss of customer trust',
+                'Operational: prolonged shutdown of a critical activity or systemic disruption of the operating model',
+                'Human: collective disengagement, multiple departures, and lasting loss of employer attractiveness'
             ]
         }
     };

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; de la conformité Al Hiyad - v2.14.160</title>
+    <title>Cartographie des risques &amp; de la conformité Al Hiyad - v2.14.162</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <!-- Local dependencies with CDN fallback -->
     <script>
@@ -787,9 +787,9 @@
                                         <th>Niveau</th>
                                         <th>Libellé</th>
                                         <th>Financier</th>
+                                        <th>Juridique</th>
                                         <th>Réputationnel</th>
                                         <th>Opérationnel</th>
-                                        <th>Juridique</th>
                                         <th>Humain</th>
                                     </tr>
                                 </thead>
@@ -797,38 +797,38 @@
                                     <tr>
                                         <td><span class="legend-level-badge level-1">1</span></td>
                                         <td>Faible</td>
-                                        <td>&lt; 250 k$</td>
-                                        <td>Plainte client VIP isolée</td>
-                                        <td>Retard de service isolé</td>
-                                        <td>Réclamation contractuelle</td>
-                                        <td>Inconfort client ou staff</td>
+                                        <td>&lt; 5% des bénéfices</td>
+                                        <td>Sanction interne disciplinaire envers un collaborateur</td>
+                                        <td>Mécontentement isolé, sans exposition externe</td>
+                                        <td>Perturbation ponctuelle, résolue localement</td>
+                                        <td>Malaise ponctuel et baisse limitée de motivation sans impact durable</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-level-badge level-2">2</span></td>
                                         <td>Modéré</td>
-                                        <td>250 k$ à 2,5 M$</td>
-                                        <td>Impact sur partenaire palace</td>
-                                        <td>Incident séjour VIP</td>
-                                        <td>Contrôle autorité locale</td>
-                                        <td>Atteinte limitée à la sécurité</td>
+                                        <td>&lt; 10% des bénéfices</td>
+                                        <td>Procédure judiciaire ou administrative à l’échelle d’un collaborateur</td>
+                                        <td>Réclamation client sensible, risque de bouche-à-oreille négatif dans un cercle restreint</td>
+                                        <td>Désorganisation locale ou sur plusieurs missions ; intervention HQ</td>
+                                        <td>Tensions récurrentes et désengagement individuel nécessitant une intervention managériale</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-level-badge level-3">3</span></td>
-                                        <td>Élevé</td>
-                                        <td>2,5 M$ à 25 M$</td>
-                                        <td>Crise média régionale</td>
-                                        <td>Rupture fournisseur clé</td>
-                                        <td>Contentieux multi-juridictions</td>
-                                        <td>Dommage physique ou psychologique sérieux</td>
+                                        <td>Fort</td>
+                                        <td>&lt; 25% des bénéfices</td>
+                                        <td>Sanctions à l’échelle d’une filiale</td>
+                                        <td>Atteinte à l’image auprès de clients B2B ou clients VIP ; début d’exposition externe</td>
+                                        <td>Désorganisation importante d’une filiale, d’un service ou d’un portefeuille client</td>
+                                        <td>Dégradation du climat de travail, absentéisme, conflit ouvert</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-level-badge level-4">4</span></td>
                                         <td>Critique</td>
-                                        <td>≥ 25 M$</td>
-                                        <td>Atteinte internationale à la marque Al Hiyad</td>
-                                        <td>Interruption d’activité multi-marchés</td>
-                                        <td>Sanctions, interdiction d’opérer ou poursuites pénales</td>
-                                        <td>Risque vital ou atteinte grave à une personne</td>
+                                        <td>≥ 25% des bénéfices</td>
+                                        <td>Poursuites pénales majeures, interdiction d’opérer ou sanctions lourdes</td>
+                                        <td>Forte exposition médiatique ; perte de confiance durable des clients</td>
+                                        <td>Arrêt prolongé d’une activité critique ou rupture systémique du modèle opérationnel</td>
+                                        <td>Désengagement collectif, départs multiples et perte durable d’attractivité employeur</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -855,34 +855,29 @@
                                     <tr>
                                         <th>Niveau</th>
                                         <th>Libellé</th>
-                                        <th>Lecture historique</th>
-                                        <th>Lecture prospective</th>
+                                        <th>Critères d’évaluation de la probabilité</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td><span class="legend-level-badge level-1">1</span></td>
                                         <td>Peu probable</td>
-                                        <td>Ne s’est pas produit au cours des 5 dernières années</td>
-                                        <td>Non attendu au cours des 5 prochaines années</td>
+                                        <td>Pourrait survenir une fois tous les 5 ans en l’absence de mesures de maîtrise</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-level-badge level-2">2</span></td>
-                                        <td>Modérément probable</td>
-                                        <td>Survenu une fois au cours des 5 dernières années</td>
-                                        <td>Susceptible de se produire une fois au cours des 5 prochaines années</td>
+                                        <td>Moyennement probable</td>
+                                        <td>Pourrait survenir une fois tous les 3 ans en l’absence de mesures de maîtrise</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-level-badge level-3">3</span></td>
                                         <td>Probable</td>
-                                        <td>Survenu une fois au cours de l’année passée</td>
-                                        <td>Susceptible de se produire une fois dans l’année à venir</td>
+                                        <td>Pourrait survenir une fois par an en l’absence de mesures de maîtrise</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-level-badge level-4">4</span></td>
                                         <td>Très probable</td>
-                                        <td>Survenu plusieurs fois au cours de l’année passée</td>
-                                        <td>Attendu une ou plusieurs fois dans l’année à venir</td>
+                                        <td>Pourrait survenir plusieurs fois au cours de l’année en l’absence de mesures de maîtrise</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1038,7 +1033,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.161</span>
+            <span class="app-version">Version 2.14.162</span>
         </footer>
     </div>
 
