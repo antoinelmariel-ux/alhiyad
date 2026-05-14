@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview10'] = {
     "id": 10,
     "fileIndex": 10,
     "fileName": "interview10.js",
-    "title": "Interview fictive — Finance",
+    "title": "Entretien — Finance",
     "referents": [
         "Thomas Lemaire — Directeur Financier"
     ],

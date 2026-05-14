@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview9'] = {
     "id": 9,
     "fileIndex": 9,
     "fileName": "interview9.js",
-    "title": "Interview fictive — Achats & fournisseurs",
+    "title": "Entretien — Achats & fournisseurs",
     "referents": [
         "Soraya Haddad — Directrice Achats & Fournisseurs"
     ],

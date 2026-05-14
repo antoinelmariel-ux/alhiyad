@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview6'] = {
     "id": 6,
     "fileIndex": 6,
     "fileName": "interview6.js",
-    "title": "Interview fictive — Confidentialité & sûreté",
+    "title": "Entretien — Confidentialité & sûreté",
     "referents": [
         "Sami El Idrissi — Responsable Sûreté & Confidentialité"
     ],

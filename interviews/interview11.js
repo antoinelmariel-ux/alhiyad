@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview11'] = {
     "id": 11,
     "fileIndex": 11,
     "fileName": "interview11.js",
-    "title": "Interview fictive — Juridique & compliance",
+    "title": "Entretien — Juridique & compliance",
     "referents": [
         "Aïcha Rahmani — Directrice Juridique & Compliance"
     ],

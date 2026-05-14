@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview12'] = {
     "id": 12,
     "fileIndex": 12,
     "fileName": "interview12.js",
-    "title": "Interview fictive — SI & cybersécurité",
+    "title": "Entretien — SI & cybersécurité",
     "referents": [
         "Olivier Garnier — Directeur SI & Cybersécurité"
     ],

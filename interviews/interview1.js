@@ -3,7 +3,7 @@ window.RMS_INTERVIEW_FILES['interview1'] = {
     "id": 1,
     "fileIndex": 1,
     "fileName": "interview1.js",
-    "title": "Interview fictive — Gouvernance",
+    "title": "Entretien — Gouvernance",
     "referents": [
         "Nadia Benali — Directrice Gouvernance"
     ],
