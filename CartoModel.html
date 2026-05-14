@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; de la conformité Al Hiyad - v2.14.158</title>
+    <title>Cartographie des risques &amp; de la conformité Al Hiyad - v2.14.160</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <!-- Local dependencies with CDN fallback -->
     <script>
@@ -154,6 +154,9 @@
                 </button>
                 <button class="tab" onclick="switchTab('plans')">
                     📝 Plans d’action
+                </button>
+                <button class="tab" onclick="switchTab('legends')">
+                    🧭 Légendes
                 </button>
                 <button class="tab" onclick="switchTab('config')">
                     ⚙️ Administration
@@ -760,6 +763,243 @@
             </div>
         </div>
 
+        <div id="legends-tab" class="tab-content">
+            <div class="main-content legends-page">
+                <div class="toolbar">
+                    <div>
+                        <div class="toolbar-title">Légendes pédagogiques</div>
+                        <p class="legends-toolbar-subtitle">Repères de lecture utilisés pour qualifier, pondérer et maîtriser les risques.</p>
+                    </div>
+                </div>
+                <div class="content-area legends-content">
+                    <section class="legend-panel">
+                        <div class="legend-panel-header">
+                            <span class="legend-panel-icon">💥</span>
+                            <div>
+                                <h2>Impact</h2>
+                                <p>Évalue la gravité maximale plausible d’un scénario sur cinq dimensions : financier, réputationnel, opérationnel, juridique et humain.</p>
+                            </div>
+                        </div>
+                        <div class="legend-table-wrapper">
+                            <table class="legend-table legend-impact-table">
+                                <thead>
+                                    <tr>
+                                        <th>Niveau</th>
+                                        <th>Libellé</th>
+                                        <th>Financier</th>
+                                        <th>Réputationnel</th>
+                                        <th>Opérationnel</th>
+                                        <th>Juridique</th>
+                                        <th>Humain</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-1">1</span></td>
+                                        <td>Faible</td>
+                                        <td>&lt; 250 k$</td>
+                                        <td>Plainte client VIP isolée</td>
+                                        <td>Retard de service isolé</td>
+                                        <td>Réclamation contractuelle</td>
+                                        <td>Inconfort client ou staff</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-2">2</span></td>
+                                        <td>Modéré</td>
+                                        <td>250 k$ à 2,5 M$</td>
+                                        <td>Impact sur partenaire palace</td>
+                                        <td>Incident séjour VIP</td>
+                                        <td>Contrôle autorité locale</td>
+                                        <td>Atteinte limitée à la sécurité</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-3">3</span></td>
+                                        <td>Élevé</td>
+                                        <td>2,5 M$ à 25 M$</td>
+                                        <td>Crise média régionale</td>
+                                        <td>Rupture fournisseur clé</td>
+                                        <td>Contentieux multi-juridictions</td>
+                                        <td>Dommage physique ou psychologique sérieux</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-4">4</span></td>
+                                        <td>Critique</td>
+                                        <td>≥ 25 M$</td>
+                                        <td>Atteinte internationale à la marque Al Hiyad</td>
+                                        <td>Interruption d’activité multi-marchés</td>
+                                        <td>Sanctions, interdiction d’opérer ou poursuites pénales</td>
+                                        <td>Risque vital ou atteinte grave à une personne</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="legend-formula-card">
+                        <span class="legend-formula-label">Formule — risque brut simple</span>
+                        <code>Score brut simple = Probabilité × Impact</code>
+                        <p>Cette première lecture positionne le risque avant pondération par les facteurs aggravants.</p>
+                    </div>
+
+                    <section class="legend-panel">
+                        <div class="legend-panel-header">
+                            <span class="legend-panel-icon">🎲</span>
+                            <div>
+                                <h2>Probabilité</h2>
+                                <p>Mesure la fréquence observée ou anticipée du scénario sur une échelle de 1 à 4.</p>
+                            </div>
+                        </div>
+                        <div class="legend-table-wrapper">
+                            <table class="legend-table">
+                                <thead>
+                                    <tr>
+                                        <th>Niveau</th>
+                                        <th>Libellé</th>
+                                        <th>Lecture historique</th>
+                                        <th>Lecture prospective</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-1">1</span></td>
+                                        <td>Peu probable</td>
+                                        <td>Ne s’est pas produit au cours des 5 dernières années</td>
+                                        <td>Non attendu au cours des 5 prochaines années</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-2">2</span></td>
+                                        <td>Modérément probable</td>
+                                        <td>Survenu une fois au cours des 5 dernières années</td>
+                                        <td>Susceptible de se produire une fois au cours des 5 prochaines années</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-3">3</span></td>
+                                        <td>Probable</td>
+                                        <td>Survenu une fois au cours de l’année passée</td>
+                                        <td>Susceptible de se produire une fois dans l’année à venir</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-4">4</span></td>
+                                        <td>Très probable</td>
+                                        <td>Survenu plusieurs fois au cours de l’année passée</td>
+                                        <td>Attendu une ou plusieurs fois dans l’année à venir</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="legend-formula-card accent">
+                        <span class="legend-formula-label">Formule — risque brut aggravé</span>
+                        <code>Score brut aggravé = Probabilité × Coefficient aggravant × Impact</code>
+                        <p>Le coefficient vaut <strong>1</strong> sans facteur, <strong>1,2</strong> si au moins un facteur aggravant de groupe 2 est présent, et <strong>1,4</strong> si au moins un facteur aggravant de groupe 1 est présent.</p>
+                    </div>
+
+                    <section class="legend-panel">
+                        <div class="legend-panel-header">
+                            <span class="legend-panel-icon">⚠️</span>
+                            <div>
+                                <h2>Facteurs aggravants</h2>
+                                <p>Facteurs contextuels susceptibles d’augmenter l’exposition inhérente du risque selon la thématique sélectionnée.</p>
+                            </div>
+                        </div>
+                        <div class="legend-table-wrapper">
+                            <table class="legend-table">
+                                <thead>
+                                    <tr>
+                                        <th>Groupe</th>
+                                        <th>Coefficient</th>
+                                        <th>Rôle</th>
+                                        <th>Exemples de signaux</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="legend-factor-pill neutral">Aucun</span></td>
+                                        <td>1,0</td>
+                                        <td>Situation de référence</td>
+                                        <td>Aucun facteur aggravant documenté ou applicable</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-factor-pill group-2">Groupe 2</span></td>
+                                        <td>1,2</td>
+                                        <td>Aggravation modérée</td>
+                                        <td>Pays à risque modéré, culture du pourboire, forte présence de cash, bénéficiaire effectif difficile à identifier, pression business forte</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-factor-pill group-1">Groupe 1</span></td>
+                                        <td>1,4</td>
+                                        <td>Aggravation prioritaire</td>
+                                        <td>Agent public, pays à risque de corruption élevé, données sensibles, pays sous sanctions, décision à fort enjeu pour la personne</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="legend-formula-card success">
+                        <span class="legend-formula-label">Formule — risque net</span>
+                        <code>Score net = Score brut aggravé × Coefficient de maîtrise</code>
+                        <p>Le coefficient de maîtrise traduit l’efficacité des contrôles existants : plus il est faible, plus la réduction du risque est forte.</p>
+                    </div>
+
+                    <section class="legend-panel">
+                        <div class="legend-panel-header">
+                            <span class="legend-panel-icon">🛡️</span>
+                            <div>
+                                <h2>Mesures de maîtrises</h2>
+                                <p>Apprécie la maturité combinée de la gouvernance, des procédures, des contrôles et de la formation.</p>
+                            </div>
+                        </div>
+                        <div class="legend-table-wrapper">
+                            <table class="legend-table">
+                                <thead>
+                                    <tr>
+                                        <th>Niveau</th>
+                                        <th>Coefficient</th>
+                                        <th>Réduction indicative</th>
+                                        <th>Lecture pédagogique</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="legend-control-pill effective">Efficace</span></td>
+                                        <td>0,25</td>
+                                        <td>75 %</td>
+                                        <td>Gouvernance active, procédures formalisées, contrôles documentés, audits et formation ciblée avec taux élevé.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-control-pill improvable">Améliorable</span></td>
+                                        <td>0,50</td>
+                                        <td>50 %</td>
+                                        <td>Dispositif formalisé mais suivi, mise à jour, ciblage ou preuves d’exécution encore perfectibles.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-control-pill insufficient">Insuffisant</span></td>
+                                        <td>0,75</td>
+                                        <td>25 %</td>
+                                        <td>Processus informels ou partiellement mis en œuvre, contrôles ad hoc, sensibilisation limitée.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-control-pill ineffective">Inefficace</span></td>
+                                        <td>1,00</td>
+                                        <td>0 %</td>
+                                        <td>Absence ou inefficacité des procédures, contrôles, gouvernance et actions de formation.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="legend-formula-card post-action">
+                        <span class="legend-formula-label">Formule — risque net après plan d’action</span>
+                        <code>Score cible = Score brut aggravé × Coefficient de maîtrise cible</code>
+                        <p>Le score cible illustre le risque résiduel attendu après la mise en œuvre des plans d’action.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="config-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
@@ -798,7 +1038,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.159</span>
+            <span class="app-version">Version 2.14.160</span>
         </footer>
     </div>
 
