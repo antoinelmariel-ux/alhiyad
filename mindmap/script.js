@@ -248,7 +248,6 @@ Exemples:
       },
       'lfb-controleur': {
         controle: `**Quels sont les principaux mécanismes de prévention ou de contrôle que vous avez mis en place pour prévenir et détecter les risques de corruption sur les opérations ?**
-- Separation of medical and commercial roles
 - Segregation of duties
 - Collegial decision-making
 - Collegiality via committees/review bodies
@@ -529,7 +528,6 @@ Examples:
       },
       'lfb-controleur': {
         controle: `**What are the main prevention or control mechanisms you have put in place to prevent and detect corruption risks in operations?**
-- Separation of medical and commercial roles
 - Segregation of duties
 - Collegial decision-making
 - Collegiality via committees/review bodies
