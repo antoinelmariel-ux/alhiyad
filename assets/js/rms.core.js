@@ -8915,6 +8915,9 @@ class RiskManagementSystem {
                 const itemAttributes = isBlurred
                     ? ' aria-hidden="true"'
                     : ` onclick='rms.selectRisk(${JSON.stringify(risk.id)}, { preferredView: ${JSON.stringify(mode)} })'`;
+                const viewButtonAttributes = isBlurred
+                    ? ' disabled aria-hidden="true" tabindex="-1"'
+                    : ` title="Voir le risque" aria-label="Voir le risque ${escapeHtml(risk.titre || risk.description || 'Sans titre')}" onclick='event.stopPropagation(); rms.viewRisk(${JSON.stringify(risk.id)})'`;
                 const editButtonAttributes = isBlurred
                     ? ' disabled aria-hidden="true" tabindex="-1"'
                     : ` title="Éditer le risque" aria-label="Éditer le risque ${escapeHtml(risk.titre || risk.description || 'Sans titre')}" onclick='event.stopPropagation(); rms.editRisk(${JSON.stringify(risk.id)})'`;
@@ -8928,6 +8931,11 @@ class RiskManagementSystem {
                             </div>
                             <div class="risk-item-actions">
                                 <span class="risk-item-score ${scoreClass}">${formattedScore}</span>
+                                <button
+                                    type="button"
+                                    class="risk-item-edit-btn"
+                                    ${viewButtonAttributes}
+                                >👁️</button>
                                 <button
                                     type="button"
                                     class="risk-item-edit-btn"
@@ -10528,8 +10536,9 @@ class RiskManagementSystem {
                     <td class="table-actions-cell">
                         <div class="table-actions">
                             <button class="action-btn" title="Dupliquer" onclick='rms.duplicateRisk(${JSON.stringify(risk.id)})'${disabledAttr}>📄</button>
-                            <button class="action-btn" onclick='rms.editRisk(${JSON.stringify(risk.id)})'${disabledAttr}>✏️</button>
-                            <button class="action-btn" onclick='rms.deleteRisk(${JSON.stringify(risk.id)})'${disabledAttr}>🗑️</button>
+                            <button class="action-btn" title="Voir" aria-label="Voir le risque ${escapeHtml(risk.titre || risk.description || 'Sans titre')}" onclick='rms.viewRisk(${JSON.stringify(risk.id)})'${disabledAttr}>👁️</button>
+                            <button class="action-btn" title="Éditer" aria-label="Éditer le risque ${escapeHtml(risk.titre || risk.description || 'Sans titre')}" onclick='rms.editRisk(${JSON.stringify(risk.id)})'${disabledAttr}>✏️</button>
+                            <button class="action-btn" title="Supprimer" onclick='rms.deleteRisk(${JSON.stringify(risk.id)})'${disabledAttr}>🗑️</button>
                         </div>
                     </td>
                 </tr>
@@ -12733,6 +12742,184 @@ class RiskManagementSystem {
         }
 
         return normalizedRisk;
+    }
+
+    viewRisk(riskId) {
+        const targetId = String(riskId);
+        const risk = this.risks.find(r => idsEqual(r.id, targetId));
+        if (!risk) return;
+
+        const modal = document.getElementById('riskViewModal');
+        const body = document.getElementById('riskViewModalBody');
+        const title = document.getElementById('riskViewModalTitle');
+        if (!modal || !body) return;
+
+        const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (match) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match]));
+        const buildLabelMap = (list) => (Array.isArray(list) ? list : []).reduce((acc, item) => {
+            if (!item || item.value === undefined || item.value === null) return acc;
+            const rawValue = String(item.value);
+            const label = item.label || rawValue;
+            acc[rawValue] = label;
+            acc[rawValue.toLowerCase()] = label;
+            return acc;
+        }, {});
+        const resolveLabel = (map, value) => {
+            if (value == null || value === '') return '';
+            const rawValue = String(value);
+            return map[rawValue] || map[rawValue.toLowerCase()] || rawValue;
+        };
+        const normalizeList = (values, fallback = '') => {
+            if (Array.isArray(values)) {
+                return values.map(item => (item != null ? String(item).trim() : '')).filter(Boolean);
+            }
+            if (typeof values === 'string') {
+                const raw = values.trim();
+                if (!raw) return [];
+                return /[;,|]/.test(raw) ? raw.split(/[;,|]/).map(item => item.trim()).filter(Boolean) : [raw];
+            }
+            if (fallback != null && String(fallback).trim()) return [String(fallback).trim()];
+            return [];
+        };
+        const formatNumber = (value) => Number.isFinite(Number(value))
+            ? Number(value).toLocaleString('fr-FR', { maximumFractionDigits: 2 })
+            : '';
+        const formatValue = (value) => {
+            if (Array.isArray(value)) return value.filter(Boolean).join(', ');
+            if (value == null) return '';
+            return String(value).trim();
+        };
+        const renderRows = (rows) => rows
+            .filter(row => formatValue(row.value))
+            .map(row => `
+                <div class="risk-view-field">
+                    <div class="risk-view-label">${escapeHtml(row.label)}</div>
+                    <div class="risk-view-value">${escapeHtml(formatValue(row.value))}</div>
+                </div>
+            `).join('');
+        const renderSection = (sectionTitle, rows) => {
+            const html = renderRows(rows);
+            if (!html) return '';
+            return `
+                <section class="risk-view-section">
+                    <h4>${escapeHtml(sectionTitle)}</h4>
+                    <div class="risk-view-grid">${html}</div>
+                </section>
+            `;
+        };
+
+        const themeMap = buildLabelMap(this.config?.riskThemes);
+        const typeMap = buildLabelMap(this.config?.riskTypes);
+        const tierMap = buildLabelMap(this.config?.tiers);
+        const countryMap = buildLabelMap(this.config?.countries);
+        const audienceMap = buildLabelMap(this.config?.targetAudiences);
+        const statusValue = this.normalizeStatusValue('risk', risk?.statut, risk?.status, risk?.statusLabel, risk?.state);
+        const theme = risk.riskTheme || 'corruption';
+        const processes = normalizeList(risk.processusAssocies, risk.processus).map(value => this.getProcessLabel(value) || value);
+        const subProcesses = normalizeList(risk.sousProcessusAssocies, risk.sousProcessus).map(value => this.getSubProcessLabel(risk.processus, value) || value);
+        const corruptionTypes = normalizeList(risk.typesCorruption, risk.typeCorruption).map(value => resolveLabel(typeMap, value));
+        const corruptionExposure = normalizeList(risk.corruptionExposureTypes, risk.corruptionExposure).map(value => ({ public: 'Corruption publique', private: 'Corruption privée' }[value] || value));
+        const corruptionModes = normalizeList(risk.corruptionModes, risk.corruptionMode).map(value => ({ direct: 'Corruption directe', indirect: 'Corruption indirecte' }[value] || value));
+        const targetAudiences = normalizeList(risk.targetAudiences, risk.targetAudience).map(value => resolveLabel(audienceMap, value));
+        const tiers = normalizeList(risk.tiers).map(value => resolveLabel(tierMap, value));
+        const entities = normalizeList(risk.paysExposes).map(value => resolveLabel(countryMap, value));
+
+        const aggravatingFactors = typeof getRiskAggravatingFactors === 'function'
+            ? getRiskAggravatingFactors(risk)
+            : (risk.aggravatingFactors || {});
+        const factorConfig = this.config?.riskThemeAggravatingFactors?.[theme] || {};
+        const factorMap = buildLabelMap([...(factorConfig.group1 || []), ...(factorConfig.group2 || [])]);
+        const group1Factors = normalizeList(aggravatingFactors.group1).map(value => resolveLabel(factorMap, value));
+        const group2Factors = normalizeList(aggravatingFactors.group2).map(value => resolveLabel(factorMap, value));
+        const aggravatingCoefficient = typeof getRiskAggravatingCoefficient === 'function' ? getRiskAggravatingCoefficient(risk) : risk.aggravatingCoefficient;
+        const brutScore = typeof getRiskBrutScore === 'function' ? getRiskBrutScore(risk) : (Number(risk.probBrut) || 0) * (Number(risk.impactBrut) || 0);
+        const netInfo = typeof getRiskNetInfo === 'function'
+            ? getRiskNetInfo(risk)
+            : { score: (Number(risk.probNet) || 0) * (Number(risk.impactNet) || 0), label: risk.mitigationEffectiveness || '' };
+        const postInfo = typeof getRiskPostActionInfo === 'function'
+            ? getRiskPostActionInfo(risk)
+            : { score: (Number(risk.probPost) || 0) * (Number(risk.impactPost) || 0), label: risk.postActionMitigationEffectiveness || '' };
+        const controlIndex = (Array.isArray(this.controls) ? this.controls : []).reduce((acc, control) => {
+            if (control && control.id != null) acc[String(control.id)] = control;
+            return acc;
+        }, {});
+        const actionPlanIndex = (Array.isArray(this.actionPlans) ? this.actionPlans : []).reduce((acc, plan) => {
+            if (plan && plan.id != null) acc[String(plan.id)] = plan;
+            return acc;
+        }, {});
+        const controls = normalizeList(risk.controls).map(ref => controlIndex[String(ref)]?.name || controlIndex[String(ref)]?.title || ref);
+        const actionPlans = normalizeList(risk.actionPlans).map(ref => actionPlanIndex[String(ref)]?.name || actionPlanIndex[String(ref)]?.title || ref);
+
+        if (title) {
+            title.textContent = `Risque #${risk.id} — ${risk.titre || risk.description || 'Sans titre'}`;
+        }
+        modal.dataset.riskId = risk.id;
+        body.innerHTML = `
+            <div class="risk-view-summary">
+                <div>
+                    <span class="risk-view-kicker">Risque #${escapeHtml(risk.id)}</span>
+                    <h3>${escapeHtml(risk.titre || risk.description || 'Sans titre')}</h3>
+                </div>
+                <span class="table-badge badge-info">${escapeHtml(this.getStatusLabel('risk', statusValue, risk?.statusLabel, risk?.status, risk?.statut) || 'Non défini')}</span>
+            </div>
+            ${renderSection('Informations générales', [
+                { label: 'Thématique', value: resolveLabel(themeMap, theme) },
+                { label: 'Processus', value: processes },
+                { label: 'Sous-processus', value: subProcesses },
+                { label: 'Type de corruption', value: corruptionTypes },
+                { label: 'Corruption publique / privée', value: corruptionExposure },
+                { label: 'Corruption directe / indirecte', value: corruptionModes },
+                { label: 'Public cible', value: targetAudiences },
+                { label: 'Tiers concernés', value: tiers },
+                { label: 'Entités concernées', value: entities },
+                { label: 'Description', value: risk.description },
+                { label: 'Avantages indus', value: risk.avantagesIndus },
+                { label: 'Résultats attendus', value: risk.avantagesAttendus },
+                { label: 'Exemple', value: risk.example }
+            ])}
+            ${renderSection('Évaluation du risque', [
+                { label: 'Probabilité brute', value: formatNumber(risk.probBrut) },
+                { label: 'Impact brut', value: formatNumber(risk.impactBrut) },
+                { label: 'Score brut aggravé', value: formatNumber(brutScore) },
+                { label: 'Facteurs aggravants très significatifs', value: group1Factors },
+                { label: 'Facteurs aggravants significatifs', value: group2Factors },
+                { label: 'Coefficient aggravant', value: formatNumber(aggravatingCoefficient) },
+                { label: 'Niveau de maîtrise', value: netInfo.label },
+                { label: 'Score net', value: formatNumber(netInfo.score) },
+                { label: 'Niveau de maîtrise après plan d’action', value: postInfo.label },
+                { label: 'Score net après plan d’action', value: formatNumber(postInfo.score) }
+            ])}
+            ${renderSection('Contrôles et plans d’action', [
+                { label: 'Contrôles associés', value: controls },
+                { label: 'Plans d’action associés', value: actionPlans }
+            ])}
+            ${renderSection('Commentaire', [
+                { label: 'Commentaire', value: risk.comment }
+            ])}
+        `;
+
+        if (typeof window.bringModalToFront === 'function') {
+            window.bringModalToFront(modal);
+        } else {
+            modal.classList.add('show');
+        }
+    }
+
+    editRiskFromView() {
+        const modal = document.getElementById('riskViewModal');
+        const riskId = modal?.dataset?.riskId;
+        if (!riskId) return;
+        if (typeof window.closeModal === 'function') {
+            window.closeModal('riskViewModal');
+        } else if (modal) {
+            modal.classList.remove('show');
+        }
+        this.editRisk(riskId);
     }
 
     editRisk(riskId) {
