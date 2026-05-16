@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.170</title>
+    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.171</title>
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://unpkg.com/@sjmc11/tourguidejs/dist/css/tour.min.css">
     <!-- Local dependencies with CDN fallback -->
     <script>
         const LIBRARY_FALLBACKS = {
@@ -98,6 +99,9 @@
                 <div class="header-actions">
                     <div class="last-save">Dernière sauvegarde : <span id="lastSaveTime">-</span></div>
                     <div class="header-buttons">
+                        <button class="btn btn-outline btn-tour-guide" id="tourGuideLaunchButton" type="button">
+                            <span class="btn-icon">✨</span> Lancer l’explication
+                        </button>
                         <button class="btn btn-feedback" id="feedbackToggleButton" type="button" aria-pressed="false" hidden>
                             <span class="btn-icon">📝</span> Retour
                         </button>
@@ -1033,7 +1037,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.170</span>
+            <span class="app-version">Version 2.14.171</span>
         </footer>
     </div>
 
@@ -1760,6 +1764,8 @@
     <script defer src="assets/js/rms.core.js"></script>
     <script defer src="assets/js/rms.integrations.js"></script>
     <script defer src="assets/js/feedback.js"></script>
+    <script defer src="https://unpkg.com/@sjmc11/tourguidejs/dist/tour.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="assets/js/tourguide-init.js"></script>
     <script defer src="assets/js/main.js"></script>
 </body>
 </html>
