@@ -2582,6 +2582,8 @@ function handleConfigExport() {
         exportProcessConfiguration();
     } else if (section === 'general') {
         exportOtherParameters();
+    } else if (section === 'guidedTours') {
+        exportOtherParameters();
     } else if (section === 'history') {
         if (typeof exportHistory === 'function') {
             exportHistory();

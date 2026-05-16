@@ -3503,8 +3503,9 @@ class RiskManagementSystem {
 
         const availableSections = [
             { id: 'processManager', label: 'Processus & référents' },
-            { id: 'general', label: 'Other settings' },
-            { id: 'history', label: 'Change history' }
+            { id: 'general', label: 'Autres paramètres' },
+            { id: 'guidedTours', label: 'Tours guidés' },
+            { id: 'history', label: 'Historique des changements' }
         ];
 
         if (!this.currentConfigSection || !availableSections.some(section => section.id === this.currentConfigSection)) {
@@ -3521,6 +3522,10 @@ class RiskManagementSystem {
                 exportButton.style.display = '';
                 exportButton.textContent = '💾 Exporter les autres paramètres';
                 exportButton.setAttribute('data-scope', 'parameters');
+            } else if (this.currentConfigSection === 'guidedTours') {
+                exportButton.style.display = '';
+                exportButton.textContent = '💾 Exporter les tours guidés';
+                exportButton.setAttribute('data-scope', 'guidedTours');
             } else {
                 exportButton.style.display = 'none';
                 exportButton.removeAttribute('data-scope');
@@ -3540,7 +3545,7 @@ class RiskManagementSystem {
             const helper = document.createElement('div');
             helper.className = 'config-helper';
             const helperText = document.createElement('p');
-            helperText.textContent = "💡 Use the save button in the header to store risks, controls, and action plans. From this section, export your processes or other settings to share or archive them.";
+            helperText.textContent = "💡 Utilisez le bouton Enregistrer de l’en-tête pour exporter les données opérationnelles. Depuis cette section, exportez les processus, paramètres ou tours guidés pour les partager ou les archiver.";
             helper.appendChild(helperText);
             container.appendChild(helper);
         }
@@ -3570,6 +3575,13 @@ class RiskManagementSystem {
         } else if (this.currentConfigSection === 'general') {
             this.processManagerContainer = null;
             this.renderGeneralConfiguration(content);
+        } else if (this.currentConfigSection === 'guidedTours') {
+            this.processManagerContainer = null;
+            if (typeof window.renderGuidedToursAdmin === 'function') {
+                window.renderGuidedToursAdmin(content);
+            } else {
+                content.innerHTML = '<div class="config-helper">Le studio de tours guidés est en cours de chargement.</div>';
+            }
         } else {
             this.processManagerContainer = null;
             this.renderHistoryConfiguration(content);

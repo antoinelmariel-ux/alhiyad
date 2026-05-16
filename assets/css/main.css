@@ -7149,3 +7149,133 @@ tbody tr:hover {
         font-size: 0.7rem;
     }
 }
+
+.btn.btn-danger {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+    color: #fff;
+}
+
+.btn.btn-danger:hover,
+.btn.btn-danger:focus-visible {
+    filter: brightness(0.92);
+}
+
+.tour-guide-launcher-select {
+    min-width: 180px;
+    max-width: 260px;
+    padding: 9px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--surface-color);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.tour-capture-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: min(680px, calc(100vw - 32px));
+    padding: 14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(13, 31, 60, 0.97), rgba(51, 65, 85, 0.97));
+    color: #fff;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.3);
+}
+
+.tour-capture-bar.paused {
+    background: linear-gradient(135deg, rgba(146, 64, 14, 0.97), rgba(180, 83, 9, 0.97));
+}
+
+.tour-capture-actions,
+.tour-admin-toolbar,
+.tour-admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.tour-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.tour-admin-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background: var(--surface-color);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.tour-admin-card-header {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(140px, 180px) auto;
+    gap: 14px;
+    align-items: end;
+}
+
+.tour-step-summary {
+    color: var(--muted-text-color);
+    font-size: 0.9rem;
+}
+
+.tour-step-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tour-step-row {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: start;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--surface-alt-color);
+}
+
+.tour-step-order {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+}
+
+.tour-step-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (max-width: 860px) {
+    .tour-admin-card-header,
+    .tour-step-row {
+        grid-template-columns: 1fr;
+    }
+
+    .tour-capture-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
