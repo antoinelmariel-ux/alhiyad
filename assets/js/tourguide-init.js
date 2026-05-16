@@ -181,6 +181,9 @@
             target,
             order: parseInt(step.order, 10) || index + 1,
             zoom,
+            tab: typeof step.tab === 'string' ? step.tab.trim() : '',
+            modal: typeof step.modal === 'string' ? step.modal.trim() : '',
+            configSection: typeof step.configSection === 'string' ? step.configSection.trim() : '',
         };
     }
 
@@ -209,6 +212,8 @@
                 target: step.target,
                 order: step.order,
                 targetPadding: getStepPadding(step),
+                beforeEnter: () => prepareStepContext(step),
+                afterEnter: () => refreshTourGuidePosition(),
             }));
 
         const averageZoom = steps.length
@@ -223,6 +228,164 @@
         };
     }
 
+
+    function nextFrame() {
+        return new Promise(resolve => window.requestAnimationFrame(() => resolve(true)));
+    }
+
+    function refreshTourGuidePosition() {
+        if (!tourGuideClient) {
+            return Promise.resolve(true);
+        }
+        if (typeof tourGuideClient.updatePositions === 'function') {
+            return tourGuideClient.updatePositions().catch(() => true);
+        }
+        if (typeof tourGuideClient.refreshDialog === 'function') {
+            return tourGuideClient.refreshDialog().catch(() => true);
+        }
+        return Promise.resolve(true);
+    }
+
+    function findStepTargetElement(step) {
+        const target = typeof step?.target === 'string' ? step.target.trim() : '';
+        if (!target) {
+            return null;
+        }
+        try {
+            return document.querySelector(target);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function inferTabName(step) {
+        if (typeof step?.tab === 'string' && step.tab.trim()) {
+            return step.tab.trim();
+        }
+        const element = findStepTargetElement(step);
+        const tabContent = element?.closest?.('.tab-content[id$="-tab"]');
+        if (tabContent?.id) {
+            return tabContent.id.replace(/-tab$/, '');
+        }
+        const target = typeof step?.target === 'string' ? step.target.trim() : '';
+        const match = target.match(/#([a-z0-9_-]+)-tab\b/i);
+        return match ? match[1] : '';
+    }
+
+    function getActiveTabName() {
+        const activeTab = document.querySelector('.tab-content.active[id$="-tab"]');
+        return activeTab?.id ? activeTab.id.replace(/-tab$/, '') : '';
+    }
+
+    function getActiveConfigSection() {
+        return window.rms?.currentConfigSection || '';
+    }
+
+    function inferConfigSection(step) {
+        if (typeof step?.configSection === 'string' && step.configSection.trim()) {
+            return step.configSection.trim();
+        }
+        const element = findStepTargetElement(step);
+        if (!element || !element.closest('#configurationContainer')) {
+            return '';
+        }
+        return getActiveConfigSection();
+    }
+
+    function inferModalId(step) {
+        if (typeof step?.modal === 'string' && step.modal.trim()) {
+            return step.modal.trim();
+        }
+        const element = findStepTargetElement(step);
+        const modal = element?.closest?.('.modal');
+        if (modal?.id) {
+            return modal.id;
+        }
+        const target = typeof step?.target === 'string' ? step.target.trim() : '';
+        const match = target.match(/#([a-z0-9_-]*modal[a-z0-9_-]*)\b/i);
+        return match ? match[1] : '';
+    }
+
+    function getActiveModalId(element) {
+        const scopedModal = element?.closest?.('.modal.show');
+        if (scopedModal?.id) {
+            return scopedModal.id;
+        }
+        const topModal = Array.from(document.querySelectorAll('.modal.show')).pop();
+        return topModal?.id || '';
+    }
+
+    function closeGuidedTourModals(exceptModalId = '') {
+        document.querySelectorAll('.modal.show[data-tour-opened-by-guide="true"]').forEach((modal) => {
+            if (modal.id && modal.id === exceptModalId) {
+                return;
+            }
+            if (modal.id && typeof window.closeModal === 'function') {
+                window.closeModal(modal.id);
+            } else {
+                modal.classList.remove('show');
+            }
+            delete modal.dataset.tourOpenedByGuide;
+        });
+    }
+
+    function openModalForStep(modalId) {
+        if (!modalId) {
+            closeGuidedTourModals();
+            return;
+        }
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            return;
+        }
+        const alreadyOpen = modal.classList.contains('show');
+        const openers = {
+            interviewModal: () => window.rms?.openInterviewModal?.(),
+            interviewTemplateModal: () => window.rms?.openInterviewTemplateModal?.(),
+            mentionsModal: () => window.rms?.openMentionsModal?.(),
+            referentDirectoryModal: () => window.rms?.openReferentDirectoryModal?.(),
+            mindmapModal: () => window.rms?.openMindMapModal?.(),
+            riskModal: () => window.addNewRisk?.(),
+            controlModal: () => window.addNewControl?.(),
+            actionPlanModal: () => window.addNewActionPlan?.(),
+            controlSelectorModal: () => window.openControlSelector?.(),
+            actionPlanSelectorModal: () => window.openActionPlanSelector?.(),
+            riskSelectorPlanModal: () => window.openRiskSelectorForPlan?.(),
+            riskSelectorModal: () => window.openRiskSelector?.(),
+        };
+        if (!alreadyOpen && typeof openers[modalId] === 'function') {
+            openers[modalId]();
+        }
+        if (!modal.classList.contains('show')) {
+            if (typeof window.bringModalToFront === 'function') {
+                window.bringModalToFront(modal);
+            } else {
+                modal.classList.add('show');
+            }
+        }
+        modal.dataset.tourOpenedByGuide = 'true';
+        closeGuidedTourModals(modalId);
+    }
+
+    function prepareStepContext(step) {
+        if (!step) {
+            return Promise.resolve(true);
+        }
+        const tabName = inferTabName(step);
+        if (tabName && typeof window.switchTab === 'function' && getActiveTabName() !== tabName) {
+            window.switchTab(tabName);
+        }
+        if (tabName === 'config') {
+            const configSection = inferConfigSection(step);
+            if (configSection && window.rms && window.rms.currentConfigSection !== configSection && typeof window.rms.renderConfiguration === 'function') {
+                window.rms.currentConfigSection = configSection;
+                window.rms.renderConfiguration();
+            }
+        }
+        openModalForStep(inferModalId(step));
+        return nextFrame().then(() => refreshTourGuidePosition());
+    }
+
     function notifyTourGuideUnavailable() {
         notify('warning', 'Le module TourGuide JS est indisponible. Vérifiez la connexion au CDN puis réessayez.');
     }
@@ -233,10 +396,19 @@
         }
 
         tourGuideClient = new window.tourguide.TourGuideClient(buildTourOptions(tour));
+        if (typeof tourGuideClient.onAfterStepChange === 'function') {
+            tourGuideClient.onAfterStepChange(() => refreshTourGuidePosition());
+        }
+        if (typeof tourGuideClient.onAfterExit === 'function') {
+            tourGuideClient.onAfterExit(() => closeGuidedTourModals());
+        }
+        if (typeof tourGuideClient.onFinish === 'function') {
+            tourGuideClient.onFinish(() => closeGuidedTourModals());
+        }
         return tourGuideClient;
     }
 
-    function startTourGuide(tourId = activeTourId) {
+    async function startTourGuide(tourId = activeTourId) {
         const launchableTours = getLaunchableTours();
         if (!launchableTours.length) {
             notify('warning', 'Aucun tour actif avec étapes n’est disponible. Créez ou activez un tour dans Administration > Tours guidés.');
@@ -246,12 +418,8 @@
         const tour = getTourById(tourId) || launchableTours[0];
         activeTourId = tour.id;
 
-        const firstTarget = tour.steps?.[0]?.target || '';
-        if (firstTarget.includes('config') && typeof window.switchTab === 'function') {
-            window.switchTab('config');
-        } else if (typeof window.switchTab === 'function') {
-            window.switchTab('dashboard');
-        }
+        const firstStep = normalizeStep(tour.steps?.[0]) || tour.steps?.[0] || null;
+        await prepareStepContext(firstStep);
 
         const client = createTourGuideClient(tour);
         if (!client || typeof client.start !== 'function') {
@@ -403,6 +571,9 @@
             target: selector,
             order: tour.steps.length + 1,
             zoom: 100,
+            tab: getActiveTabName(),
+            modal: getActiveModalId(event.target),
+            configSection: getActiveConfigSection(),
         });
         touchTour(tour);
         persistTourChanges('Étape capturée. Vous pouvez la modifier dans le studio de tours.', false);
@@ -671,6 +842,20 @@
                                 <label class="form-group">
                                     <span class="form-label">Zoom (${step.zoom || 100}%)</span>
                                     <input class="form-input" type="range" min="60" max="160" step="5" value="${step.zoom || 100}" data-step-field="zoom">
+                                </label>
+                            </div>
+                            <div class="form-grid">
+                                <label class="form-group">
+                                    <span class="form-label">Onglet à ouvrir</span>
+                                    <input class="form-input" value="${escapeHtml(step.tab || '')}" placeholder="ex. risks" data-step-field="tab">
+                                </label>
+                                <label class="form-group">
+                                    <span class="form-label">Modale à ouvrir</span>
+                                    <input class="form-input" value="${escapeHtml(step.modal || '')}" placeholder="ex. riskModal" data-step-field="modal">
+                                </label>
+                                <label class="form-group">
+                                    <span class="form-label">Section admin</span>
+                                    <input class="form-input" value="${escapeHtml(step.configSection || '')}" placeholder="ex. guidedTours" data-step-field="configSection">
                                 </label>
                             </div>
                             <label class="form-group">
