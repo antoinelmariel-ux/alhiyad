@@ -7241,7 +7241,7 @@ tbody tr:hover {
 
 .tour-step-row {
     display: grid;
-    grid-template-columns: 38px minmax(0, 1fr) auto;
+    grid-template-columns: 38px minmax(180px, 260px) minmax(0, 1fr) auto;
     gap: 14px;
     align-items: start;
     padding: 14px;
@@ -7262,10 +7262,65 @@ tbody tr:hover {
     font-weight: 700;
 }
 
+.tour-step-preview-column,
 .tour-step-fields {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.tour-step-preview {
+    overflow: hidden;
+    min-height: 150px;
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--surface-color);
+}
+
+.tour-step-preview.has-image {
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.03);
+}
+
+.tour-step-preview img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    object-position: top left;
+    background: #fff;
+}
+
+.tour-step-preview figcaption {
+    padding: 8px 10px;
+    color: var(--muted-text-color);
+    font-size: 0.78rem;
+}
+
+.tour-step-preview-fallback {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    color: var(--muted-text-color);
+    background: repeating-linear-gradient(
+        135deg,
+        rgba(148, 163, 184, 0.12),
+        rgba(148, 163, 184, 0.12) 10px,
+        rgba(148, 163, 184, 0.2) 10px,
+        rgba(148, 163, 184, 0.2) 20px
+    );
+}
+
+.tour-step-preview-fallback strong {
+    color: var(--text-color);
+}
+
+.tour-step-preview-fallback span {
+    overflow-wrap: anywhere;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.82rem;
 }
 
 @media (max-width: 860px) {
