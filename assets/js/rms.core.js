@@ -12812,6 +12812,148 @@ class RiskManagementSystem {
                 </section>
             `;
         };
+        const renderRiskEvolutionMatrix = ({ brutScore, netInfo, postInfo }) => {
+            const mitigationOptions = typeof getMitigationEffectivenessOptions === 'function'
+                ? getMitigationEffectivenessOptions()
+                : [
+                    { value: 'efficace', label: 'Effective', coefficient: 0.25 },
+                    { value: 'ameliorable', label: 'Room for improvement', coefficient: 0.5 },
+                    { value: 'insuffisant', label: 'Insufficient', coefficient: 0.75 },
+                    { value: 'inefficace', label: 'Ineffective', coefficient: 1 }
+                ];
+            const mitigationOrder = mitigationOptions.map(option => option.value);
+            const grossRows = [
+                { score: 16, label: 'Critique', helper: '16' },
+                { score: 12, label: 'Critique', helper: '12' },
+                { score: 9, label: 'Élevé', helper: '9' },
+                { score: 8, label: 'Élevé', helper: '8' },
+                { score: 6, label: 'Élevé', helper: '6' },
+                { score: 4, label: 'Modéré', helper: '4' },
+                { score: 3, label: 'Modéré', helper: '3' },
+                { score: 2, label: 'Faible', helper: '2' },
+                { score: 1, label: 'Faible', helper: '1' }
+            ];
+            const severityStops = [
+                { min: 0, max: 3, className: 'level-1' },
+                { min: 3, max: 6, className: 'level-2' },
+                { min: 6, max: 12, className: 'level-3' },
+                { min: 12, max: Infinity, className: 'level-4' }
+            ];
+            const getSeverityClassFromScore = (score) => {
+                const value = Number.isFinite(Number(score)) ? Number(score) : 0;
+                const match = severityStops.find(stop => value >= stop.min && value < stop.max);
+                return match?.className || 'level-1';
+            };
+            const findRowIndex = (score) => {
+                const numericScore = Number.isFinite(Number(score)) ? Number(score) : 0;
+                const cappedScore = Math.max(1, Math.min(16, numericScore));
+                let bestIndex = 0;
+                let bestDistance = Infinity;
+                grossRows.forEach((row, index) => {
+                    const distance = Math.abs(row.score - cappedScore);
+                    if (distance < bestDistance) {
+                        bestDistance = distance;
+                        bestIndex = index;
+                    }
+                });
+                return bestIndex;
+            };
+            const resolveColumnIndex = (effectiveness) => {
+                const normalized = typeof normalizeMitigationEffectiveness === 'function'
+                    ? normalizeMitigationEffectiveness(effectiveness)
+                    : String(effectiveness || 'inefficace').toLowerCase();
+                const index = mitigationOrder.indexOf(normalized);
+                return index >= 0 ? index : mitigationOrder.length - 1;
+            };
+            const resolveEffectivenessLabel = (effectiveness, fallbackLabel) => {
+                if (fallbackLabel) return fallbackLabel;
+                const option = mitigationOptions.find(entry => entry.value === effectiveness);
+                return option?.label || effectiveness || 'Non défini';
+            };
+            const renderMarker = (entry) => {
+                const colIndex = resolveColumnIndex(entry.effectiveness);
+                const rowIndex = findRowIndex(entry.brutReferenceScore);
+                const left = ((colIndex + 0.5) / Math.max(mitigationOptions.length, 1)) * 100;
+                const bottom = ((grossRows.length - rowIndex - 0.5) / grossRows.length) * 100;
+                const formattedScore = formatNumber(entry.score) || '0';
+                const formattedBrut = formatNumber(entry.brutReferenceScore) || '0';
+                const markerTitle = `${entry.label} — score ${formattedScore} • brut de référence ${formattedBrut} • maîtrise ${resolveEffectivenessLabel(entry.effectiveness, entry.effectivenessLabel)}`;
+                return `
+                    <span
+                        class="risk-view-evolution-marker ${entry.className}"
+                        style="left: ${left}%; bottom: ${bottom}%;"
+                        title="${escapeHtml(markerTitle)}"
+                        aria-label="${escapeHtml(markerTitle)}"
+                    >${escapeHtml(entry.symbol)}</span>
+                `;
+            };
+            const cells = grossRows.map(row => mitigationOptions.map(option => {
+                const coefficient = Math.min(Math.max(Number(option.coefficient) || 1, 0.25), 1);
+                const netScore = row.score * coefficient;
+                return `<div class="risk-view-evolution-cell ${getSeverityClassFromScore(netScore)}" title="${escapeHtml(`${row.label} ${row.helper} • ${option.label} • score ${formatNumber(netScore)}`)}"></div>`;
+            }).join('')).join('');
+            const rows = grossRows.map(row => `
+                <span>
+                    <strong>${escapeHtml(row.label)}</strong>
+                    <small>${escapeHtml(row.helper)}</small>
+                </span>
+            `).join('');
+            const columns = mitigationOptions.map(option => `<span>${escapeHtml(option.label)}</span>`).join('');
+            const markers = [
+                {
+                    label: 'Risque brut',
+                    symbol: 'B',
+                    className: 'gross',
+                    score: brutScore,
+                    brutReferenceScore: brutScore,
+                    effectiveness: 'inefficace',
+                    effectivenessLabel: 'Sans maîtrise'
+                },
+                {
+                    label: 'Risque net',
+                    symbol: 'N',
+                    className: 'net',
+                    score: netInfo.score,
+                    brutReferenceScore: netInfo.brutScore || brutScore,
+                    effectiveness: netInfo.effectiveness,
+                    effectivenessLabel: netInfo.label
+                },
+                {
+                    label: 'Après plan d’action',
+                    symbol: 'P',
+                    className: 'post',
+                    score: postInfo.score,
+                    brutReferenceScore: postInfo.brutScore || brutScore,
+                    effectiveness: postInfo.effectiveness,
+                    effectivenessLabel: postInfo.label
+                }
+            ].map(renderMarker).join('');
+
+            return `
+                <section class="risk-view-section risk-view-evolution-section">
+                    <div class="risk-view-section-heading">
+                        <div>
+                            <h4>Évolution du risque</h4>
+                            <p>Positionnement du risque brut, net et après plan d’action sur une matrice de risque net.</p>
+                        </div>
+                        <div class="risk-view-evolution-legend" aria-label="Légende des puces">
+                            <span><i class="gross"></i> Brut</span>
+                            <span><i class="net"></i> Net</span>
+                            <span><i class="post"></i> Après plan d’action</span>
+                        </div>
+                    </div>
+                    <div class="risk-view-evolution-layout">
+                        <div class="risk-view-evolution-row-labels" aria-hidden="true">${rows}</div>
+                        <div class="risk-view-evolution-matrix" role="img" aria-label="Matrice d'évolution du risque">
+                            <div class="risk-view-evolution-grid">${cells}</div>
+                            ${markers}
+                        </div>
+                    </div>
+                    <div class="risk-view-evolution-col-labels" aria-hidden="true">${columns}</div>
+                    <div class="risk-view-evolution-axis">Niveau de risque brut ↑ · Efficacité des contrôles →</div>
+                </section>
+            `;
+        };
 
         const themeMap = buildLabelMap(this.config?.riskThemes);
         const typeMap = buildLabelMap(this.config?.riskTypes);
@@ -12867,6 +13009,7 @@ class RiskManagementSystem {
                 </div>
                 <span class="table-badge badge-info">${escapeHtml(this.getStatusLabel('risk', statusValue, risk?.statusLabel, risk?.status, risk?.statut) || 'Non défini')}</span>
             </div>
+            ${renderRiskEvolutionMatrix({ brutScore, netInfo, postInfo })}
             ${renderSection('Informations générales', [
                 { label: 'Thématique', value: resolveLabel(themeMap, theme) },
                 { label: 'Processus', value: processes },
