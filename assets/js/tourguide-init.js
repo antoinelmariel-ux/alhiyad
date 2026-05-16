@@ -40,6 +40,8 @@
                     target: '#tourGuideLaunchButton',
                     order: 5,
                     zoom: 110,
+                    nextAction: 'next',
+                    launchTourIds: [],
                 },
             ],
         },
@@ -185,12 +187,25 @@
             modal: typeof step.modal === 'string' ? step.modal.trim() : '',
             configSection: typeof step.configSection === 'string' ? step.configSection.trim() : '',
             screenshot: isValidPreviewImage(step.screenshot) ? step.screenshot : '',
+            nextAction: step.nextAction === 'launchTour' ? 'launchTour' : 'next',
+            launchTourIds: normalizeLaunchTourIds(step.launchTourIds || step.launchTours || step.launchTourId),
         };
+    }
+
+    function normalizeLaunchTourIds(value) {
+        const values = Array.isArray(value) ? value : (value ? [value] : []);
+        return values
+            .map(item => String(item || '').trim())
+            .filter((item, index, list) => item && list.indexOf(item) === index);
+    }
+
+    function findTourById(tourId) {
+        return getConfiguredTours().find(tour => tour.id === tourId) || null;
     }
 
     function getTourById(tourId) {
         const tours = getConfiguredTours();
-        return tours.find(tour => tour.id === tourId) || tours.find(tour => tour.status !== 'draft') || tours[0] || null;
+        return findTourById(tourId) || tours.find(tour => tour.status !== 'draft') || tours[0] || null;
     }
 
     function getLaunchableTours() {
@@ -209,12 +224,13 @@
             .sort((a, b) => (a.order || 0) - (b.order || 0))
             .map(step => ({
                 title: step.title,
-                content: step.content,
+                content: buildStepContent(step, tour),
                 target: step.target,
                 order: step.order,
                 targetPadding: getStepPadding(step),
                 beforeEnter: () => prepareStepContext(step),
-                afterEnter: () => refreshTourGuidePosition(),
+                sourceStep: step,
+                afterEnter: () => nextFrame().then(() => applyStepButtonBehavior(step)).then(() => refreshTourGuidePosition()),
             }));
 
         const averageZoom = steps.length
@@ -391,6 +407,115 @@
         return nextFrame().then(() => refreshTourGuidePosition());
     }
 
+    function getLaunchTourIds(step) {
+        return step?.nextAction === 'launchTour' ? normalizeLaunchTourIds(step.launchTourIds) : [];
+    }
+
+    function getTourName(tourId) {
+        return getConfiguredTours().find(tour => tour.id === tourId)?.name || tourId;
+    }
+
+    function buildStepContent(step, currentTour) {
+        const baseContent = String(step?.content || '');
+        const launchIds = getLaunchTourIds(step);
+        if (!launchIds.length) {
+            return baseContent;
+        }
+        const actions = launchIds
+            .filter(tourId => tourId && tourId !== currentTour?.id)
+            .map(tourId => `
+                <button type="button" class="tour-step-branch-button" data-tour-launch-id="${escapeHtml(tourId)}">
+                    ${escapeHtml(getTourName(tourId))}
+                </button>
+            `)
+            .join('');
+        if (!actions) {
+            return baseContent;
+        }
+        return `
+            ${baseContent}
+            <div class="tour-step-branch-actions" data-tour-step-branch-actions>
+                <span class="tour-step-branch-label">Choisir le tour à lancer ensuite</span>
+                <div class="tour-step-branch-buttons">${actions}</div>
+            </div>
+        `;
+    }
+
+    function getCurrentRuntimeStep() {
+        const stepIndex = Number.isInteger(tourGuideClient?.activeStep) ? tourGuideClient.activeStep : -1;
+        const step = tourGuideClient?.tourSteps?.[stepIndex];
+        return step?.sourceStep || null;
+    }
+
+    function applyStepButtonBehavior(step) {
+        const nextButton = document.getElementById('tg-dialog-next-btn');
+        if (!nextButton) {
+            return Promise.resolve(true);
+        }
+        const launchIds = getLaunchTourIds(step);
+        nextButton.dataset.tourNextAction = launchIds.length ? 'launchTour' : 'next';
+        nextButton.dataset.tourLaunchIds = launchIds.join(',');
+        if (launchIds.length === 1) {
+            nextButton.textContent = `Lancer “${getTourName(launchIds[0])}”`;
+        } else if (launchIds.length > 1) {
+            nextButton.textContent = 'Choisir un tour';
+        }
+        return Promise.resolve(true);
+    }
+
+    function focusStepBranchActions() {
+        const actions = document.querySelector('[data-tour-step-branch-actions]');
+        if (actions instanceof HTMLElement) {
+            actions.setAttribute('tabindex', '-1');
+            actions.focus({ preventScroll: true });
+            actions.classList.add('is-highlighted');
+            window.setTimeout(() => actions.classList.remove('is-highlighted'), 800);
+        }
+    }
+
+    function launchLinkedTour(tourId) {
+        const targetTour = findTourById(tourId);
+        if (!targetTour || targetTour.status === 'draft' || !targetTour.steps?.length) {
+            notify('warning', 'Le tour sélectionné est indisponible ou encore en brouillon.');
+            return;
+        }
+        const currentClient = tourGuideClient;
+        const startTargetTour = () => window.setTimeout(() => startTourGuide(tourId), 0);
+        if (currentClient && typeof currentClient.exit === 'function' && currentClient.isVisible) {
+            Promise.resolve(currentClient.exit()).finally(startTargetTour);
+        } else {
+            startTargetTour();
+        }
+    }
+
+    function handleTourBranchClick(event) {
+        const branchButton = event.target?.closest?.('[data-tour-launch-id]');
+        if (branchButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            launchLinkedTour(branchButton.dataset.tourLaunchId);
+        }
+    }
+
+    function handlePrimaryNextAction(event) {
+        const nextButton = event.target?.closest?.('#tg-dialog-next-btn');
+        if (!nextButton || nextButton.dataset.tourNextAction !== 'launchTour') {
+            return;
+        }
+        const launchIds = normalizeLaunchTourIds(nextButton.dataset.tourLaunchIds?.split(','));
+        if (!launchIds.length) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        if (launchIds.length === 1) {
+            launchLinkedTour(launchIds[0]);
+            return;
+        }
+        focusStepBranchActions();
+    }
+
     function notifyTourGuideUnavailable() {
         notify('warning', 'Le module TourGuide JS est indisponible. Vérifiez la connexion au CDN puis réessayez.');
     }
@@ -402,7 +527,10 @@
 
         tourGuideClient = new window.tourguide.TourGuideClient(buildTourOptions(tour));
         if (typeof tourGuideClient.onAfterStepChange === 'function') {
-            tourGuideClient.onAfterStepChange(() => refreshTourGuidePosition());
+            tourGuideClient.onAfterStepChange(() => {
+                applyStepButtonBehavior(getCurrentRuntimeStep());
+                return refreshTourGuidePosition();
+            });
         }
         if (typeof tourGuideClient.onAfterExit === 'function') {
             tourGuideClient.onAfterExit(() => closeGuidedTourModals());
@@ -665,6 +793,8 @@
             modal: getActiveModalId(event.target),
             configSection: getActiveConfigSection(),
             screenshot: '',
+            nextAction: 'next',
+            launchTourIds: [],
         });
         touchTour(tour);
         persistTourChanges('Étape capturée. Vous pouvez la modifier dans le studio de tours.', false);
@@ -815,7 +945,18 @@
     function updateStepField(tourId, stepIndex, field, value) {
         const tour = getTourById(tourId);
         if (!tour || !tour.steps[stepIndex]) return;
-        tour.steps[stepIndex][field] = field === 'zoom' ? Math.min(160, Math.max(60, parseInt(value, 10) || 100)) : value;
+        if (field === 'zoom') {
+            tour.steps[stepIndex][field] = Math.min(160, Math.max(60, parseInt(value, 10) || 100));
+        } else if (field === 'launchTourIds') {
+            tour.steps[stepIndex][field] = normalizeLaunchTourIds(value);
+        } else if (field === 'nextAction') {
+            tour.steps[stepIndex][field] = value === 'launchTour' ? 'launchTour' : 'next';
+            if (tour.steps[stepIndex][field] === 'next') {
+                tour.steps[stepIndex].launchTourIds = [];
+            }
+        } else {
+            tour.steps[stepIndex][field] = value;
+        }
         touchTour(tour);
         persistTourChanges();
     }
@@ -954,6 +1095,22 @@
                                     <input class="form-input" value="${escapeHtml(step.configSection || '')}" placeholder="ex. guidedTours" data-step-field="configSection">
                                 </label>
                             </div>
+                            <div class="form-grid">
+                                <label class="form-group">
+                                    <span class="form-label">Action du bouton</span>
+                                    <select class="form-select" data-step-field="nextAction">
+                                        <option value="next"${step.nextAction !== 'launchTour' ? ' selected' : ''}>Aller à l’étape suivante</option>
+                                        <option value="launchTour"${step.nextAction === 'launchTour' ? ' selected' : ''}>Lancer un ou plusieurs tours</option>
+                                    </select>
+                                </label>
+                                <label class="form-group">
+                                    <span class="form-label">Tours proposés</span>
+                                    <select class="form-select" multiple size="${Math.min(Math.max(tours.length - 1, 2), 5)}" data-step-field="launchTourIds">
+                                        ${tours.filter(candidate => candidate.id !== tour.id).map(candidate => `<option value="${escapeHtml(candidate.id)}"${normalizeLaunchTourIds(step.launchTourIds).includes(candidate.id) ? ' selected' : ''}>${escapeHtml(candidate.name)}</option>`).join('')}
+                                    </select>
+                                    <span class="config-helper">Maintenez Ctrl/Cmd pour choisir plusieurs tours.</span>
+                                </label>
+                            </div>
                             <label class="form-group">
                                 <span class="form-label">Description</span>
                                 <textarea class="form-textarea" rows="2" data-step-field="content">${escapeHtml(step.content)}</textarea>
@@ -962,7 +1119,12 @@
                         <button class="btn btn-danger btn-small" type="button" data-step-delete>Supprimer</button>
                     `;
                     row.querySelectorAll('[data-step-field]').forEach((field) => {
-                        const handler = (event) => updateStepField(tour.id, stepIndex, field.dataset.stepField, event.target.value);
+                        const handler = (event) => updateStepField(
+                            tour.id,
+                            stepIndex,
+                            field.dataset.stepField,
+                            field.multiple ? Array.from(field.selectedOptions).map(option => option.value) : event.target.value
+                        );
                         field.addEventListener(field.type === 'range' ? 'input' : 'change', handler);
                         field.addEventListener('blur', handler);
                     });
@@ -1029,6 +1191,8 @@
     }
 
     patchRiskManagementSystem();
+    document.addEventListener('click', handleTourBranchClick);
+    document.addEventListener('click', handlePrimaryNextAction, true);
     document.addEventListener('DOMContentLoaded', initTourGuideButton);
     window.startTourGuide = startTourGuide;
     window.renderGuidedToursAdmin = renderGuidedToursAdmin;
