@@ -7323,6 +7323,55 @@ tbody tr:hover {
     font-size: 0.82rem;
 }
 
+
+.tour-step-branch-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 12px;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.08);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.tour-step-branch-actions.is-highlighted {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    transform: translateY(-1px);
+}
+
+.tour-step-branch-label {
+    color: #1d4ed8;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.tour-step-branch-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tour-step-branch-button {
+    cursor: pointer;
+    padding: 7px 11px;
+    border: 1px solid rgba(37, 99, 235, 0.35);
+    border-radius: 999px;
+    background: #ffffff;
+    color: #1d4ed8;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.tour-step-branch-button:hover,
+.tour-step-branch-button:focus-visible {
+    border-color: #1d4ed8;
+    background: #eff6ff;
+    outline: none;
+}
+
 @media (max-width: 860px) {
     .tour-admin-card-header,
     .tour-step-row {
