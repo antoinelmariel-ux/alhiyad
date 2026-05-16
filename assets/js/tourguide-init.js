@@ -184,6 +184,7 @@
             tab: typeof step.tab === 'string' ? step.tab.trim() : '',
             modal: typeof step.modal === 'string' ? step.modal.trim() : '',
             configSection: typeof step.configSection === 'string' ? step.configSection.trim() : '',
+            screenshot: isValidPreviewImage(step.screenshot) ? step.screenshot : '',
         };
     }
 
@@ -304,6 +305,10 @@
         const target = typeof step?.target === 'string' ? step.target.trim() : '';
         const match = target.match(/#([a-z0-9_-]*modal[a-z0-9_-]*)\b/i);
         return match ? match[1] : '';
+    }
+
+    function isValidPreviewImage(value) {
+        return typeof value === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(value.trim());
     }
 
     function getActiveModalId(element) {
@@ -547,6 +552,90 @@
         return Boolean(element?.closest?.('.tour-capture-bar, .tour-admin-card, .tour-step-editor, .config-section-tabs, #tourGuideLauncherSelect, #tourGuideLaunchButton'));
     }
 
+    function getPreviewCaptureElement(element) {
+        if (!(element instanceof Element)) {
+            return null;
+        }
+        return element.closest('.modal-content, .card, .dashboard-card, .chart-container, .section, .toolbar, .nav-tabs, .header, .content-area') || element;
+    }
+
+    function captureStepScreenshot(element) {
+        if (!(element instanceof Element) || typeof window.html2canvas !== 'function') {
+            return Promise.resolve('');
+        }
+
+        const captureElement = getPreviewCaptureElement(element);
+        if (!captureElement) {
+            return Promise.resolve('');
+        }
+
+        return window.html2canvas(captureElement, {
+            backgroundColor: '#ffffff',
+            scale: Math.min(1.5, window.devicePixelRatio || 1),
+            logging: false,
+            useCORS: true,
+            width: Math.min(captureElement.scrollWidth || captureElement.clientWidth || 640, 960),
+            height: Math.min(captureElement.scrollHeight || captureElement.clientHeight || 420, 620),
+        }).then((canvas) => canvas.toDataURL('image/jpeg', 0.72)).catch(() => '');
+    }
+
+    function updateStepScreenshot(tourId, stepIndex, imageData, shouldRender = false) {
+        if (!isValidPreviewImage(imageData)) {
+            return;
+        }
+        const tour = getTourById(tourId);
+        if (!tour || !tour.steps[stepIndex]) {
+            return;
+        }
+        tour.steps[stepIndex].screenshot = imageData;
+        touchTour(tour);
+        persistTourChanges('', shouldRender);
+    }
+
+    function refreshStepScreenshot(tourId, stepIndex) {
+        const tour = getTourById(tourId);
+        const step = tour?.steps?.[stepIndex];
+        if (!tour || !step) {
+            notify('warning', 'Étape introuvable.');
+            return;
+        }
+        prepareStepContext(step)
+            .then(() => {
+                const element = findStepTargetElement(step);
+                if (!element) {
+                    notify('warning', 'Impossible de trouver la cible CSS pour actualiser l’aperçu.');
+                    return '';
+                }
+                return captureStepScreenshot(element);
+            })
+            .then((imageData) => {
+                if (!imageData) {
+                    notify('warning', 'Capture d’écran indisponible : l’aperçu textuel reste affiché.');
+                    return;
+                }
+                updateStepScreenshot(tourId, stepIndex, imageData, true);
+                notify('success', 'Aperçu de l’étape actualisé.');
+            });
+    }
+
+    function buildStepPreviewMarkup(step) {
+        if (isValidPreviewImage(step?.screenshot)) {
+            return `
+                <figure class="tour-step-preview has-image">
+                    <img src="${escapeHtml(step.screenshot)}" alt="Aperçu visuel de l’étape ${escapeHtml(step.title)}" loading="lazy">
+                    <figcaption>Capture de la zone visible lors de l’étape</figcaption>
+                </figure>
+            `;
+        }
+        return `
+            <div class="tour-step-preview tour-step-preview-fallback">
+                <strong>Aperçu à générer</strong>
+                <span>Cible : ${escapeHtml(step?.target || 'non définie')}</span>
+                <small>Utilisez « Actualiser l’aperçu » quand la cible est visible pour obtenir une capture.</small>
+            </div>
+        `;
+    }
+
     function getCaptureTour() {
         const tours = ensureGuidedToursConfig();
         return tours.find(tour => tour.id === captureState.tourId) || null;
@@ -565,6 +654,7 @@
             return;
         }
         const label = getReadableLabel(event.target);
+        const stepIndex = tour.steps.length;
         tour.steps.push({
             title: `${CAPTURE_DEFAULTS.titlePrefix} ${tour.steps.length + 1}${label ? ` — ${label}` : ''}`,
             content: CAPTURE_DEFAULTS.defaultDescription,
@@ -574,9 +664,11 @@
             tab: getActiveTabName(),
             modal: getActiveModalId(event.target),
             configSection: getActiveConfigSection(),
+            screenshot: '',
         });
         touchTour(tour);
         persistTourChanges('Étape capturée. Vous pouvez la modifier dans le studio de tours.', false);
+        captureStepScreenshot(event.target).then((imageData) => updateStepScreenshot(tour.id, stepIndex, imageData));
     }
 
     function touchTour(tour) {
@@ -759,7 +851,7 @@
 
         const intro = document.createElement('div');
         intro.className = 'config-section-description';
-        intro.innerHTML = '<strong>Studio de tours guidés.</strong> Créez plusieurs parcours, lancez une capture façon Tango, mettez-la en pause ou arrêtez-la, puis retouchez chaque étape (description, cible, zoom ou suppression) avant export.';
+        intro.innerHTML = '<strong>Studio de tours guidés.</strong> Créez plusieurs parcours, lancez une capture façon Tango, mettez-la en pause ou arrêtez-la, puis retouchez chaque étape. Chaque étape affiche une capture de la zone visible ; si elle n’existe pas encore, actualisez l’aperçu lorsque la cible est affichée.';
         container.appendChild(intro);
 
         const toolbar = document.createElement('div');
@@ -829,6 +921,10 @@
                     row.className = 'tour-step-row';
                     row.innerHTML = `
                         <div class="tour-step-order">${stepIndex + 1}</div>
+                        <div class="tour-step-preview-column">
+                            ${buildStepPreviewMarkup(step)}
+                            <button class="btn btn-outline btn-small" type="button" data-step-preview>📸 Actualiser l’aperçu</button>
+                        </div>
                         <div class="tour-step-fields">
                             <div class="form-grid">
                                 <label class="form-group">
@@ -870,6 +966,7 @@
                         field.addEventListener(field.type === 'range' ? 'input' : 'change', handler);
                         field.addEventListener('blur', handler);
                     });
+                    row.querySelector('[data-step-preview]')?.addEventListener('click', () => refreshStepScreenshot(tour.id, stepIndex));
                     row.querySelector('[data-step-delete]')?.addEventListener('click', () => removeStep(tour.id, stepIndex));
                     steps.appendChild(row);
                 });
