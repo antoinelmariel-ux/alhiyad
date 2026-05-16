@@ -11,35 +11,35 @@
                     content: 'Ce guide présente les zones principales de la cartographie des risques et compliance Al Hiyad.',
                     target: '.header-title',
                     order: 1,
-                    zoom: 100,
+                    displayMode: 'focus',
                 },
                 {
                     title: 'Navigation',
                     content: 'Utilisez ces onglets pour passer du tableau de bord aux interviews, matrices, risques, contrôles, plans d’action, légendes et paramètres.',
                     target: '.nav-tabs',
                     order: 2,
-                    zoom: 100,
+                    displayMode: 'focus',
                 },
                 {
                     title: 'Tableau de bord',
                     content: 'Le tableau de bord synthétise les indicateurs clés, les risques prioritaires et les alertes récentes.',
                     target: '#dashboard-tab .toolbar',
                     order: 3,
-                    zoom: 100,
+                    displayMode: 'focus',
                 },
                 {
                     title: 'Exporter les données',
                     content: 'Ce bouton permet d’enregistrer et d’exporter les données opérationnelles de la cartographie.',
                     target: '.header-buttons .btn-primary',
                     order: 4,
-                    zoom: 110,
+                    displayMode: 'focus',
                 },
                 {
                     title: 'Relancer l’explication',
                     content: 'Vous pourrez relancer ce tour guidé à tout moment depuis le bouton “Lancer l’explication”.',
                     target: '#tourGuideLaunchButton',
                     order: 5,
-                    zoom: 110,
+                    displayMode: 'focus',
                     nextAction: 'next',
                     launchTourIds: [],
                 },
@@ -56,18 +56,20 @@
                     content: 'L’onglet Administration centralise les paramètres et le nouveau studio de tours guidés.',
                     target: '.tab[onclick="switchTab(\'config\')"]',
                     order: 1,
-                    zoom: 105,
+                    displayMode: 'focus',
                 },
                 {
                     title: 'Créer un tour',
                     content: 'Dans “Tours guidés”, créez un parcours, lancez une capture, puis parcourez l’application : chaque clic devient une étape modifiable.',
                     target: '#tourGuideLaunchButton',
                     order: 2,
-                    zoom: 100,
+                    displayMode: 'focus',
                 },
             ],
         },
     ];
+
+    const TOUR_FOCUS_BACKDROP_COLOR = 'rgba(20,20,21,0.84)';
 
     const TOUR_BASE_OPTIONS = {
         nextLabel: 'Suivant',
@@ -81,6 +83,7 @@
         rememberStep: false,
         dialogWidth: 420,
         targetPadding: 10,
+        backdropColor: TOUR_FOCUS_BACKDROP_COLOR,
     };
 
     const CAPTURE_DEFAULTS = {
@@ -94,6 +97,7 @@
         active: false,
         paused: false,
         tourId: '',
+        insertAfterIndex: null,
     };
 
     function clone(value) {
@@ -176,17 +180,17 @@
         if (!target) {
             return null;
         }
-        const zoom = Math.min(160, Math.max(60, parseInt(step.zoom, 10) || 100));
+        const legacyZoom = Math.min(160, Math.max(60, parseInt(step.zoom, 10) || 100));
+        const displayMode = step.displayMode === 'wide' || legacyZoom >= 120 ? 'wide' : 'focus';
         return {
             title: String(step.title || `${CAPTURE_DEFAULTS.titlePrefix} ${index + 1}`).trim(),
             content: String(step.content || step.description || CAPTURE_DEFAULTS.defaultDescription).trim(),
             target,
             order: parseInt(step.order, 10) || index + 1,
-            zoom,
+            displayMode,
             tab: typeof step.tab === 'string' ? step.tab.trim() : '',
             modal: typeof step.modal === 'string' ? step.modal.trim() : '',
             configSection: typeof step.configSection === 'string' ? step.configSection.trim() : '',
-            screenshot: isValidPreviewImage(step.screenshot) ? step.screenshot : '',
             nextAction: step.nextAction === 'launchTour' ? 'launchTour' : 'next',
             launchTourIds: normalizeLaunchTourIds(step.launchTourIds || step.launchTours || step.launchTourId),
         };
@@ -213,8 +217,7 @@
     }
 
     function getStepPadding(step) {
-        const zoom = parseInt(step?.zoom, 10) || 100;
-        return Math.max(4, Math.round(18 - ((zoom - 60) / 100) * 12));
+        return step?.displayMode === 'wide' ? 6 : TOUR_BASE_OPTIONS.targetPadding;
     }
 
     function buildTourOptions(tour) {
@@ -230,18 +233,19 @@
                 targetPadding: getStepPadding(step),
                 beforeEnter: () => prepareStepContext(step),
                 sourceStep: step,
-                afterEnter: () => nextFrame().then(() => applyStepButtonBehavior(step)).then(() => refreshTourGuidePosition()),
+                afterEnter: () => nextFrame()
+                    .then(() => applyStepDisplayMode(step))
+                    .then(() => applyStepButtonBehavior(step))
+                    .then(() => refreshTourGuidePosition()),
             }));
 
-        const averageZoom = steps.length
-            ? (tour.steps.reduce((sum, step) => sum + (parseInt(step.zoom, 10) || 100), 0) / tour.steps.length)
-            : 100;
+        const hasWideSteps = steps.some(step => step.sourceStep?.displayMode === 'wide');
 
         return {
             ...TOUR_BASE_OPTIONS,
             steps,
-            dialogWidth: averageZoom > 120 ? 460 : TOUR_BASE_OPTIONS.dialogWidth,
-            targetPadding: averageZoom > 115 ? 6 : TOUR_BASE_OPTIONS.targetPadding,
+            dialogWidth: hasWideSteps ? 460 : TOUR_BASE_OPTIONS.dialogWidth,
+            targetPadding: hasWideSteps ? 6 : TOUR_BASE_OPTIONS.targetPadding,
         };
     }
 
@@ -321,10 +325,6 @@
         const target = typeof step?.target === 'string' ? step.target.trim() : '';
         const match = target.match(/#([a-z0-9_-]*modal[a-z0-9_-]*)\b/i);
         return match ? match[1] : '';
-    }
-
-    function isValidPreviewImage(value) {
-        return typeof value === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(value.trim());
     }
 
     function getActiveModalId(element) {
@@ -447,6 +447,27 @@
         return step?.sourceStep || null;
     }
 
+    function applyStepDisplayMode(step) {
+        const mode = step?.displayMode === 'wide' ? 'wide' : 'focus';
+        document.body.dataset.tourDisplayMode = mode;
+        const backdrop = tourGuideClient?.backdrop;
+        if (backdrop instanceof HTMLElement) {
+            backdrop.classList.toggle('tour-backdrop-wide', mode === 'wide');
+            backdrop.classList.toggle('tour-backdrop-focus', mode !== 'wide');
+            backdrop.style.backgroundColor = mode === 'wide' ? 'rgba(20,20,21,0)' : TOUR_FOCUS_BACKDROP_COLOR;
+        }
+        return Promise.resolve(true);
+    }
+
+    function clearStepDisplayMode() {
+        delete document.body.dataset.tourDisplayMode;
+        const backdrop = tourGuideClient?.backdrop;
+        if (backdrop instanceof HTMLElement) {
+            backdrop.classList.remove('tour-backdrop-wide', 'tour-backdrop-focus');
+            backdrop.style.backgroundColor = TOUR_FOCUS_BACKDROP_COLOR;
+        }
+    }
+
     function applyStepButtonBehavior(step) {
         const nextButton = document.getElementById('tg-dialog-next-btn');
         if (!nextButton) {
@@ -528,15 +549,22 @@
         tourGuideClient = new window.tourguide.TourGuideClient(buildTourOptions(tour));
         if (typeof tourGuideClient.onAfterStepChange === 'function') {
             tourGuideClient.onAfterStepChange(() => {
+                applyStepDisplayMode(getCurrentRuntimeStep());
                 applyStepButtonBehavior(getCurrentRuntimeStep());
                 return refreshTourGuidePosition();
             });
         }
         if (typeof tourGuideClient.onAfterExit === 'function') {
-            tourGuideClient.onAfterExit(() => closeGuidedTourModals());
+            tourGuideClient.onAfterExit(() => {
+                clearStepDisplayMode();
+                closeGuidedTourModals();
+            });
         }
         if (typeof tourGuideClient.onFinish === 'function') {
-            tourGuideClient.onFinish(() => closeGuidedTourModals());
+            tourGuideClient.onFinish(() => {
+                clearStepDisplayMode();
+                closeGuidedTourModals();
+            });
         }
         return tourGuideClient;
     }
@@ -680,86 +708,24 @@
         return Boolean(element?.closest?.('.tour-capture-bar, .tour-admin-card, .tour-step-editor, .config-section-tabs, #tourGuideLauncherSelect, #tourGuideLaunchButton'));
     }
 
-    function getPreviewCaptureElement(element) {
-        if (!(element instanceof Element)) {
-            return null;
-        }
-        return element.closest('.modal-content, .card, .dashboard-card, .chart-container, .section, .toolbar, .nav-tabs, .header, .content-area') || element;
+    function getStepPreviewUrl(tourId, stepIndex) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('tourStepPreview', `${tourId}:${stepIndex}`);
+        url.hash = '';
+        return url.toString();
     }
 
-    function captureStepScreenshot(element) {
-        if (!(element instanceof Element) || typeof window.html2canvas !== 'function') {
-            return Promise.resolve('');
-        }
-
-        const captureElement = getPreviewCaptureElement(element);
-        if (!captureElement) {
-            return Promise.resolve('');
-        }
-
-        return window.html2canvas(captureElement, {
-            backgroundColor: '#ffffff',
-            scale: Math.min(1.5, window.devicePixelRatio || 1),
-            logging: false,
-            useCORS: true,
-            width: Math.min(captureElement.scrollWidth || captureElement.clientWidth || 640, 960),
-            height: Math.min(captureElement.scrollHeight || captureElement.clientHeight || 420, 620),
-        }).then((canvas) => canvas.toDataURL('image/jpeg', 0.72)).catch(() => '');
+    function openStepPreview(tourId, stepIndex) {
+        window.open(getStepPreviewUrl(tourId, stepIndex), '_blank', 'noopener');
     }
 
-    function updateStepScreenshot(tourId, stepIndex, imageData, shouldRender = false) {
-        if (!isValidPreviewImage(imageData)) {
-            return;
-        }
-        const tour = getTourById(tourId);
-        if (!tour || !tour.steps[stepIndex]) {
-            return;
-        }
-        tour.steps[stepIndex].screenshot = imageData;
-        touchTour(tour);
-        persistTourChanges('', shouldRender);
-    }
-
-    function refreshStepScreenshot(tourId, stepIndex) {
-        const tour = getTourById(tourId);
-        const step = tour?.steps?.[stepIndex];
-        if (!tour || !step) {
-            notify('warning', 'Étape introuvable.');
-            return;
-        }
-        prepareStepContext(step)
-            .then(() => {
-                const element = findStepTargetElement(step);
-                if (!element) {
-                    notify('warning', 'Impossible de trouver la cible CSS pour actualiser l’aperçu.');
-                    return '';
-                }
-                return captureStepScreenshot(element);
-            })
-            .then((imageData) => {
-                if (!imageData) {
-                    notify('warning', 'Capture d’écran indisponible : l’aperçu textuel reste affiché.');
-                    return;
-                }
-                updateStepScreenshot(tourId, stepIndex, imageData, true);
-                notify('success', 'Aperçu de l’étape actualisé.');
-            });
-    }
-
-    function buildStepPreviewMarkup(step) {
-        if (isValidPreviewImage(step?.screenshot)) {
-            return `
-                <figure class="tour-step-preview has-image">
-                    <img src="${escapeHtml(step.screenshot)}" alt="Aperçu visuel de l’étape ${escapeHtml(step.title)}" loading="lazy">
-                    <figcaption>Capture de la zone visible lors de l’étape</figcaption>
-                </figure>
-            `;
-        }
+    function buildStepPreviewMarkup(step, tourId, stepIndex) {
         return `
             <div class="tour-step-preview tour-step-preview-fallback">
-                <strong>Aperçu à générer</strong>
+                <strong>${escapeHtml(step?.title || 'Étape enregistrée')}</strong>
                 <span>Cible : ${escapeHtml(step?.target || 'non définie')}</span>
-                <small>Utilisez « Actualiser l’aperçu » quand la cible est visible pour obtenir une capture.</small>
+                <small>Ouvrez cette étape dans un nouvel onglet pour vérifier le contexte enregistré.</small>
+                <code>${escapeHtml(getStepPreviewUrl(tourId, stepIndex))}</code>
             </div>
         `;
     }
@@ -782,23 +748,28 @@
             return;
         }
         const label = getReadableLabel(event.target);
-        const stepIndex = tour.steps.length;
-        tour.steps.push({
-            title: `${CAPTURE_DEFAULTS.titlePrefix} ${tour.steps.length + 1}${label ? ` — ${label}` : ''}`,
+        const stepIndex = Number.isInteger(captureState.insertAfterIndex)
+            ? Math.min(Math.max(captureState.insertAfterIndex + 1, 0), tour.steps.length)
+            : tour.steps.length;
+        tour.steps.splice(stepIndex, 0, {
+            title: `${CAPTURE_DEFAULTS.titlePrefix} ${stepIndex + 1}${label ? ` — ${label}` : ''}`,
             content: CAPTURE_DEFAULTS.defaultDescription,
             target: selector,
-            order: tour.steps.length + 1,
-            zoom: 100,
+            order: stepIndex + 1,
+            displayMode: 'focus',
             tab: getActiveTabName(),
             modal: getActiveModalId(event.target),
             configSection: getActiveConfigSection(),
-            screenshot: '',
             nextAction: 'next',
             launchTourIds: [],
         });
+        tour.steps = tour.steps.map((step, index) => ({ ...step, order: index + 1 }));
+        if (Number.isInteger(captureState.insertAfterIndex)) {
+            captureState.insertAfterIndex = stepIndex;
+        }
         touchTour(tour);
         persistTourChanges('Étape capturée. Vous pouvez la modifier dans le studio de tours.', false);
-        captureStepScreenshot(event.target).then((imageData) => updateStepScreenshot(tour.id, stepIndex, imageData));
+
     }
 
     function touchTour(tour) {
@@ -856,7 +827,9 @@
             const tour = getCaptureTour();
             status.textContent = captureState.paused
                 ? `Capture en pause pour “${tour?.name || ''}”.`
-                : `Chaque clic devient une étape pour “${tour?.name || ''}”.`;
+                : Number.isInteger(captureState.insertAfterIndex)
+                    ? `Chaque clic ajoute une étape après la position ${captureState.insertAfterIndex + 1} pour “${tour?.name || ''}”.`
+                    : `Chaque clic devient une étape à la fin de “${tour?.name || ''}”.`;
         }
         if (button) {
             button.textContent = captureState.paused ? 'Reprendre' : 'Pause';
@@ -869,9 +842,11 @@
             notify('warning', 'Créez d’abord un tour à capturer.');
             return;
         }
-        captureState = { active: true, paused: false, tourId: tour.id };
+        const insertAfterIndex = Number.isInteger(arguments[1]) ? arguments[1] : null;
+        captureState = { active: true, paused: false, tourId: tour.id, insertAfterIndex };
         ensureCaptureBar();
         updateCaptureBar();
+        document.removeEventListener('click', addCapturedStep, true);
         document.addEventListener('click', addCapturedStep, true);
         notify('success', `Capture démarrée pour “${tour.name}”.`);
     }
@@ -882,7 +857,7 @@
         }
         document.removeEventListener('click', addCapturedStep, true);
         const tour = getCaptureTour();
-        captureState = { active: false, paused: false, tourId: '' };
+        captureState = { active: false, paused: false, tourId: '', insertAfterIndex: null };
         document.getElementById('tourCaptureBar')?.remove();
         persistTourChanges(tour ? `Capture arrêtée : ${tour.steps.length} étape(s) dans “${tour.name}”.` : 'Capture arrêtée.', true);
     }
@@ -945,8 +920,8 @@
     function updateStepField(tourId, stepIndex, field, value) {
         const tour = getTourById(tourId);
         if (!tour || !tour.steps[stepIndex]) return;
-        if (field === 'zoom') {
-            tour.steps[stepIndex][field] = Math.min(160, Math.max(60, parseInt(value, 10) || 100));
+        if (field === 'displayMode') {
+            tour.steps[stepIndex][field] = value === 'wide' ? 'wide' : 'focus';
         } else if (field === 'launchTourIds') {
             tour.steps[stepIndex][field] = normalizeLaunchTourIds(value);
         } else if (field === 'nextAction') {
@@ -992,7 +967,7 @@
 
         const intro = document.createElement('div');
         intro.className = 'config-section-description';
-        intro.innerHTML = '<strong>Studio de tours guidés.</strong> Créez plusieurs parcours, lancez une capture façon Tango, mettez-la en pause ou arrêtez-la, puis retouchez chaque étape. Chaque étape affiche une capture de la zone visible ; si elle n’existe pas encore, actualisez l’aperçu lorsque la cible est affichée.';
+        intro.innerHTML = '<strong>Studio de tours guidés.</strong> Créez plusieurs parcours, lancez une capture façon Tango, mettez-la en pause ou arrêtez-la, puis retouchez chaque étape. Chaque étape peut être ouverte dans un nouvel onglet pour vérifier son contexte, et une capture peut être relancée entre deux étapes pour compléter le parcours.';
         container.appendChild(intro);
 
         const toolbar = document.createElement('div');
@@ -1063,8 +1038,9 @@
                     row.innerHTML = `
                         <div class="tour-step-order">${stepIndex + 1}</div>
                         <div class="tour-step-preview-column">
-                            ${buildStepPreviewMarkup(step)}
-                            <button class="btn btn-outline btn-small" type="button" data-step-preview>📸 Actualiser l’aperçu</button>
+                            ${buildStepPreviewMarkup(step, tour.id, stepIndex)}
+                            <button class="btn btn-outline btn-small" type="button" data-step-open>↗️ Ouvrir l’étape</button>
+                            <button class="btn btn-secondary btn-small" type="button" data-step-capture-after>🎯 Capturer après</button>
                         </div>
                         <div class="tour-step-fields">
                             <div class="form-grid">
@@ -1077,8 +1053,11 @@
                                     <input class="form-input" value="${escapeHtml(step.target)}" data-step-field="target">
                                 </label>
                                 <label class="form-group">
-                                    <span class="form-label">Zoom (${step.zoom || 100}%)</span>
-                                    <input class="form-input" type="range" min="60" max="160" step="5" value="${step.zoom || 100}" data-step-field="zoom">
+                                    <span class="form-label">Affichage</span>
+                                    <select class="form-select" data-step-field="displayMode">
+                                        <option value="focus"${step.displayMode !== 'wide' ? ' selected' : ''}>Mode focus — zones non ciblées assombries</option>
+                                        <option value="wide"${step.displayMode === 'wide' ? ' selected' : ''}>Mode large — aucune zone assombrie</option>
+                                    </select>
                                 </label>
                             </div>
                             <div class="form-grid">
@@ -1128,7 +1107,8 @@
                         field.addEventListener(field.type === 'range' ? 'input' : 'change', handler);
                         field.addEventListener('blur', handler);
                     });
-                    row.querySelector('[data-step-preview]')?.addEventListener('click', () => refreshStepScreenshot(tour.id, stepIndex));
+                    row.querySelector('[data-step-open]')?.addEventListener('click', () => openStepPreview(tour.id, stepIndex));
+                    row.querySelector('[data-step-capture-after]')?.addEventListener('click', () => startCapture(tour.id, stepIndex));
                     row.querySelector('[data-step-delete]')?.addEventListener('click', () => removeStep(tour.id, stepIndex));
                     steps.appendChild(row);
                 });
@@ -1193,7 +1173,31 @@
     patchRiskManagementSystem();
     document.addEventListener('click', handleTourBranchClick);
     document.addEventListener('click', handlePrimaryNextAction, true);
-    document.addEventListener('DOMContentLoaded', initTourGuideButton);
+    function initStepPreviewFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const preview = params.get('tourStepPreview');
+        if (!preview) {
+            return;
+        }
+        const [tourId, rawIndex] = preview.split(':');
+        const stepIndex = parseInt(rawIndex, 10);
+        const tour = getTourById(tourId);
+        if (!tour || !Number.isInteger(stepIndex) || !tour.steps[stepIndex]) {
+            notify('warning', 'Étape de tour guidé introuvable pour l’aperçu.');
+            return;
+        }
+        window.setTimeout(async () => {
+            await startTourGuide(tour.id);
+            if (tourGuideClient && typeof tourGuideClient.visitStep === 'function') {
+                tourGuideClient.visitStep(stepIndex).then(() => applyStepDisplayMode(tour.steps[stepIndex]));
+            }
+        }, 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initTourGuideButton();
+        initStepPreviewFromUrl();
+    });
     window.startTourGuide = startTourGuide;
     window.renderGuidedToursAdmin = renderGuidedToursAdmin;
     window.exportGuidedTours = exportGuidedTours;

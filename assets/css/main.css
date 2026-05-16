@@ -7324,6 +7324,24 @@ tbody tr:hover {
 }
 
 
+body[data-tour-display-mode="wide"] .tg-backdrop,
+body[data-tour-display-mode="wide"] #tg-backdrop,
+body[data-tour-display-mode="wide"] .tour-backdrop-wide {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.tour-step-preview-fallback code {
+    display: block;
+    overflow-wrap: anywhere;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.06);
+    color: var(--text-color);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.74rem;
+}
+
 .tour-step-branch-actions {
     display: flex;
     flex-direction: column;
