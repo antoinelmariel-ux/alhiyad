@@ -163,6 +163,7 @@
             name,
             description: String(tour.description || '').trim(),
             status: tour.status === 'draft' ? 'draft' : 'active',
+            autoStartOnFirstVisit: tour.autoStartOnFirstVisit === true,
             createdAt: tour.createdAt || new Date().toISOString(),
             updatedAt: tour.updatedAt || new Date().toISOString(),
             steps: steps.map(normalizeStep).filter(Boolean).map((step, stepIndex) => ({
@@ -236,6 +237,7 @@
                 afterEnter: () => nextFrame()
                     .then(() => applyStepDisplayMode(step))
                     .then(() => applyStepButtonBehavior(step))
+                    .then(() => applyTourDialogErgonomics())
                     .then(() => refreshTourGuidePosition()),
             }));
 
@@ -468,6 +470,22 @@
         }
     }
 
+
+    function applyTourDialogErgonomics() {
+        const dialog = document.getElementById('tg-dialog') || document.querySelector('.tg-dialog');
+        if (dialog instanceof HTMLElement) {
+            dialog.style.width = 'fit-content';
+            dialog.style.maxWidth = 'min(560px, calc(100vw - 32px))';
+            dialog.style.minWidth = 'min(320px, calc(100vw - 32px))';
+        }
+        const closeButton = document.getElementById('tg-dialog-close-btn') || dialog?.querySelector?.('[data-tg-close], .tg-dialog-close, .tg-close');
+        if (closeButton instanceof HTMLElement) {
+            closeButton.setAttribute('aria-label', 'Passer le tour');
+            closeButton.setAttribute('title', 'Passer le tour');
+        }
+        return Promise.resolve(true);
+    }
+
     function applyStepButtonBehavior(step) {
         const nextButton = document.getElementById('tg-dialog-next-btn');
         if (!nextButton) {
@@ -551,6 +569,7 @@
             tourGuideClient.onAfterStepChange(() => {
                 applyStepDisplayMode(getCurrentRuntimeStep());
                 applyStepButtonBehavior(getCurrentRuntimeStep());
+                applyTourDialogErgonomics();
                 return refreshTourGuidePosition();
             });
         }
@@ -880,6 +899,7 @@
             name: name.trim(),
             description: 'Tour créé depuis le studio de capture.',
             status: 'draft',
+            autoStartOnFirstVisit: false,
             createdAt: now,
             updatedAt: now,
             steps: [],
@@ -912,6 +932,17 @@
     function updateTourField(tourId, field, value) {
         const tour = getTourById(tourId);
         if (!tour) return;
+        if (field === 'autoStartOnFirstVisit') {
+            const isEnabled = value === true || value === 'true' || value === 'on';
+            ensureGuidedToursConfig().forEach(candidate => {
+                candidate.autoStartOnFirstVisit = candidate.id === tourId ? isEnabled : false;
+                if (candidate.id === tourId) {
+                    touchTour(candidate);
+                }
+            });
+            persistTourChanges(null, true);
+            return;
+        }
         tour[field] = field === 'status' && value !== 'draft' ? 'active' : value;
         touchTour(tour);
         persistTourChanges();
@@ -991,9 +1022,16 @@
         const list = document.createElement('div');
         list.className = 'tour-admin-list';
         tours.forEach((tour) => {
-            const card = document.createElement('article');
-            card.className = 'tour-admin-card';
+            const card = document.createElement('details');
+            card.className = 'tour-admin-card tour-admin-accordion';
             card.innerHTML = `
+                <summary class="tour-admin-accordion-summary">
+                    <span class="tour-admin-accordion-title">${escapeHtml(tour.name)}</span>
+                    <span class="tour-admin-accordion-meta">${tour.status === 'draft' ? 'Brouillon' : 'Actif'} · ${tour.steps.length} étape(s)</span>
+                    <span class="tour-admin-accordion-auto${tour.autoStartOnFirstVisit ? ' is-enabled' : ''}">${tour.autoStartOnFirstVisit ? 'Démarrage auto' : 'Manuel'}</span>
+                    <span class="tour-admin-accordion-chevron" aria-hidden="true">⌄</span>
+                </summary>
+                <div class="tour-admin-card-body">
                 <div class="tour-admin-card-header">
                     <div class="form-group tour-admin-name">
                         <label class="form-label">Nom du tour</label>
@@ -1016,12 +1054,20 @@
                     <label class="form-label">Description</label>
                     <textarea class="form-textarea" rows="2" data-tour-field="description">${escapeHtml(tour.description || '')}</textarea>
                 </div>
+                <label class="tour-admin-auto-start">
+                    <input type="checkbox" data-tour-field="autoStartOnFirstVisit"${tour.autoStartOnFirstVisit ? ' checked' : ''}>
+                    <span>
+                        <strong>Lancer automatiquement ce tour à la première visite</strong>
+                        <small>Le visiteur peut passer le tour avec la fermeture du guide. Un seul tour peut être défini comme automatique.</small>
+                    </span>
+                </label>
                 <div class="tour-step-summary">${tour.steps.length} étape(s) · Dernière modification ${formatDateTime(tour.updatedAt)}</div>
             `;
 
             card.querySelectorAll('[data-tour-field]').forEach((field) => {
-                field.addEventListener('change', (event) => updateTourField(tour.id, field.dataset.tourField, event.target.value));
-                field.addEventListener('blur', (event) => updateTourField(tour.id, field.dataset.tourField, event.target.value));
+                const getFieldValue = (event) => event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+                field.addEventListener('change', (event) => updateTourField(tour.id, field.dataset.tourField, getFieldValue(event)));
+                field.addEventListener('blur', (event) => updateTourField(tour.id, field.dataset.tourField, getFieldValue(event)));
             });
             card.querySelector('[data-action="start"]')?.addEventListener('click', () => startTourGuide(tour.id));
             card.querySelector('[data-action="capture"]')?.addEventListener('click', () => startCapture(tour.id));
@@ -1113,7 +1159,7 @@
                     steps.appendChild(row);
                 });
             }
-            card.appendChild(steps);
+            card.querySelector('.tour-admin-card-body')?.appendChild(steps);
             list.appendChild(card);
         });
         container.appendChild(list);
@@ -1173,6 +1219,45 @@
     patchRiskManagementSystem();
     document.addEventListener('click', handleTourBranchClick);
     document.addEventListener('click', handlePrimaryNextAction, true);
+
+    const FIRST_VISIT_TOUR_STORAGE_KEY = 'rms_guided_tour_first_visit_seen';
+
+    function canUseLocalStorage() {
+        try {
+            if (typeof window.localStorage === 'undefined') {
+                return false;
+            }
+            const probeKey = `${FIRST_VISIT_TOUR_STORAGE_KEY}_probe`;
+            window.localStorage.setItem(probeKey, '1');
+            window.localStorage.removeItem(probeKey);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function getAutoStartTour() {
+        return getLaunchableTours().find(tour => tour.autoStartOnFirstVisit === true) || null;
+    }
+
+    function initFirstVisitAutoTour() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('tourStepPreview')) {
+            return;
+        }
+        const autoTour = getAutoStartTour();
+        if (!autoTour) {
+            return;
+        }
+        if (canUseLocalStorage()) {
+            if (window.localStorage.getItem(FIRST_VISIT_TOUR_STORAGE_KEY)) {
+                return;
+            }
+            window.localStorage.setItem(FIRST_VISIT_TOUR_STORAGE_KEY, new Date().toISOString());
+        }
+        window.setTimeout(() => startTourGuide(autoTour.id), 700);
+    }
+
     function initStepPreviewFromUrl() {
         const params = new URLSearchParams(window.location.search);
         const preview = params.get('tourStepPreview');
@@ -1197,6 +1282,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         initTourGuideButton();
         initStepPreviewFromUrl();
+        initFirstVisitAutoTour();
     });
     window.startTourGuide = startTourGuide;
     window.renderGuidedToursAdmin = renderGuidedToursAdmin;
