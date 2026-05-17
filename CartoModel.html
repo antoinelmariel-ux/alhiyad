@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.182</title>
+    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.184</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="https://unpkg.com/@sjmc11/tourguidejs/dist/css/tour.min.css">
     <!-- Local dependencies with CDN fallback -->
@@ -775,14 +775,14 @@
                         <p class="legends-toolbar-subtitle">Repères de lecture utilisés pour qualifier, pondérer et maîtriser les risques.</p>
                     </div>
                 </div>
-                <div class="content-area legends-content">
-                    <div class="legend-formula-card">
+                <div class="content-area legends-content" id="legendGuidedTourContent">
+                    <div class="legend-formula-card" id="legendFormulaGrossRisk" data-tour-legend="gross-risk-formula">
                         <span class="legend-formula-label">Formule — risque brut</span>
                         <code>Score brut simple = Probabilité × Impact</code>
                         <p>Cette première lecture positionne le risque avant pondération par les facteurs aggravants.</p>
                     </div>
 
-                    <section class="legend-panel">
+                    <section class="legend-panel" id="legendImpactPanel" data-tour-legend="impact">
                         <div class="legend-panel-header">
                             <span class="legend-panel-icon">💥</span>
                             <div>
@@ -845,7 +845,7 @@
                         </div>
                     </section>
 
-                    <section class="legend-panel">
+                    <section class="legend-panel" id="legendProbabilityPanel" data-tour-legend="probability">
                         <div class="legend-panel-header">
                             <span class="legend-panel-icon">🎲</span>
                             <div>
@@ -888,13 +888,13 @@
                         </div>
                     </section>
 
-                    <div class="legend-formula-card accent">
+                    <div class="legend-formula-card accent" id="legendFormulaAggravatedRisk" data-tour-legend="aggravated-risk-formula">
                         <span class="legend-formula-label">Formule — risque brut aggravé</span>
                         <code>Score brut aggravé = Probabilité × Coefficient aggravant × Impact</code>
                         <p>Le coefficient vaut <strong>1</strong> sans facteur, <strong>1,2</strong> si au moins un facteur aggravant de groupe 2 est présent, et <strong>1,4</strong> si au moins un facteur aggravant de groupe 1 est présent.</p>
                     </div>
 
-                    <section class="legend-panel">
+                    <section class="legend-panel" id="legendAggravatingFactorsPanel" data-tour-legend="aggravating-factors">
                         <div class="legend-panel-header">
                             <span class="legend-panel-icon">⚠️</span>
                             <div>
@@ -936,13 +936,13 @@
                         </div>
                     </section>
 
-                    <div class="legend-formula-card success">
+                    <div class="legend-formula-card success" id="legendFormulaNetRisk" data-tour-legend="net-risk-formula">
                         <span class="legend-formula-label">Formule — risque net</span>
                         <code>Score net = Score brut aggravé × Coefficient de maîtrise</code>
                         <p>Le coefficient de maîtrise traduit l’efficacité des contrôles existants : plus il est faible, plus la réduction du risque est forte.</p>
                     </div>
 
-                    <section class="legend-panel">
+                    <section class="legend-panel" id="legendControlMeasuresPanel" data-tour-legend="control-measures">
                         <div class="legend-panel-header">
                             <span class="legend-panel-icon">🛡️</span>
                             <div>
@@ -990,7 +990,7 @@
                         </div>
                     </section>
 
-                    <div class="legend-formula-card post-action">
+                    <div class="legend-formula-card post-action" id="legendFormulaPostActionRisk" data-tour-legend="post-action-net-risk-formula">
                         <span class="legend-formula-label">Formule — risque net après plan d’action</span>
                         <code>Score cible = Score brut aggravé × Coefficient de maîtrise cible</code>
                         <p>Le score cible illustre le risque résiduel attendu après la mise en œuvre des plans d’action.</p>
@@ -1037,7 +1037,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.183</span>
+            <span class="app-version">Version 2.14.184</span>
         </footer>
     </div>
 

@@ -45,6 +45,79 @@
                 },
             ],
         },
+
+        {
+            id: 'tour-legende-risque',
+            name: 'Légende des risques',
+            description: 'Parcours pédagogique des formules, échelles et coefficients utilisés dans la légende des risques.',
+            status: 'active',
+            steps: [
+                {
+                    title: 'Formule risque brut',
+                    content: 'Le risque brut est la première lecture du scénario : Score brut simple = Probabilité × Impact. Il sert de base avant toute pondération.',
+                    target: '#legendFormulaGrossRisk',
+                    tab: 'legends',
+                    order: 1,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Impact',
+                    content: 'L’impact qualifie la gravité maximale plausible du scénario sur les dimensions financière, juridique, réputationnelle, opérationnelle et humaine.',
+                    target: '#legendImpactPanel',
+                    tab: 'legends',
+                    order: 2,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Probabilité',
+                    content: 'La probabilité mesure la fréquence observée ou anticipée du scénario en l’absence de mesures de maîtrise.',
+                    target: '#legendProbabilityPanel',
+                    tab: 'legends',
+                    order: 3,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Formule risque aggravé',
+                    content: 'Le risque aggravé applique un coefficient aux scores probabilité et impact pour tenir compte des facteurs contextuels aggravants.',
+                    target: '#legendFormulaAggravatedRisk',
+                    tab: 'legends',
+                    order: 4,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Facteurs aggravants',
+                    content: 'Les facteurs aggravants augmentent l’exposition inhérente : aucun facteur conserve un coefficient 1, les groupes 2 et 1 renforcent progressivement le score.',
+                    target: '#legendAggravatingFactorsPanel',
+                    tab: 'legends',
+                    order: 5,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Formule risque net',
+                    content: 'Le risque net applique le coefficient de maîtrise au score brut aggravé pour refléter l’effet des contrôles existants.',
+                    target: '#legendFormulaNetRisk',
+                    tab: 'legends',
+                    order: 6,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Mesures de maîtrises',
+                    content: 'Les mesures de maîtrises traduisent l’efficacité des contrôles : plus le dispositif est efficace, plus le coefficient réduit le score net.',
+                    target: '#legendControlMeasuresPanel',
+                    tab: 'legends',
+                    order: 7,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Formule risque net après plan d’action',
+                    content: 'Le score cible projette le risque résiduel attendu après la mise en œuvre du plan d’action et du coefficient de maîtrise cible.',
+                    target: '#legendFormulaPostActionRisk',
+                    tab: 'legends',
+                    order: 8,
+                    displayMode: 'focus',
+                },
+            ],
+        },
         {
             id: 'tour-administration',
             name: 'Administration des tours',
@@ -153,6 +226,15 @@
             instance.config.guidedTours = clone(DEFAULT_TOURS);
         }
         instance.config.guidedTours = instance.config.guidedTours.map(normalizeTour).filter(Boolean);
+
+        const knownTourIds = new Set(instance.config.guidedTours.map(tour => tour.id));
+        DEFAULT_TOURS.forEach((defaultTour) => {
+            if (!knownTourIds.has(defaultTour.id)) {
+                instance.config.guidedTours.push(normalizeTour(clone(defaultTour)));
+                knownTourIds.add(defaultTour.id);
+            }
+        });
+
         if (!instance.config.guidedTours.length) {
             instance.config.guidedTours = clone(DEFAULT_TOURS);
         }
@@ -1763,6 +1845,16 @@
                 updated = true;
             }
             this.config.guidedTours = this.config.guidedTours.map(normalizeTour).filter(Boolean);
+
+            const existingTourIds = new Set(this.config.guidedTours.map(tour => tour.id));
+            fallbackTours.forEach((fallbackTour) => {
+                if (!existingTourIds.has(fallbackTour.id)) {
+                    this.config.guidedTours.push(normalizeTour(clone(fallbackTour)));
+                    existingTourIds.add(fallbackTour.id);
+                    updated = true;
+                }
+            });
+
             return updated;
         };
 
