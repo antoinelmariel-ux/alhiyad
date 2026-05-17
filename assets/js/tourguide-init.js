@@ -81,7 +81,7 @@
         showStepProgress: true,
         progressBar: true,
         rememberStep: false,
-        dialogWidth: 420,
+        dialogWidth: 460,
         targetPadding: 10,
         backdropColor: TOUR_FOCUS_BACKDROP_COLOR,
     };
@@ -95,6 +95,8 @@
 
     let tourGuideClient = null;
     let activeTourId = '';
+    let highlightedAdminTourId = '';
+
     let captureState = {
         active: false,
         paused: false,
@@ -578,9 +580,29 @@
     function applyTourDialogErgonomics() {
         const dialog = document.getElementById('tg-dialog') || document.querySelector('.tg-dialog');
         if (dialog instanceof HTMLElement) {
+            const viewportWidth = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 320);
+            const viewportHeight = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 320);
+            const maxWidth = Math.min(Math.max(460, viewportWidth - 32), 720);
+            const availableHeight = Math.max(220, viewportHeight - 56);
             dialog.style.width = 'fit-content';
-            dialog.style.maxWidth = 'min(560px, calc(100vw - 32px))';
-            dialog.style.minWidth = 'min(320px, calc(100vw - 32px))';
+            dialog.style.maxWidth = `${maxWidth}px`;
+            dialog.style.minWidth = `${Math.min(340, viewportWidth - 32)}px`;
+            dialog.style.maxHeight = `${availableHeight}px`;
+            dialog.style.overflow = 'visible';
+
+            const content = dialog.querySelector('.tg-dialog-body, .tg-dialog-content');
+            if (content instanceof HTMLElement) {
+                content.style.maxHeight = 'none';
+                content.style.overflow = 'visible';
+            }
+
+            const naturalHeight = dialog.scrollHeight;
+            const compactLevel = naturalHeight > availableHeight * 0.94 ? 2 : naturalHeight > availableHeight * 0.82 ? 1 : 0;
+            dialog.dataset.tourCompactLevel = String(compactLevel);
+            if (compactLevel > 0) {
+                const compactWidth = Math.min(viewportWidth - 24, compactLevel === 2 ? 760 : 680);
+                dialog.style.maxWidth = `${Math.max(maxWidth, compactWidth)}px`;
+            }
         }
         const closeButton = document.getElementById('tg-dialog-close-btn') || dialog?.querySelector?.('[data-tg-close], .tg-dialog-close, .tg-close');
         if (closeButton instanceof HTMLElement) {
@@ -642,7 +664,11 @@
 
     function handlePrimaryNextAction(event) {
         const nextButton = event.target?.closest?.('#tg-dialog-next-btn');
-        if (!nextButton || nextButton.dataset.tourNextAction !== 'launchTour') {
+        if (!nextButton) {
+            return;
+        }
+        if (nextButton.dataset.tourNextAction !== 'launchTour') {
+            scheduleNextStepFallback();
             return;
         }
         const launchIds = normalizeLaunchTourIds(nextButton.dataset.tourLaunchIds?.split(','));
@@ -657,6 +683,29 @@
             return;
         }
         focusStepBranchActions();
+    }
+
+    function scheduleNextStepFallback() {
+        const client = tourGuideClient;
+        const currentIndex = Number.isInteger(client?.activeStep) ? client.activeStep : -1;
+        const steps = Array.isArray(client?.tourSteps) ? client.tourSteps : [];
+        const nextIndex = currentIndex + 1;
+        if (!client || currentIndex < 0 || nextIndex >= steps.length || typeof client.visitStep !== 'function') {
+            return;
+        }
+        window.setTimeout(() => {
+            if (tourGuideClient !== client || client.isVisible === false || client.activeStep !== currentIndex) {
+                return;
+            }
+            const nextStep = steps[nextIndex]?.sourceStep || null;
+            Promise.resolve(prepareStepContext(nextStep))
+                .then(() => client.visitStep(nextIndex))
+                .then(() => applyStepDisplayMode(nextStep))
+                .then(() => applyStepButtonBehavior(nextStep))
+                .then(() => applyTourDialogErgonomics())
+                .then(() => refreshTourGuidePosition())
+                .catch(() => true);
+        }, 350);
     }
 
     function notifyTourGuideUnavailable() {
@@ -1250,6 +1299,7 @@
             updatedAt: now,
             steps: [],
         });
+        highlightedAdminTourId = id;
         persistTourChanges('Tour créé. Lancez la capture pour enregistrer le trajet.', true);
     }
 
@@ -1370,6 +1420,10 @@
         tours.forEach((tour) => {
             const card = document.createElement('details');
             card.className = 'tour-admin-card tour-admin-accordion';
+            card.dataset.tourId = tour.id;
+            if (tour.id === highlightedAdminTourId) {
+                card.open = true;
+            }
             card.innerHTML = `
                 <summary class="tour-admin-accordion-summary">
                     <span class="tour-admin-accordion-title">${escapeHtml(tour.name)}</span>
@@ -1509,6 +1563,10 @@
             list.appendChild(card);
         });
         container.appendChild(list);
+        if (highlightedAdminTourId) {
+            list.querySelector(`[data-tour-id="${escapeCssString(highlightedAdminTourId)}"]`)
+                ?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
+        }
     }
 
     function escapeHtml(value) {

@@ -7176,11 +7176,11 @@ tbody tr:hover {
 #tg-dialog,
 .tg-dialog {
     width: fit-content !important;
-    min-width: min(320px, calc(100vw - 32px)) !important;
-    max-width: min(560px, calc(100vw - 32px)) !important;
+    min-width: min(340px, calc(100vw - 32px)) !important;
+    max-width: min(720px, calc(100vw - 32px)) !important;
     height: auto !important;
-    max-height: calc(100vh - 48px) !important;
-    overflow: auto !important;
+    max-height: calc(100vh - 56px) !important;
+    overflow: visible !important;
     overflow-wrap: anywhere;
 }
 
@@ -7190,6 +7190,25 @@ tbody tr:hover {
 .tg-dialog .tg-dialog-content {
     width: auto !important;
     max-width: 100%;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+#tg-dialog[data-tour-compact-level="1"],
+.tg-dialog[data-tour-compact-level="1"] {
+    font-size: 0.95rem;
+}
+
+#tg-dialog[data-tour-compact-level="2"],
+.tg-dialog[data-tour-compact-level="2"] {
+    font-size: 0.88rem;
+    line-height: 1.35;
+}
+
+#tg-dialog[data-tour-compact-level="2"] .tg-dialog-footer,
+.tg-dialog[data-tour-compact-level="2"] .tg-dialog-footer {
+    gap: 0.4rem;
+    padding-top: 0.5rem;
 }
 
 .tour-capture-bar {
