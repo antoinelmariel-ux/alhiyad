@@ -46,6 +46,168 @@
             ],
         },
 
+
+        {
+            id: 'tour-matrices-risques',
+            name: 'Matrices et modification d’un risque',
+            description: 'Guide pas à pas pour lire les trois matrices, consulter un risque précis puis comprendre les options de modification.',
+            status: 'active',
+            steps: [
+                {
+                    title: 'Ouvrir les matrices',
+                    content: 'Ce parcours commence dans l’onglet Matrice des risques. Vous y retrouvez les trois lectures complémentaires du portefeuille de risques.',
+                    target: '#matrix-tab .toolbar',
+                    tab: 'matrix',
+                    order: 1,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Filtrer avant l’analyse',
+                    content: 'Les filtres par entité, thème, processus, statut et recherche limitent les puces affichées dans les matrices ainsi que les listes de risques associées.',
+                    target: '#matrix-tab .filters-bar',
+                    tab: 'matrix',
+                    order: 2,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Repérer les thématiques',
+                    content: 'La légende indique la couleur de chaque thématique. Cliquer sur une thématique applique directement le filtre correspondant.',
+                    target: '#riskThemeLegend',
+                    tab: 'matrix',
+                    order: 3,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Matrice du risque brut',
+                    content: 'La matrice brute positionne le risque selon la probabilité et l’impact avant prise en compte des contrôles. C’est la vision de l’exposition inhérente.',
+                    target: '.matrix-container[data-view="brut"]',
+                    tab: 'matrix',
+                    order: 4,
+                    displayMode: 'wide',
+                    captureMode: 'area',
+                    areaItems: ['#matrixTitleBrut', '#matrixGridBrut', '#riskDetailsListBrut'],
+                },
+                {
+                    title: 'Matrice du risque net',
+                    content: 'La matrice nette compare le niveau de risque brut avec l’efficacité des contrôles existants pour visualiser le risque résiduel actuel.',
+                    target: '.matrix-container[data-view="net"]',
+                    tab: 'matrix',
+                    order: 5,
+                    displayMode: 'wide',
+                    captureMode: 'area',
+                    areaItems: ['#matrixTitleNet', '#matrixGridNet', '#riskDetailsListNet'],
+                },
+                {
+                    title: 'Matrice après plan d’action',
+                    content: 'Cette troisième matrice projette le niveau attendu après mise en œuvre des plans d’action et aide à vérifier si les efforts prévus réduisent suffisamment l’exposition.',
+                    target: '.matrix-container[data-view="post"]',
+                    tab: 'matrix',
+                    order: 6,
+                    displayMode: 'wide',
+                    captureMode: 'area',
+                    areaItems: ['#matrixTitlePost', '#matrixGridPost', '#riskDetailsListPost'],
+                },
+                {
+                    title: 'Sélectionner un risque',
+                    content: 'Dans chaque panneau, une ligne de risque donne accès à son score, son contexte et ses actions rapides : œil pour consulter, crayon pour modifier.',
+                    target: '#riskDetailsListBrut .risk-item:not(.risk-row-blurred)',
+                    tab: 'matrix',
+                    order: 7,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Voir le détail du risque',
+                    content: 'La fiche de consultation regroupe l’identité du risque, son statut et les éléments de contexte utiles avant toute décision de modification.',
+                    target: '#riskViewModal .risk-view-summary',
+                    modal: 'riskViewModal',
+                    riskTourAction: 'viewFirstRisk',
+                    order: 8,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Comprendre l’évolution',
+                    content: 'Le bloc d’évolution montre simultanément le risque brut, le risque net et la cible après plan d’action afin de comparer les effets des contrôles et actions prévues.',
+                    target: '#riskViewModal .risk-view-evolution-section',
+                    modal: 'riskViewModal',
+                    riskTourAction: 'viewFirstRisk',
+                    order: 9,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Vérifier les informations',
+                    content: 'Les sections suivantes détaillent les processus, tiers, entités, facteurs aggravants, contrôles et plans d’action liés au risque sélectionné.',
+                    target: '#riskViewModal .risk-view-section:nth-of-type(2)',
+                    modal: 'riskViewModal',
+                    riskTourAction: 'viewFirstRisk',
+                    order: 10,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Passer en modification',
+                    content: 'Le bouton Modifier ouvre le formulaire complet du risque consulté. Le tour l’ouvre automatiquement pour présenter les options sans enregistrer de changement.',
+                    target: '#riskViewModal .modal-footer .btn-primary',
+                    modal: 'riskViewModal',
+                    riskTourAction: 'viewFirstRisk',
+                    order: 11,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Modifier les informations générales',
+                    content: 'Le formulaire permet d’ajuster le titre, la description, la thématique, les processus, les types de risque, les tiers, les entités et les champs narratifs.',
+                    target: '#riskModal form .form-section:first-of-type',
+                    modal: 'riskModal',
+                    riskTourAction: 'editFirstRisk',
+                    order: 12,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Ajuster le risque brut',
+                    content: 'La matrice d’édition du risque brut sert à déplacer la probabilité et l’impact. Les scores se recalculent immédiatement pour montrer la nouvelle exposition.',
+                    target: '#riskMatrixEditBrut',
+                    modal: 'riskModal',
+                    riskTourAction: 'editFirstRisk',
+                    order: 13,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Facteurs aggravants',
+                    content: 'Les facteurs aggravants très significatifs ou significatifs modulent le score brut aggravé. Ils documentent le contexte qui renforce l’exposition.',
+                    target: '#aggravatingFactorsBlock',
+                    modal: 'riskModal',
+                    riskTourAction: 'editFirstRisk',
+                    order: 14,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Contrôles associés et maîtrise nette',
+                    content: 'Associez les contrôles existants puis choisissez le niveau de maîtrise : le curseur calcule le risque net et affiche la description du niveau sélectionné.',
+                    target: '#netMitigationSlider',
+                    modal: 'riskModal',
+                    riskTourAction: 'editFirstRisk',
+                    order: 15,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Plans d’action et cible',
+                    content: 'Ajoutez les plans d’action, ajustez le niveau de contrôle cible et visualisez le risque résiduel attendu après mise en œuvre.',
+                    target: '#postActionMitigationSlider',
+                    modal: 'riskModal',
+                    riskTourAction: 'editFirstRisk',
+                    order: 16,
+                    displayMode: 'focus',
+                },
+                {
+                    title: 'Enregistrer ou annuler',
+                    content: 'Après revue, Enregistrer applique les modifications. Annuler ferme le formulaire sans changement : pratique pour explorer les options pendant ce tour.',
+                    target: '#riskModal .modal-footer',
+                    modal: 'riskModal',
+                    riskTourAction: 'editFirstRisk',
+                    order: 17,
+                    displayMode: 'focus',
+                },
+            ],
+        },
+
         {
             id: 'tour-legende-risque',
             name: 'Légende des risques',
@@ -285,6 +447,7 @@
             tab: typeof step.tab === 'string' ? step.tab.trim() : '',
             modal: typeof step.modal === 'string' ? step.modal.trim() : '',
             configSection: typeof step.configSection === 'string' ? step.configSection.trim() : '',
+            riskTourAction: typeof step.riskTourAction === 'string' ? step.riskTourAction.trim() : '',
             nextAction: step.nextAction === 'launchTour' ? 'launchTour' : 'next',
             launchTourIds: normalizeLaunchTourIds(step.launchTourIds || step.launchTours || step.launchTourId),
         };
@@ -472,7 +635,39 @@
         });
     }
 
-    function openModalForStep(modalId) {
+
+    function getGuidedTourSampleRiskId() {
+        const risks = Array.isArray(window.rms?.risks) ? window.rms.risks : [];
+        const visibleItems = Array.from(document.querySelectorAll('.risk-item[data-risk-id]:not(.risk-row-blurred)'));
+        const visibleId = visibleItems.map(item => item.dataset.riskId).find(Boolean);
+        if (visibleId && risks.some(risk => String(risk?.id) === String(visibleId))) {
+            return visibleId;
+        }
+        const scoredRisk = risks.find(risk => risk && risk.id != null && (Number(risk.probBrut) || Number(risk.impactBrut)));
+        return scoredRisk?.id ?? risks.find(risk => risk && risk.id != null)?.id ?? null;
+    }
+
+    function openGuidedTourRiskView() {
+        const riskId = getGuidedTourSampleRiskId();
+        if (riskId == null || typeof window.rms?.viewRisk !== 'function') {
+            return false;
+        }
+        window.rms.viewRisk(riskId);
+        return true;
+    }
+
+    function openGuidedTourRiskEdit() {
+        const riskId = getGuidedTourSampleRiskId();
+        if (riskId == null || typeof window.rms?.editRisk !== 'function') {
+            return false;
+        }
+        window.rms.editRisk(riskId);
+        return true;
+    }
+
+    function openModalForStep(stepOrModalId) {
+        const step = typeof stepOrModalId === 'object' ? stepOrModalId : null;
+        const modalId = step ? inferModalId(step) : stepOrModalId;
         if (!modalId) {
             closeGuidedTourModals();
             return;
@@ -488,7 +683,8 @@
             mentionsModal: () => window.rms?.openMentionsModal?.(),
             referentDirectoryModal: () => window.rms?.openReferentDirectoryModal?.(),
             mindmapModal: () => window.rms?.openMindMapModal?.(),
-            riskModal: () => window.addNewRisk?.(),
+            riskViewModal: () => openGuidedTourRiskView(),
+            riskModal: () => (step?.riskTourAction === 'editFirstRisk' ? openGuidedTourRiskEdit() : window.addNewRisk?.()),
             controlModal: () => window.addNewControl?.(),
             actionPlanModal: () => window.addNewActionPlan?.(),
             controlSelectorModal: () => window.openControlSelector?.(),
@@ -496,7 +692,7 @@
             riskSelectorPlanModal: () => window.openRiskSelectorForPlan?.(),
             riskSelectorModal: () => window.openRiskSelector?.(),
         };
-        if (!alreadyOpen && typeof openers[modalId] === 'function') {
+        if (typeof openers[modalId] === 'function' && (!alreadyOpen || step?.riskTourAction === 'viewFirstRisk' || step?.riskTourAction === 'editFirstRisk')) {
             openers[modalId]();
         }
         if (!modal.classList.contains('show')) {
@@ -525,7 +721,7 @@
                 window.rms.renderConfiguration();
             }
         }
-        openModalForStep(inferModalId(step));
+        openModalForStep(step);
         return nextFrame()
             .then(() => scrollStepTargetIntoView(step))
             .then(() => nextFrame())
