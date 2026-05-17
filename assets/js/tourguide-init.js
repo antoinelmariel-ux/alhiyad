@@ -533,9 +533,11 @@
             element = document.createElement('div');
             element.id = targetId;
             element.className = 'tour-area-target tour-runtime-target';
-            element.setAttribute('aria-hidden', 'true');
             document.body.appendChild(element);
         }
+        element.classList.add('tour-area-target', 'tour-runtime-target');
+        element.setAttribute('aria-hidden', 'true');
+        element.dataset.tourRuntimeTarget = 'true';
         return element;
     }
 
@@ -639,7 +641,15 @@
 
 
     function getTourRuntimeElements() {
-        return Array.from(document.querySelectorAll('#tg-dialog, .tg-dialog, #tg-backdrop, .tg-backdrop'))
+        return Array.from(document.querySelectorAll([
+            '#tg-dialog',
+            '.tg-dialog',
+            '#tg-backdrop',
+            '.tg-backdrop',
+            '.tour-runtime-target',
+            '.tour-area-target[id^="tourGuideRuntimeTarget-"]',
+            '[data-tour-runtime-target="true"]',
+        ].join(', ')))
             .filter((element, index, list) => element instanceof HTMLElement && list.indexOf(element) === index);
     }
 
