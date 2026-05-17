@@ -94,6 +94,7 @@
     };
 
     let tourGuideClient = null;
+    let tourStartPromise = null;
     let activeTourId = '';
     let highlightedAdminTourId = '';
     let tourRepositionFrame = 0;
@@ -636,6 +637,17 @@
             .filter((element, index, list) => element instanceof Element && list.indexOf(element) === index && isVisibleElement(element));
     }
 
+
+    function getTourRuntimeElements() {
+        return Array.from(document.querySelectorAll('#tg-dialog, .tg-dialog, #tg-backdrop, .tg-backdrop'))
+            .filter((element, index, list) => element instanceof HTMLElement && list.indexOf(element) === index);
+    }
+
+    function cleanupTourRuntimeElements() {
+        getTourRuntimeElements().forEach((element) => element.remove());
+        document.body?.removeAttribute('data-tour-display-mode');
+    }
+
     function applyTourDialogErgonomics() {
         const dialog = document.getElementById('tg-dialog') || document.querySelector('.tg-dialog');
         if (dialog instanceof HTMLElement) {
@@ -817,59 +829,75 @@
             tourGuideClient.onAfterExit(() => {
                 clearStepDisplayMode();
                 closeGuidedTourModals();
+                window.setTimeout(cleanupTourRuntimeElements, 0);
             });
         }
         if (typeof tourGuideClient.onFinish === 'function') {
             tourGuideClient.onFinish(() => {
                 clearStepDisplayMode();
                 closeGuidedTourModals();
+                window.setTimeout(cleanupTourRuntimeElements, 0);
             });
         }
         return tourGuideClient;
     }
 
     async function startTourGuide(tourId = activeTourId) {
-        const launchableTours = getLaunchableTours();
-        if (!launchableTours.length) {
-            notify('warning', 'Aucun tour actif avec étapes n’est disponible. Créez ou activez un tour dans Administration > Tours guidés.');
-            return;
+        if (tourStartPromise) {
+            return tourStartPromise;
         }
 
-        const isLibraryReady = await waitForTourGuideLibrary();
-        if (!isLibraryReady) {
-            notifyTourGuideUnavailable();
-            return;
+        tourStartPromise = (async () => {
+            const launchableTours = getLaunchableTours();
+            if (!launchableTours.length) {
+                notify('warning', 'Aucun tour actif avec étapes n’est disponible. Créez ou activez un tour dans Administration > Tours guidés.');
+                return;
+            }
+
+            const isLibraryReady = await waitForTourGuideLibrary();
+            if (!isLibraryReady) {
+                notifyTourGuideUnavailable();
+                return;
+            }
+
+            if (tourGuideClient && tourGuideClient.isVisible !== false && typeof tourGuideClient.exit === 'function') {
+                await Promise.resolve(tourGuideClient.exit()).catch(() => true);
+                await nextFrame();
+            }
+            cleanupTourRuntimeElements();
+
+            const tour = getTourById(tourId) || launchableTours[0];
+            activeTourId = tour.id;
+
+            const firstStep = normalizeStep(tour.steps?.[0]) || tour.steps?.[0] || null;
+            await prepareStepContext(firstStep, 0);
+
+            const client = createTourGuideClient(tour);
+            if (!client || typeof client.start !== 'function') {
+                notifyTourGuideUnavailable();
+                return;
+            }
+
+            const started = await Promise.resolve(client.start()).then(() => true).catch(() => {
+                notify('error', 'Le tour guidé n’a pas pu démarrer. Vérifiez les étapes configurées.');
+                return false;
+            });
+            if (!started) {
+                return;
+            }
+            await nextFrame();
+            ensureRuntimeTargetForStep(firstStep, 0);
+            applyStepDisplayMode(firstStep);
+            applyStepButtonBehavior(firstStep);
+            applyTourDialogErgonomics();
+            await refreshTourGuidePosition();
+        })();
+
+        try {
+            await tourStartPromise;
+        } finally {
+            tourStartPromise = null;
         }
-
-        if (tourGuideClient && tourGuideClient.isVisible !== false && typeof tourGuideClient.exit === 'function') {
-            await Promise.resolve(tourGuideClient.exit()).catch(() => true);
-        }
-
-        const tour = getTourById(tourId) || launchableTours[0];
-        activeTourId = tour.id;
-
-        const firstStep = normalizeStep(tour.steps?.[0]) || tour.steps?.[0] || null;
-        await prepareStepContext(firstStep, 0);
-
-        const client = createTourGuideClient(tour);
-        if (!client || typeof client.start !== 'function') {
-            notifyTourGuideUnavailable();
-            return;
-        }
-
-        const started = await Promise.resolve(client.start()).then(() => true).catch(() => {
-            notify('error', 'Le tour guidé n’a pas pu démarrer. Vérifiez les étapes configurées.');
-            return false;
-        });
-        if (!started) {
-            return;
-        }
-        await nextFrame();
-        ensureRuntimeTargetForStep(firstStep, 0);
-        applyStepDisplayMode(firstStep);
-        applyStepButtonBehavior(firstStep);
-        applyTourDialogErgonomics();
-        await refreshTourGuidePosition();
     }
 
     function renderTourLauncherMenu() {
@@ -916,7 +944,10 @@
             return;
         }
 
-        launchButton.addEventListener('click', () => startTourGuide(activeTourId));
+        if (launchButton.dataset.tourGuideBound !== 'true') {
+            launchButton.dataset.tourGuideBound = 'true';
+            launchButton.addEventListener('click', () => startTourGuide(activeTourId));
+        }
         window.setTimeout(() => {
             ensureGuidedToursConfig();
             refreshTourLauncherMenu();
