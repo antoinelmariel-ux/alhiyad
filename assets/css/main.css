@@ -7428,6 +7428,29 @@ body[data-tour-display-mode="wide"] .tour-backdrop-wide {
     box-shadow: none !important;
 }
 
+
+.tour-area-selection-overlay {
+    position: fixed;
+    z-index: 10050;
+    pointer-events: none;
+    border: 2px solid #2563eb;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.16);
+    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.18), 0 14px 30px rgba(37, 99, 235, 0.22);
+}
+
+.tour-area-target {
+    position: fixed;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: 12px;
+    background: transparent;
+}
+
+body[data-tour-display-mode] .tour-area-target {
+    z-index: 9998;
+}
+
 .tour-step-preview-fallback code {
     display: block;
     overflow-wrap: anywhere;

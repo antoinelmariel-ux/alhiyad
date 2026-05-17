@@ -89,6 +89,8 @@
     const CAPTURE_DEFAULTS = {
         titlePrefix: 'Étape',
         defaultDescription: 'Décrivez ici l’action capturée, le résultat attendu et les points d’attention.',
+        dragThreshold: 8,
+        minAreaSize: 18,
     };
 
     let tourGuideClient = null;
@@ -98,6 +100,8 @@
         paused: false,
         tourId: '',
         insertAfterIndex: null,
+        pointer: null,
+        suppressNextClick: false,
     };
 
     function clone(value) {
@@ -182,19 +186,30 @@
             return null;
         }
         const legacyZoom = Math.min(160, Math.max(60, parseInt(step.zoom, 10) || 100));
-        const displayMode = step.displayMode === 'wide' || legacyZoom >= 120 ? 'wide' : 'focus';
+        const captureMode = step.captureMode === 'area' ? 'area' : 'element';
+        const displayMode = captureMode === 'area' || step.displayMode === 'wide' || legacyZoom >= 120 ? (step.displayMode === 'wide' ? 'wide' : 'focus') : 'focus';
         return {
             title: String(step.title || `${CAPTURE_DEFAULTS.titlePrefix} ${index + 1}`).trim(),
             content: String(step.content || step.description || CAPTURE_DEFAULTS.defaultDescription).trim(),
             target,
             order: parseInt(step.order, 10) || index + 1,
             displayMode,
+            captureMode,
+            areaItems: normalizeAreaItems(step.areaItems || step.items || step.targets),
             tab: typeof step.tab === 'string' ? step.tab.trim() : '',
             modal: typeof step.modal === 'string' ? step.modal.trim() : '',
             configSection: typeof step.configSection === 'string' ? step.configSection.trim() : '',
             nextAction: step.nextAction === 'launchTour' ? 'launchTour' : 'next',
             launchTourIds: normalizeLaunchTourIds(step.launchTourIds || step.launchTours || step.launchTourId),
         };
+    }
+
+    function normalizeAreaItems(value) {
+        const values = Array.isArray(value) ? value : (value ? [value] : []);
+        return values
+            .map(item => typeof item === 'string' ? item : item?.selector)
+            .map(item => String(item || '').trim())
+            .filter((item, index, list) => item && list.indexOf(item) === index);
     }
 
     function normalizeLaunchTourIds(value) {
@@ -218,7 +233,7 @@
     }
 
     function getStepPadding(step) {
-        return step?.displayMode === 'wide' ? 6 : TOUR_BASE_OPTIONS.targetPadding;
+        return step?.displayMode === 'wide' ? 6 : (step?.captureMode === 'area' ? 0 : TOUR_BASE_OPTIONS.targetPadding);
     }
 
     function buildTourOptions(tour) {
@@ -226,10 +241,10 @@
             .map(normalizeStep)
             .filter(Boolean)
             .sort((a, b) => (a.order || 0) - (b.order || 0))
-            .map(step => ({
+            .map((step, stepIndex) => ({
                 title: step.title,
                 content: buildStepContent(step, tour),
-                target: step.target,
+                target: getRuntimeStepTarget(step, stepIndex),
                 order: step.order,
                 targetPadding: getStepPadding(step),
                 beforeEnter: () => prepareStepContext(step),
@@ -394,6 +409,7 @@
         if (!step) {
             return Promise.resolve(true);
         }
+        ensureAreaTargetForStep(step);
         const tabName = inferTabName(step);
         if (tabName && typeof window.switchTab === 'function' && getActiveTabName() !== tabName) {
             window.switchTab(tabName);
@@ -470,6 +486,94 @@
         }
     }
 
+
+    function getAreaTargetId(step, stepIndex = 0) {
+        return `tourGuideAreaTarget-${step?.order || stepIndex + 1}`;
+    }
+
+    function getRuntimeStepTarget(step, stepIndex = 0) {
+        return step?.captureMode === 'area' ? `#${getAreaTargetId(step, stepIndex)}` : step.target;
+    }
+
+    function ensureAreaTargetsForTour(tour) {
+        (tour?.steps || []).map(normalizeStep).filter(Boolean).forEach((step, stepIndex) => {
+            ensureAreaTargetForStep(step, stepIndex);
+        });
+    }
+
+    function ensureAreaTargetElement(targetId = 'tourGuideAreaTarget') {
+        let element = document.getElementById(targetId);
+        if (!element) {
+            element = document.createElement('div');
+            element.id = targetId;
+            element.className = 'tour-area-target';
+            element.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(element);
+        }
+        return element;
+    }
+
+    function ensureAreaTargetForStep(step, stepIndex = 0) {
+        if (step?.captureMode !== 'area') {
+            return null;
+        }
+        const bounds = getAreaItemsBounds(step);
+        if (!bounds) {
+            return null;
+        }
+        const element = ensureAreaTargetElement(getAreaTargetId(step, stepIndex));
+        element.style.left = `${bounds.left}px`;
+        element.style.top = `${bounds.top}px`;
+        element.style.width = `${bounds.width}px`;
+        element.style.height = `${bounds.height}px`;
+        return element;
+    }
+
+    function getAreaItemsBounds(step) {
+        const elements = getAreaStepElements(step);
+        if (!elements.length) {
+            return null;
+        }
+        const bounds = elements.reduce((currentBounds, element) => {
+            const rect = element.getBoundingClientRect();
+            if (rect.width <= 0 || rect.height <= 0) {
+                return currentBounds;
+            }
+            if (!currentBounds) {
+                return {
+                    left: rect.left,
+                    top: rect.top,
+                    right: rect.right,
+                    bottom: rect.bottom,
+                };
+            }
+            return {
+                left: Math.min(currentBounds.left, rect.left),
+                top: Math.min(currentBounds.top, rect.top),
+                right: Math.max(currentBounds.right, rect.right),
+                bottom: Math.max(currentBounds.bottom, rect.bottom),
+            };
+        }, null);
+        return bounds ? {
+            left: bounds.left,
+            top: bounds.top,
+            width: bounds.right - bounds.left,
+            height: bounds.bottom - bounds.top,
+        } : null;
+    }
+
+    function getAreaStepElements(step) {
+        const selectors = normalizeAreaItems(step?.areaItems);
+        return selectors
+            .flatMap(selector => {
+                try {
+                    return Array.from(document.querySelectorAll(selector));
+                } catch (error) {
+                    return [];
+                }
+            })
+            .filter((element, index, list) => element instanceof Element && list.indexOf(element) === index && isVisibleElement(element));
+    }
 
     function applyTourDialogErgonomics() {
         const dialog = document.getElementById('tg-dialog') || document.querySelector('.tg-dialog');
@@ -564,6 +668,7 @@
             return null;
         }
 
+        ensureAreaTargetsForTour(tour);
         tourGuideClient = new window.tourguide.TourGuideClient(buildTourOptions(tour));
         if (typeof tourGuideClient.onAfterStepChange === 'function') {
             tourGuideClient.onAfterStepChange(() => {
@@ -724,7 +829,7 @@
     }
 
     function isCaptureControl(element) {
-        return Boolean(element?.closest?.('.tour-capture-bar, .tour-admin-card, .tour-step-editor, .config-section-tabs, #tourGuideLauncherSelect, #tourGuideLaunchButton'));
+        return Boolean(element?.closest?.('.tour-capture-bar, .tour-admin-card, .tour-step-editor, .config-section-tabs, .tour-area-selection-overlay, #tourGuideLauncherSelect, #tourGuideLaunchButton'));
     }
 
     function getStepPreviewUrl(tourId, stepIndex) {
@@ -739,10 +844,16 @@
     }
 
     function buildStepPreviewMarkup(step, tourId, stepIndex) {
+        const areaItems = normalizeAreaItems(step?.areaItems);
+        const areaSummary = step?.captureMode === 'area'
+            ? `<span>Items repérés : ${areaItems.length || 0}</span>`
+            : '';
         return `
             <div class="tour-step-preview tour-step-preview-fallback">
                 <strong>${escapeHtml(step?.title || 'Étape enregistrée')}</strong>
+                <span>Mode : ${step?.captureMode === 'area' ? 'capture de zone' : 'capture classique'}</span>
                 <span>Cible : ${escapeHtml(step?.target || 'non définie')}</span>
+                ${areaSummary}
                 <small>Ouvrez cette étape dans un nouvel onglet pour vérifier le contexte enregistré.</small>
                 <code>${escapeHtml(getStepPreviewUrl(tourId, stepIndex))}</code>
             </div>
@@ -754,41 +865,275 @@
         return tours.find(tour => tour.id === captureState.tourId) || null;
     }
 
-    function addCapturedStep(event) {
-        if (!captureState.active || captureState.paused || isCaptureControl(event.target)) {
+    function attachCaptureListeners() {
+        document.addEventListener('pointerdown', handleCapturePointerDown, true);
+        document.addEventListener('pointermove', handleCapturePointerMove, true);
+        document.addEventListener('pointerup', handleCapturePointerUp, true);
+        document.addEventListener('pointercancel', handleCapturePointerCancel, true);
+        document.addEventListener('click', suppressAreaSelectionClick, true);
+    }
+
+    function detachCaptureListeners() {
+        document.removeEventListener('pointerdown', handleCapturePointerDown, true);
+        document.removeEventListener('pointermove', handleCapturePointerMove, true);
+        document.removeEventListener('pointerup', handleCapturePointerUp, true);
+        document.removeEventListener('pointercancel', handleCapturePointerCancel, true);
+        document.removeEventListener('click', suppressAreaSelectionClick, true);
+    }
+
+    function handleCapturePointerDown(event) {
+        if (!captureState.active || captureState.paused || event.button !== 0 || isCaptureControl(event.target)) {
             return;
         }
+        captureState.pointer = {
+            id: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            currentX: event.clientX,
+            currentY: event.clientY,
+            target: event.target,
+            dragging: false,
+            suppressClick: false,
+        };
+    }
+
+    function handleCapturePointerMove(event) {
+        const pointer = captureState.pointer;
+        if (!pointer || pointer.id !== event.pointerId || captureState.paused) {
+            return;
+        }
+        pointer.currentX = event.clientX;
+        pointer.currentY = event.clientY;
+        const distance = Math.hypot(pointer.currentX - pointer.startX, pointer.currentY - pointer.startY);
+        if (!pointer.dragging && distance >= CAPTURE_DEFAULTS.dragThreshold) {
+            pointer.dragging = true;
+            pointer.suppressClick = true;
+            ensureAreaSelectionOverlay();
+        }
+        if (pointer.dragging) {
+            captureState.suppressNextClick = true;
+            event.preventDefault();
+            event.stopPropagation();
+            updateAreaSelectionOverlay(pointer.startX, pointer.startY, pointer.currentX, pointer.currentY);
+        }
+    }
+
+    function handleCapturePointerUp(event) {
+        const pointer = captureState.pointer;
+        if (!pointer || pointer.id !== event.pointerId) {
+            return;
+        }
+        pointer.currentX = event.clientX;
+        pointer.currentY = event.clientY;
+        captureState.pointer = null;
+        if (pointer.dragging) {
+            captureState.suppressNextClick = true;
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            addCapturedAreaStep(pointer);
+            removeAreaSelectionOverlay();
+            return;
+        }
+        addCapturedElementStep(pointer.target);
+    }
+
+    function handleCapturePointerCancel(event) {
+        if (captureState.pointer?.id !== event.pointerId) {
+            return;
+        }
+        captureState.pointer = null;
+        removeAreaSelectionOverlay();
+    }
+
+    function suppressAreaSelectionClick(event) {
+        if (!captureState.suppressNextClick) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        captureState.suppressNextClick = false;
+    }
+
+    function ensureAreaSelectionOverlay() {
+        let overlay = document.getElementById('tourAreaSelectionOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'tourAreaSelectionOverlay';
+            overlay.className = 'tour-area-selection-overlay';
+            document.body.appendChild(overlay);
+        }
+        return overlay;
+    }
+
+    function updateAreaSelectionOverlay(startX, startY, endX, endY) {
+        const overlay = ensureAreaSelectionOverlay();
+        const rect = getViewportSelectionRect(startX, startY, endX, endY);
+        overlay.style.left = `${rect.left}px`;
+        overlay.style.top = `${rect.top}px`;
+        overlay.style.width = `${rect.width}px`;
+        overlay.style.height = `${rect.height}px`;
+    }
+
+    function removeAreaSelectionOverlay() {
+        document.getElementById('tourAreaSelectionOverlay')?.remove();
+    }
+
+    function getViewportSelectionRect(startX, startY, endX, endY) {
+        const viewportWidth = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+        const viewportHeight = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1);
+        const x1 = Math.min(Math.max(0, startX), viewportWidth);
+        const y1 = Math.min(Math.max(0, startY), viewportHeight);
+        const x2 = Math.min(Math.max(0, endX), viewportWidth);
+        const y2 = Math.min(Math.max(0, endY), viewportHeight);
+        return {
+            left: Math.min(x1, x2),
+            top: Math.min(y1, y2),
+            width: Math.abs(x2 - x1),
+            height: Math.abs(y2 - y1),
+            viewportWidth,
+            viewportHeight,
+        };
+    }
+
+    function insertCapturedStep(step, successMessage) {
         const tour = getCaptureTour();
         if (!tour) {
             return;
         }
-        const selector = getElementSelector(event.target);
-        if (!selector) {
-            return;
-        }
-        const label = getReadableLabel(event.target);
         const stepIndex = Number.isInteger(captureState.insertAfterIndex)
             ? Math.min(Math.max(captureState.insertAfterIndex + 1, 0), tour.steps.length)
             : tour.steps.length;
-        tour.steps.splice(stepIndex, 0, {
-            title: `${CAPTURE_DEFAULTS.titlePrefix} ${stepIndex + 1}${label ? ` — ${label}` : ''}`,
-            content: CAPTURE_DEFAULTS.defaultDescription,
-            target: selector,
-            order: stepIndex + 1,
-            displayMode: 'focus',
-            tab: getActiveTabName(),
-            modal: getActiveModalId(event.target),
-            configSection: getActiveConfigSection(),
-            nextAction: 'next',
-            launchTourIds: [],
-        });
-        tour.steps = tour.steps.map((step, index) => ({ ...step, order: index + 1 }));
+        tour.steps.splice(stepIndex, 0, { ...step, order: stepIndex + 1 });
+        tour.steps = tour.steps.map((item, index) => ({ ...item, order: index + 1 }));
         if (Number.isInteger(captureState.insertAfterIndex)) {
             captureState.insertAfterIndex = stepIndex;
         }
         touchTour(tour);
-        persistTourChanges('Étape capturée. Vous pouvez la modifier dans le studio de tours.', false);
+        persistTourChanges(successMessage, false);
+        updateCaptureBar();
+    }
 
+    function addCapturedElementStep(target) {
+        if (!captureState.active || captureState.paused || isCaptureControl(target)) {
+            return;
+        }
+        const selector = getElementSelector(target);
+        if (!selector) {
+            return;
+        }
+        const label = getReadableLabel(target);
+        insertCapturedStep({
+            title: `${CAPTURE_DEFAULTS.titlePrefix}${label ? ` — ${label}` : ''}`,
+            content: CAPTURE_DEFAULTS.defaultDescription,
+            target: selector,
+            displayMode: 'focus',
+            captureMode: 'element',
+            areaItems: [],
+            tab: getActiveTabName(),
+            modal: getActiveModalId(target),
+            configSection: getActiveConfigSection(),
+            nextAction: 'next',
+            launchTourIds: [],
+        }, 'Étape capturée. Vous pouvez la modifier dans le studio de tours.');
+    }
+
+    function collectAreaItemSelectors(rect, fallbackElement) {
+        const candidates = Array.from(document.body.querySelectorAll('*'))
+            .filter(element => isSelectableAreaItem(element, rect));
+        const leafCandidates = candidates.filter(element => !candidates.some(candidate => candidate !== element && element.contains(candidate)));
+        const selectors = (leafCandidates.length ? leafCandidates : candidates)
+            .map(getElementSelector)
+            .filter(Boolean)
+            .filter((selector, index, list) => list.indexOf(selector) === index)
+            .slice(0, 40);
+        if (!selectors.length && fallbackElement instanceof Element) {
+            const fallbackSelector = getElementSelector(fallbackElement);
+            if (fallbackSelector) {
+                selectors.push(fallbackSelector);
+            }
+        }
+        return selectors;
+    }
+
+    function isSelectableAreaItem(element, selectionRect) {
+        if (!(element instanceof Element) || element === document.body || element === document.documentElement) {
+            return false;
+        }
+        if (element.classList?.contains('tour-area-target') || element.closest?.('.tg-dialog, #tg-dialog, .tg-backdrop, #tg-backdrop')) {
+            return false;
+        }
+        if (isCaptureControl(element) || !isVisibleElement(element)) {
+            return false;
+        }
+        const rect = element.getBoundingClientRect();
+        if (rect.width < 4 || rect.height < 4) {
+            return false;
+        }
+        const intersection = getRectIntersection(selectionRect, rect);
+        if (!intersection) {
+            return false;
+        }
+        const elementArea = rect.width * rect.height;
+        const selectionArea = Math.max(1, selectionRect.width * selectionRect.height);
+        const intersectionArea = intersection.width * intersection.height;
+        const centerIsSelected = rect.left + rect.width / 2 >= selectionRect.left
+            && rect.left + rect.width / 2 <= selectionRect.left + selectionRect.width
+            && rect.top + rect.height / 2 >= selectionRect.top
+            && rect.top + rect.height / 2 <= selectionRect.top + selectionRect.height;
+        const isVeryLargeContainer = elementArea > selectionArea * 3 && intersectionArea / elementArea < 0.35;
+        return !isVeryLargeContainer && (centerIsSelected || intersectionArea / Math.min(elementArea, selectionArea) >= 0.35);
+    }
+
+    function isVisibleElement(element) {
+        const style = window.getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) {
+            return false;
+        }
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+    }
+
+    function getRectIntersection(a, b) {
+        const left = Math.max(a.left, b.left);
+        const top = Math.max(a.top, b.top);
+        const right = Math.min(a.left + a.width, b.right ?? b.left + b.width);
+        const bottom = Math.min(a.top + a.height, b.bottom ?? b.top + b.height);
+        if (right <= left || bottom <= top) {
+            return null;
+        }
+        return { left, top, width: right - left, height: bottom - top };
+    }
+
+    function addCapturedAreaStep(pointer) {
+        if (!captureState.active || captureState.paused) {
+            return;
+        }
+        const rect = getViewportSelectionRect(pointer.startX, pointer.startY, pointer.currentX, pointer.currentY);
+        if (rect.width < CAPTURE_DEFAULTS.minAreaSize || rect.height < CAPTURE_DEFAULTS.minAreaSize) {
+            addCapturedElementStep(pointer.target);
+            return;
+        }
+        const centerTarget = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2) || pointer.target;
+        const areaItems = collectAreaItemSelectors(rect, centerTarget);
+        if (!areaItems.length) {
+            addCapturedElementStep(centerTarget);
+            return;
+        }
+        insertCapturedStep({
+            title: `${CAPTURE_DEFAULTS.titlePrefix} — Zone sélectionnée`,
+            content: CAPTURE_DEFAULTS.defaultDescription,
+            target: '#tourGuideAreaTarget',
+            displayMode: 'focus',
+            captureMode: 'area',
+            areaItems,
+            tab: getActiveTabName(),
+            modal: getActiveModalId(centerTarget),
+            configSection: getActiveConfigSection(),
+            nextAction: 'next',
+            launchTourIds: [],
+        }, `${areaItems.length} item(s) repéré(s) dans la zone. Le tour les retrouvera au moment de l’affichage.`);
     }
 
     function touchTour(tour) {
@@ -847,8 +1192,8 @@
             status.textContent = captureState.paused
                 ? `Capture en pause pour “${tour?.name || ''}”.`
                 : Number.isInteger(captureState.insertAfterIndex)
-                    ? `Chaque clic ajoute une étape après la position ${captureState.insertAfterIndex + 1} pour “${tour?.name || ''}”.`
-                    : `Chaque clic devient une étape à la fin de “${tour?.name || ''}”.`;
+                    ? `Cliquez ou cliquez-glissez pour ajouter une étape après la position ${captureState.insertAfterIndex + 1} pour “${tour?.name || ''}”.`
+                    : `Cliquez pour capturer un élément ou cliquez-glissez pour sélectionner une zone à la fin de “${tour?.name || ''}”.`;
         }
         if (button) {
             button.textContent = captureState.paused ? 'Reprendre' : 'Pause';
@@ -862,21 +1207,22 @@
             return;
         }
         const insertAfterIndex = Number.isInteger(arguments[1]) ? arguments[1] : null;
-        captureState = { active: true, paused: false, tourId: tour.id, insertAfterIndex };
+        captureState = { active: true, paused: false, tourId: tour.id, insertAfterIndex, pointer: null, suppressNextClick: false };
         ensureCaptureBar();
         updateCaptureBar();
-        document.removeEventListener('click', addCapturedStep, true);
-        document.addEventListener('click', addCapturedStep, true);
-        notify('success', `Capture démarrée pour “${tour.name}”.`);
+        detachCaptureListeners();
+        attachCaptureListeners();
+        notify('success', `Capture démarrée pour “${tour.name}”. Cliquez pour une capture classique ou cliquez-glissez pour une capture de zone.`);
     }
 
     function stopCapture() {
         if (!captureState.active) {
             return;
         }
-        document.removeEventListener('click', addCapturedStep, true);
+        detachCaptureListeners();
+        removeAreaSelectionOverlay();
         const tour = getCaptureTour();
-        captureState = { active: false, paused: false, tourId: '', insertAfterIndex: null };
+        captureState = { active: false, paused: false, tourId: '', insertAfterIndex: null, pointer: null, suppressNextClick: false };
         document.getElementById('tourCaptureBar')?.remove();
         persistTourChanges(tour ? `Capture arrêtée : ${tour.steps.length} étape(s) dans “${tour.name}”.` : 'Capture arrêtée.', true);
     }
@@ -998,7 +1344,7 @@
 
         const intro = document.createElement('div');
         intro.className = 'config-section-description';
-        intro.innerHTML = '<strong>Studio de tours guidés.</strong> Créez plusieurs parcours, lancez une capture façon Tango, mettez-la en pause ou arrêtez-la, puis retouchez chaque étape. Chaque étape peut être ouverte dans un nouvel onglet pour vérifier son contexte, et une capture peut être relancée entre deux étapes pour compléter le parcours.';
+        intro.innerHTML = '<strong>Studio de tours guidés.</strong> Créez plusieurs parcours, lancez une capture façon Tango, mettez-la en pause ou arrêtez-la, puis retouchez chaque étape. Cliquez pour une capture classique ou maintenez le clic en déplaçant le curseur pour capturer les items présents dans une zone. Chaque étape peut être ouverte dans un nouvel onglet pour vérifier son contexte, et une capture peut être relancée entre deux étapes pour compléter le parcours.';
         container.appendChild(intro);
 
         const toolbar = document.createElement('div');
