@@ -96,6 +96,7 @@
     let tourGuideClient = null;
     let activeTourId = '';
     let highlightedAdminTourId = '';
+    let tourRepositionFrame = 0;
 
     let captureState = {
         active: false,
@@ -249,9 +250,10 @@
                 target: getRuntimeStepTarget(step, stepIndex),
                 order: step.order,
                 targetPadding: getStepPadding(step),
-                beforeEnter: () => prepareStepContext(step),
+                beforeEnter: () => prepareStepContext(step, stepIndex),
                 sourceStep: step,
                 afterEnter: () => nextFrame()
+                    .then(() => ensureRuntimeTargetForStep(step, stepIndex))
                     .then(() => applyStepDisplayMode(step))
                     .then(() => applyStepButtonBehavior(step))
                     .then(() => applyTourDialogErgonomics())
@@ -286,6 +288,20 @@
         return Promise.resolve(true);
     }
 
+    function scheduleActiveTourReposition() {
+        if (!tourGuideClient || tourGuideClient.isVisible === false || tourRepositionFrame) {
+            return;
+        }
+        tourRepositionFrame = window.requestAnimationFrame(() => {
+            tourRepositionFrame = 0;
+            const currentStep = getCurrentRuntimeStep();
+            const currentIndex = Number.isInteger(tourGuideClient?.activeStep) ? tourGuideClient.activeStep : 0;
+            ensureRuntimeTargetForStep(currentStep, currentIndex);
+            applyTourDialogErgonomics();
+            refreshTourGuidePosition();
+        });
+    }
+
     function findStepTargetElement(step) {
         const target = typeof step?.target === 'string' ? step.target.trim() : '';
         if (!target) {
@@ -308,8 +324,12 @@
             return tabContent.id.replace(/-tab$/, '');
         }
         const target = typeof step?.target === 'string' ? step.target.trim() : '';
-        const match = target.match(/#([a-z0-9_-]+)-tab\b/i);
-        return match ? match[1] : '';
+        const contentMatch = target.match(/#([a-z0-9_-]+)-tab\b/i);
+        if (contentMatch) {
+            return contentMatch[1];
+        }
+        const switchTabMatch = target.match(/switchTab\([\'"]([a-z0-9_-]+)[\'"]\)/i);
+        return switchTabMatch ? switchTabMatch[1] : '';
     }
 
     function getActiveTabName() {
@@ -407,11 +427,10 @@
         closeGuidedTourModals(modalId);
     }
 
-    function prepareStepContext(step) {
+    function prepareStepContext(step, stepIndex = 0) {
         if (!step) {
             return Promise.resolve(true);
         }
-        ensureAreaTargetForStep(step);
         const tabName = inferTabName(step);
         if (tabName && typeof window.switchTab === 'function' && getActiveTabName() !== tabName) {
             window.switchTab(tabName);
@@ -424,7 +443,11 @@
             }
         }
         openModalForStep(inferModalId(step));
-        return nextFrame().then(() => refreshTourGuidePosition());
+        return nextFrame()
+            .then(() => scrollStepTargetIntoView(step))
+            .then(() => nextFrame())
+            .then(() => ensureRuntimeTargetForStep(step, stepIndex))
+            .then(() => refreshTourGuidePosition());
     }
 
     function getLaunchTourIds(step) {
@@ -489,46 +512,82 @@
     }
 
 
-    function getAreaTargetId(step, stepIndex = 0) {
-        return `tourGuideAreaTarget-${step?.order || stepIndex + 1}`;
+    function getRuntimeTargetId(step, stepIndex = 0) {
+        return `tourGuideRuntimeTarget-${step?.order || stepIndex + 1}`;
     }
 
     function getRuntimeStepTarget(step, stepIndex = 0) {
-        return step?.captureMode === 'area' ? `#${getAreaTargetId(step, stepIndex)}` : step.target;
+        return `#${getRuntimeTargetId(step, stepIndex)}`;
     }
 
     function ensureAreaTargetsForTour(tour) {
         (tour?.steps || []).map(normalizeStep).filter(Boolean).forEach((step, stepIndex) => {
-            ensureAreaTargetForStep(step, stepIndex);
+            ensureRuntimeTargetForStep(step, stepIndex);
         });
     }
 
-    function ensureAreaTargetElement(targetId = 'tourGuideAreaTarget') {
+    function ensureRuntimeTargetElement(targetId = 'tourGuideRuntimeTarget') {
         let element = document.getElementById(targetId);
         if (!element) {
             element = document.createElement('div');
             element.id = targetId;
-            element.className = 'tour-area-target';
+            element.className = 'tour-area-target tour-runtime-target';
             element.setAttribute('aria-hidden', 'true');
             document.body.appendChild(element);
         }
         return element;
     }
 
-    function ensureAreaTargetForStep(step, stepIndex = 0) {
-        if (step?.captureMode !== 'area') {
+    function getFallbackTargetBounds() {
+        const viewportWidth = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 320);
+        const viewportHeight = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 320);
+        return {
+            left: Math.max(16, viewportWidth / 2 - 80),
+            top: Math.max(88, viewportHeight / 2 - 60),
+            width: Math.min(160, viewportWidth - 32),
+            height: 120,
+        };
+    }
+
+    function getElementBounds(element) {
+        if (!(element instanceof Element) || !isVisibleElement(element)) {
             return null;
         }
-        const bounds = getAreaItemsBounds(step);
-        if (!bounds) {
+        const rect = element.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) {
             return null;
         }
-        const element = ensureAreaTargetElement(getAreaTargetId(step, stepIndex));
-        element.style.left = `${bounds.left}px`;
-        element.style.top = `${bounds.top}px`;
-        element.style.width = `${bounds.width}px`;
-        element.style.height = `${bounds.height}px`;
+        return {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height,
+        };
+    }
+
+    function ensureRuntimeTargetForStep(step, stepIndex = 0) {
+        const element = ensureRuntimeTargetElement(getRuntimeTargetId(step, stepIndex));
+        const bounds = step?.captureMode === 'area'
+            ? getAreaItemsBounds(step)
+            : getElementBounds(findStepTargetElement(step));
+        const safeBounds = bounds || getFallbackTargetBounds();
+        element.style.left = `${Math.round(safeBounds.left)}px`;
+        element.style.top = `${Math.round(safeBounds.top)}px`;
+        element.style.width = `${Math.max(1, Math.round(safeBounds.width))}px`;
+        element.style.height = `${Math.max(1, Math.round(safeBounds.height))}px`;
+        element.classList.toggle('is-fallback', !bounds);
         return element;
+    }
+
+    function scrollStepTargetIntoView(step) {
+        const targetElement = step?.captureMode === 'area'
+            ? getAreaStepElements(step)[0]
+            : findStepTargetElement(step);
+        if (!(targetElement instanceof Element) || !isVisibleElement(targetElement)) {
+            return Promise.resolve(false);
+        }
+        targetElement.scrollIntoView({ block: 'center', inline: 'center', behavior: 'auto' });
+        return Promise.resolve(true);
     }
 
     function getAreaItemsBounds(step) {
@@ -588,12 +647,14 @@
             dialog.style.maxWidth = `${maxWidth}px`;
             dialog.style.minWidth = `${Math.min(340, viewportWidth - 32)}px`;
             dialog.style.maxHeight = `${availableHeight}px`;
-            dialog.style.overflow = 'visible';
+            dialog.style.overflow = 'hidden';
 
             const content = dialog.querySelector('.tg-dialog-body, .tg-dialog-content');
+            const footer = dialog.querySelector('.tg-dialog-footer');
             if (content instanceof HTMLElement) {
                 content.style.maxHeight = 'none';
-                content.style.overflow = 'visible';
+                content.style.overflowY = 'visible';
+                content.style.overflowX = 'hidden';
             }
 
             const naturalHeight = dialog.scrollHeight;
@@ -602,6 +663,13 @@
             if (compactLevel > 0) {
                 const compactWidth = Math.min(viewportWidth - 24, compactLevel === 2 ? 760 : 680);
                 dialog.style.maxWidth = `${Math.max(maxWidth, compactWidth)}px`;
+            }
+            if (content instanceof HTMLElement && dialog.scrollHeight > availableHeight) {
+                const footerHeight = footer instanceof HTMLElement ? footer.offsetHeight : 56;
+                const chromeHeight = Math.max(88, dialog.offsetHeight - content.offsetHeight);
+                const contentMaxHeight = Math.max(120, availableHeight - Math.max(footerHeight + 48, chromeHeight));
+                content.style.maxHeight = `${contentMaxHeight}px`;
+                content.style.overflowY = 'auto';
             }
         }
         const closeButton = document.getElementById('tg-dialog-close-btn') || dialog?.querySelector?.('[data-tg-close], .tg-dialog-close, .tg-close');
@@ -698,7 +766,7 @@
                 return;
             }
             const nextStep = steps[nextIndex]?.sourceStep || null;
-            Promise.resolve(prepareStepContext(nextStep))
+            Promise.resolve(prepareStepContext(nextStep, nextIndex))
                 .then(() => client.visitStep(nextIndex))
                 .then(() => applyStepDisplayMode(nextStep))
                 .then(() => applyStepButtonBehavior(nextStep))
@@ -712,6 +780,22 @@
         notify('warning', 'Le module TourGuide JS est indisponible. Vérifiez la connexion au CDN puis réessayez.');
     }
 
+    function waitForTourGuideLibrary(timeout = 5000) {
+        if (window.tourguide && typeof window.tourguide.TourGuideClient === 'function') {
+            return Promise.resolve(true);
+        }
+        const startedAt = Date.now();
+        return new Promise(resolve => {
+            const timer = window.setInterval(() => {
+                const isReady = window.tourguide && typeof window.tourguide.TourGuideClient === 'function';
+                if (isReady || Date.now() - startedAt >= timeout) {
+                    window.clearInterval(timer);
+                    resolve(Boolean(isReady));
+                }
+            }, 100);
+        });
+    }
+
     function createTourGuideClient(tour) {
         if (!window.tourguide || typeof window.tourguide.TourGuideClient !== 'function') {
             return null;
@@ -721,8 +805,10 @@
         tourGuideClient = new window.tourguide.TourGuideClient(buildTourOptions(tour));
         if (typeof tourGuideClient.onAfterStepChange === 'function') {
             tourGuideClient.onAfterStepChange(() => {
-                applyStepDisplayMode(getCurrentRuntimeStep());
-                applyStepButtonBehavior(getCurrentRuntimeStep());
+                const currentStep = getCurrentRuntimeStep();
+                ensureRuntimeTargetForStep(currentStep, tourGuideClient.activeStep || 0);
+                applyStepDisplayMode(currentStep);
+                applyStepButtonBehavior(currentStep);
                 applyTourDialogErgonomics();
                 return refreshTourGuidePosition();
             });
@@ -749,11 +835,21 @@
             return;
         }
 
+        const isLibraryReady = await waitForTourGuideLibrary();
+        if (!isLibraryReady) {
+            notifyTourGuideUnavailable();
+            return;
+        }
+
+        if (tourGuideClient && tourGuideClient.isVisible !== false && typeof tourGuideClient.exit === 'function') {
+            await Promise.resolve(tourGuideClient.exit()).catch(() => true);
+        }
+
         const tour = getTourById(tourId) || launchableTours[0];
         activeTourId = tour.id;
 
         const firstStep = normalizeStep(tour.steps?.[0]) || tour.steps?.[0] || null;
-        await prepareStepContext(firstStep);
+        await prepareStepContext(firstStep, 0);
 
         const client = createTourGuideClient(tour);
         if (!client || typeof client.start !== 'function') {
@@ -761,7 +857,19 @@
             return;
         }
 
-        client.start();
+        const started = await Promise.resolve(client.start()).then(() => true).catch(() => {
+            notify('error', 'Le tour guidé n’a pas pu démarrer. Vérifiez les étapes configurées.');
+            return false;
+        });
+        if (!started) {
+            return;
+        }
+        await nextFrame();
+        ensureRuntimeTargetForStep(firstStep, 0);
+        applyStepDisplayMode(firstStep);
+        applyStepButtonBehavior(firstStep);
+        applyTourDialogErgonomics();
+        await refreshTourGuidePosition();
     }
 
     function renderTourLauncherMenu() {
@@ -1623,6 +1731,8 @@
     patchRiskManagementSystem();
     document.addEventListener('click', handleTourBranchClick);
     document.addEventListener('click', handlePrimaryNextAction, true);
+    window.addEventListener('resize', scheduleActiveTourReposition);
+    window.addEventListener('scroll', scheduleActiveTourReposition, true);
 
     const FIRST_VISIT_TOUR_STORAGE_KEY = 'rms_guided_tour_first_visit_seen';
 
@@ -1678,7 +1788,11 @@
         window.setTimeout(async () => {
             await startTourGuide(tour.id);
             if (tourGuideClient && typeof tourGuideClient.visitStep === 'function') {
-                tourGuideClient.visitStep(stepIndex).then(() => applyStepDisplayMode(tour.steps[stepIndex]));
+                tourGuideClient.visitStep(stepIndex)
+                    .then(() => prepareStepContext(tour.steps[stepIndex], stepIndex))
+                    .then(() => applyStepDisplayMode(tour.steps[stepIndex]))
+                    .then(() => applyTourDialogErgonomics())
+                    .then(() => refreshTourGuidePosition());
             }
         }, 300);
     }
