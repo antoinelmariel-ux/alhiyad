@@ -7180,7 +7180,7 @@ tbody tr:hover {
     max-width: min(720px, calc(100vw - 32px)) !important;
     height: auto !important;
     max-height: calc(100vh - 56px) !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     overflow-wrap: anywhere;
 }
 
@@ -7190,8 +7190,10 @@ tbody tr:hover {
 .tg-dialog .tg-dialog-content {
     width: auto !important;
     max-width: 100%;
-    max-height: none !important;
-    overflow: visible !important;
+    max-height: calc(100vh - 160px);
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 #tg-dialog[data-tour-compact-level="1"],
@@ -7464,6 +7466,11 @@ body[data-tour-display-mode="wide"] .tour-backdrop-wide {
     pointer-events: none;
     border-radius: 12px;
     background: transparent;
+}
+
+body[data-tour-display-mode] .tour-runtime-target.is-fallback {
+    border: 1px dashed rgba(37, 99, 235, 0.5);
+    background: rgba(37, 99, 235, 0.08);
 }
 
 body[data-tour-display-mode] .tour-area-target {
