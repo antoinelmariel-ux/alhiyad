@@ -12882,8 +12882,25 @@ class RiskManagementSystem {
                 const option = mitigationOptions.find(entry => entry.value === effectiveness);
                 return option?.label || effectiveness || 'Non défini';
             };
+            const resolveIneffectiveColumnIndex = () => {
+                const explicit = mitigationOptions.findIndex(option => {
+                    const value = String(option?.value || '').toLowerCase();
+                    const label = String(option?.label || '').toLowerCase();
+                    return value === 'inefficace'
+                        || value === 'ineffective'
+                        || label.includes('inefficace')
+                        || label.includes('ineffective')
+                        || Number(option?.coefficient) === 1;
+                });
+                if (explicit >= 0) {
+                    return explicit;
+                }
+                return resolveColumnIndex('inefficace');
+            };
             const renderMarker = (entry) => {
-                const colIndex = resolveColumnIndex(entry.effectiveness);
+                const colIndex = entry.className === 'gross'
+                    ? resolveIneffectiveColumnIndex()
+                    : resolveColumnIndex(entry.effectiveness);
                 const rowIndex = findRowIndex(entry.brutReferenceScore);
                 const left = ((colIndex + 0.5) / Math.max(mitigationOptions.length, 1)) * 100;
                 const bottom = ((grossRows.length - rowIndex - 0.5) / grossRows.length) * 100;
