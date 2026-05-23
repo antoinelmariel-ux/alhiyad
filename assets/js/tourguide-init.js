@@ -211,7 +211,7 @@
         {
             id: 'tour-legende-risque',
             name: 'Légende des risques',
-            description: 'Parcours pédagogique des formules, échelles et coefficients utilisés dans la légende des risques.',
+            description: 'Parcours pédagogique des formules, échelles et coefficients utilisés dans la légende des risques pour fiabiliser la lecture des scores.',
             status: 'active',
             steps: [
                 {
@@ -263,8 +263,8 @@
                     displayMode: 'focus',
                 },
                 {
-                    title: 'Mesures de maîtrises',
-                    content: 'Les mesures de maîtrises traduisent l’efficacité des contrôles : plus le dispositif est efficace, plus le coefficient réduit le score net.',
+                    title: 'Mesures de maîtrise',
+                    content: 'Les mesures de maîtrise traduisent l’efficacité des contrôles : plus le dispositif est efficace, plus le coefficient réduit le score net.',
                     target: '#legendControlMeasuresPanel',
                     tab: 'legends',
                     order: 7,
