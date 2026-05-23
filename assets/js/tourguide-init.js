@@ -211,7 +211,7 @@
         {
             id: 'tour-legende-risque',
             name: 'Légende des risques',
-            description: 'Parcours pédagogique des formules, échelles et coefficients utilisés dans la légende des risques.',
+            description: 'Parcours pédagogique des formules, échelles et coefficients utilisés dans la légende des risques pour fiabiliser la lecture des scores.',
             status: 'active',
             steps: [
                 {
@@ -263,8 +263,8 @@
                     displayMode: 'focus',
                 },
                 {
-                    title: 'Mesures de maîtrises',
-                    content: 'Les mesures de maîtrises traduisent l’efficacité des contrôles : plus le dispositif est efficace, plus le coefficient réduit le score net.',
+                    title: 'Mesures de maîtrise',
+                    content: 'Les mesures de maîtrise traduisent l’efficacité des contrôles : plus le dispositif est efficace, plus le coefficient réduit le score net.',
                     target: '#legendControlMeasuresPanel',
                     tab: 'legends',
                     order: 7,
@@ -436,6 +436,7 @@
         const legacyZoom = Math.min(160, Math.max(60, parseInt(step.zoom, 10) || 100));
         const captureMode = step.captureMode === 'area' ? 'area' : 'element';
         const displayMode = captureMode === 'area' || step.displayMode === 'wide' || legacyZoom >= 120 ? (step.displayMode === 'wide' ? 'wide' : 'focus') : 'focus';
+        const normalizedAreaItems = normalizeAreaItems(step.areaItems || step.items || step.targets);
         return {
             title: String(step.title || `${CAPTURE_DEFAULTS.titlePrefix} ${index + 1}`).trim(),
             content: String(step.content || step.description || CAPTURE_DEFAULTS.defaultDescription).trim(),
@@ -443,7 +444,7 @@
             order: parseInt(step.order, 10) || index + 1,
             displayMode,
             captureMode,
-            areaItems: normalizeAreaItems(step.areaItems || step.items || step.targets),
+            areaItems: captureMode === 'area' && !normalizedAreaItems.length ? [target] : normalizedAreaItems,
             tab: typeof step.tab === 'string' ? step.tab.trim() : '',
             modal: typeof step.modal === 'string' ? step.modal.trim() : '',
             configSection: typeof step.configSection === 'string' ? step.configSection.trim() : '',
@@ -986,12 +987,15 @@
             return Promise.resolve(true);
         }
         const launchIds = getLaunchTourIds(step);
+        const defaultLabel = TOUR_BASE_OPTIONS.nextLabel || 'Suivant';
         nextButton.dataset.tourNextAction = launchIds.length ? 'launchTour' : 'next';
         nextButton.dataset.tourLaunchIds = launchIds.join(',');
         if (launchIds.length === 1) {
             nextButton.textContent = `Lancer “${getTourName(launchIds[0])}”`;
         } else if (launchIds.length > 1) {
             nextButton.textContent = 'Choisir un tour';
+        } else {
+            nextButton.textContent = defaultLabel;
         }
         return Promise.resolve(true);
     }
