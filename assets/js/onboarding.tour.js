@@ -21,12 +21,20 @@
     ];
 
     function switchAndWait(tabName) { if (typeof window.switchTab === 'function') { window.switchTab(tabName); } return new Promise((r) => window.setTimeout(r, 220)); }
-    function waitForElement(selector, timeout = 3000) {
+    function isElementVisible(element) {
+        if (!element) return false;
+        const style = window.getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return false;
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+    }
+
+    function waitForElement(selector, timeout = 3000, { visible = false } = {}) {
         return new Promise((resolve) => {
             const start = Date.now();
             const check = () => {
                 const el = document.querySelector(selector);
-                if (el) return resolve(el);
+                if (el && (!visible || isElementVisible(el))) return resolve(el);
                 if (Date.now() - start >= timeout) return resolve(null);
                 window.setTimeout(check, 120);
             };
@@ -49,19 +57,36 @@
 
     async function runAction(action) {
         if (action === 'openRiskView') {
-            const btn = await waitForElement('#risksTableBody tr:first-child .action-btn[title="Voir"]'); if (btn) btn.click(); await waitForElement('#riskViewModal.show', 2500);
+            const btn = await waitForElement('#risksTableBody tr:first-child .action-btn[title="Voir"]', 3000, { visible: true }); if (btn) btn.click(); await waitForElement('#riskViewModal.show', 2500, { visible: true });
         } else if (action === 'openRiskEdit') {
-            const editBtn = document.querySelector('#riskViewModal .btn.btn-primary'); if (editBtn) editBtn.click(); await waitForElement('#riskModal.show', 2500);
+            const editBtn = await waitForElement('#riskViewModal .btn.btn-primary', 2500, { visible: true }); if (editBtn) editBtn.click(); await waitForElement('#riskModal.show', 2500, { visible: true });
         } else if (action === 'closeRiskModal') {
             if (typeof window.closeModal === 'function') window.closeModal('riskModal');
         }
     }
 
+    async function prepareStepTransition(step) {
+        if (step.tab) await switchAndWait(step.tab);
+        if (step.action) await runAction(step.action);
+        if (step.element) {
+            await waitForElement(step.element, 3200, { visible: true });
+            const target = document.querySelector(step.element);
+            if (target && typeof target.scrollIntoView === 'function') {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                await new Promise((resolve) => window.setTimeout(resolve, 250));
+            }
+        }
+    }
+
     function buildDriverSteps(tour, steps) {
-        return steps.map((step) => ({
+        return steps.map((step, index) => ({
             element: step.element,
             popover: { title: step.title, description: step.description, side: step.side || 'bottom' },
-            onNextClick: async () => { if (step.tab) await switchAndWait(step.tab); if (step.action) await runAction(step.action); tour.moveNext(); }
+            onNextClick: async () => {
+                const nextStep = steps[index + 1];
+                if (nextStep) await prepareStepTransition(nextStep);
+                tour.moveNext();
+            }
         }));
     }
 
