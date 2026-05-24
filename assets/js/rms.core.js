@@ -12937,7 +12937,7 @@ class RiskManagementSystem {
                             <p>Positionnement du risque brut, net et après plan d’action</p>
                         </div>
                         <div class="risk-view-evolution-legend" aria-label="Légende des puces">
-                            <span><i class="gross"></i> Risque brut (colonne Ineffective)</span>
+                            <span><i class="gross"></i> Risque brut</span>
                             <span><i class="net"></i> Net</span>
                             <span><i class="post"></i> Après plan d’action</span>
                         </div>
@@ -12950,7 +12950,7 @@ class RiskManagementSystem {
                         </div>
                     </div>
                     <div class="risk-view-evolution-col-labels" aria-hidden="true">${columns}</div>
-                    <div class="risk-view-evolution-axis">Niveau de risque brut ↑ Efficacité des contrôles →</div>
+                    <div class="risk-view-evolution-axis">Efficacité des contrôles →</div>
                 </section>
             `;
         };
