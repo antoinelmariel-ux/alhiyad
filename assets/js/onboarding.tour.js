@@ -125,21 +125,30 @@
         target.click();
     }
 
+    function resolveTourGuideClientConstructor() {
+        if (window.tourguide && typeof window.tourguide.TourGuideClient === 'function') return window.tourguide.TourGuideClient;
+        if (typeof window.TourGuideClient === 'function') return window.TourGuideClient;
+        if (window.Tourguide && typeof window.Tourguide.TourGuideClient === 'function') return window.Tourguide.TourGuideClient;
+        return null;
+    }
+
     function createTourGuideSteps(steps) {
         return steps.map((step, index) => ({
             title: step.title,
             content: step.description,
+            selector: step.element,
             target: step.element,
             order: index + 1
         }));
     }
 
     async function startOnboardingTour() {
-        if (!window.tourguide || typeof window.tourguide.TourGuideClient !== 'function') { alert('TourGuideJS n\'est pas chargé. Vérifiez la connexion internet.'); return; }
+        const TourGuideClient = resolveTourGuideClientConstructor();
+        if (!TourGuideClient) { alert('TourGuideJS n\'est pas chargé. Vérifiez la connexion internet.'); return; }
         const steps = loadTourConfig();
         if (!steps.length) return;
 
-        const tour = new window.tourguide.TourGuideClient({
+        const tour = new TourGuideClient({
             steps: createTourGuideSteps(steps),
             showStepProgress: true,
             showStepDots: true,
