@@ -125,25 +125,43 @@
         target.click();
     }
 
-    function buildDriverSteps(tour, steps) {
+    function createTourGuideSteps(steps) {
         return steps.map((step, index) => ({
-            element: step.element,
-            popover: { title: step.title, description: step.description, side: step.side || 'bottom' },
-            onNextClick: async () => {
-                clickStepElementIfButton(step);
-                const nextStep = steps[index + 1];
-                if (nextStep) await prepareStepTransition(nextStep);
-                tour.moveNext();
-            }
+            title: step.title,
+            content: step.description,
+            target: step.element,
+            order: index + 1
         }));
     }
 
-    function startOnboardingTour() {
-        if (!window.driver || typeof window.driver.js?.driver !== 'function') { alert('Driver.js n\'est pas chargé. Vérifiez la connexion internet.'); return; }
+    async function startOnboardingTour() {
+        if (!window.tourguide || typeof window.tourguide.TourGuideClient !== 'function') { alert('TourGuideJS n\'est pas chargé. Vérifiez la connexion internet.'); return; }
         const steps = loadTourConfig();
-        const tour = window.driver.js.driver({ showProgress: true, animate: true, stagePadding: 8, nextBtnText: 'Suivant', prevBtnText: 'Précédent', doneBtnText: 'Terminer', steps: [] });
-        tour.setConfig({ steps: buildDriverSteps(tour, steps) });
-        tour.drive();
+        if (!steps.length) return;
+
+        const tour = new window.tourguide.TourGuideClient({
+            steps: createTourGuideSteps(steps),
+            showStepProgress: true,
+            showStepDots: true,
+            nextLabel: 'Suivant',
+            prevLabel: 'Précédent',
+            finishLabel: 'Terminer',
+            dialogAnimate: true,
+            targetPadding: 8
+        });
+
+        let lastStep = -1;
+        tour.onAfterStepChange(async () => {
+            const activeIndex = Number(tour.activeStep);
+            if (Number.isNaN(activeIndex) || activeIndex < 0 || activeIndex >= steps.length) return;
+            if (activeIndex === lastStep) return;
+            const currentStep = steps[activeIndex];
+            await prepareStepTransition(currentStep);
+            lastStep = activeIndex;
+        });
+
+        await prepareStepTransition(steps[0]);
+        await tour.start();
     }
 
     function renderTourAdmin() {
