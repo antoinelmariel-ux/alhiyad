@@ -89,8 +89,17 @@
         }
     }
 
+    function clickTabElement(step) {
+        if (!step?.element || !String(step.element).startsWith('#tour-tab-')) return;
+        const target = document.querySelector(step.element);
+        if (!isButtonLikeElement(target)) return;
+        if (target.disabled || target.getAttribute('aria-disabled') === 'true') return;
+        target.click();
+    }
+
     async function prepareStepTransition(step) {
         if (step.tab) await switchAndWait(step.tab);
+        clickTabElement(step);
         if (step.action) await runAction(step.action);
         if (step.element) {
             await waitForElement(step.element, 3200, { visible: true });
