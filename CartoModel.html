@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.175</title>
+    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.176</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.5/dist/driver.css">
     <link rel="stylesheet" href="assets/css/main.css">
     <!-- Local dependencies with CDN fallback -->
@@ -316,9 +316,6 @@
                         <button class="btn btn-primary" onclick="rms.openInterviewModal()">
                             + Nouveau compte rendu d’entretien
                         </button>
-                        <button class="btn btn-outline" type="button" onclick="rms.openInterviewFolderPicker()">
-                            📂 Charger un dossier d’entretiens
-                        </button>
                         <button class="btn btn-secondary" type="button" onclick="rms.openMentionsModal()">
                             À clarifier
                         </button>
@@ -365,13 +362,10 @@
         <div id="matrix-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Risque Matrix</div>
+                    <div class="toolbar-title">Matrice des risques</div>
                     <div class="toolbar-actions">
                         <button class="btn btn-secondary" onclick="resetMatrixView()">
                             Réinitialiser la vue
-                        </button>
-                        <button class="btn btn-outline" type="button" id="startOnboardingTourBtn">
-                            ✨ Lancer le tour guidé
                         </button>
                         <button class="btn btn-primary" onclick="addNewRisk()">
                             + Nouveau risque
@@ -574,11 +568,8 @@
         <div id="risks-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Risque Register</div>
+                    <div class="toolbar-title">Registre des risques</div>
                     <div class="toolbar-actions">
-                        <button class="btn btn-secondary" onclick="exportRisks()">
-                            📤 Exporter
-                        </button>
                         <button class="btn btn-success" onclick="addNewRisk()">
                             + Nouveau risque
                         </button>
@@ -1017,12 +1008,6 @@
                         <button class="btn btn-outline" type="button" onclick="importRisksAssessmentCsv()">
                             ⬆️ Importer les risques (CSV historique)
                         </button>
-                        <button class="btn btn-outline" type="button" onclick="exportReportsRisksXlsx()">
-                            ⬇️ Exporter les risques (XLSX)
-                        </button>
-                        <button class="btn btn-outline" type="button" onclick="exportRisksAssessmentCsv()">
-                            ⬇️ Exporter les risques (CSV historique)
-                        </button>
                         <button class="btn btn-outline" type="button" onclick="importControlsCsv()">
                             ⬆️ Importer les contrôles (CSV)
                         </button>
@@ -1044,7 +1029,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.175</span>
+            <span class="app-version">Version 2.14.176</span>
         </footer>
     </div>
 
@@ -1142,7 +1127,7 @@
                                 <button type="button" class="wysiwyg-button" title="Lien" onclick="rms.applyInterviewLink()">🔗</button>
                                 <button type="button" class="wysiwyg-button" title="Effacer la mise en forme" onclick="rms.clearInterviewFormatting()">🧹</button>
                             </div>
-                            <div id="interviewNotes" class="wysiwyg-content" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Enter your interview summary here..."></div>
+                            <div id="interviewNotes" class="wysiwyg-content" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Saisissez le compte rendu d’entretien ici..."></div>
                         </div>
                     </div>
                 </form>
@@ -1150,15 +1135,6 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewModal()">Annuler</button>
                 <button class="btn btn-primary" type="submit" form="interviewForm">Enregistrer</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="mindmapModal" class="modal mindmap-modal">
-        <div class="modal-content fullscreen mindmap-content">
-            <button class="mindmap-modal-close modal-close" type="button" aria-label="Fermer l’atelier de cartographie mentale" onclick="rms.closeMindMapModal()">&times;</button>
-            <div class="modal-body mindmap-body">
-                <iframe id="mindmapFrame" class="mindmap-iframe" title="Atelier de cartographie mentale" src="mindmap/index.html"></iframe>
             </div>
         </div>
     </div>
@@ -1206,7 +1182,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" id="openInterviewMindmapButton" onclick="rms.openInterviewMindMapViewer()" disabled>Voir la carte mentale</button>
                 <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewViewModal()">Fermer</button>
             </div>
         </div>
@@ -1781,7 +1756,6 @@
         </div>
     </div>
 
-    <script defer src="assets/js/mindmap.renderer.js"></script>
     <script defer src="assets/js/rms.utils.js"></script>
     <script defer src="assets/js/rms.constants.js"></script>
     <script defer src="assets/js/rms.data.processes.js"></script>
