@@ -2,22 +2,24 @@
     const TOUR_STORAGE_KEY = 'rms.onboarding.tourConfig.v1';
 
     const defaultSteps = [
-        { id: 'dashboard', tab: 'dashboard', element: '#tour-tab-dashboard', title: 'Tableau de bord', description: 'Vision globale des KPIs de risque.' },
-        { id: 'interviews', tab: 'interviews', element: '#tour-tab-interviews', title: 'Entretiens', description: 'Collectez et exploitez les verbatims d’interviews.' },
-        { id: 'matrixTab', tab: 'matrix', element: '#tour-tab-matrix', title: 'Matrice des risques', description: 'On va maintenant détailler cet onglet clé.' },
-        { id: 'matrixBrut', tab: 'matrix', element: '#matrixGridBrut', title: 'Matrice du risque brut', description: 'Position initiale des risques avant prise en compte de la maîtrise.' },
-        { id: 'matrixNet', tab: 'matrix', element: '#matrixGridNet', title: 'Matrice du risque net', description: 'Vue du risque après niveau de maîtrise actuel.' },
-        { id: 'matrixPost', tab: 'matrix', element: '#matrixGridPost', title: 'Matrice après plan d’action', description: 'Projection de risque résiduel attendu après actions.' },
-        { id: 'risksTab', tab: 'risks', element: '#tour-tab-risks', title: 'Registre des risques', description: 'Passons au détail d’un risque individuel.', side: 'bottom' },
+        { id: 'intro', tab: 'dashboard', element: '#startOnboardingTourBtn', title: 'Introduction', description: 'Bienvenue sur notre cartographie des risques du groupe Al Hiyad. Nous vous proposons une rapide explication sur le fonctionnement de notre outil.' },
+        { id: 'dashboard', tab: 'dashboard', element: '#tour-tab-dashboard', title: 'Tableau de bord', description: 'Grâce au tableau de bord, vous aurez une vision globale de l’exposition du groupe aux risques éthiques.' },
+        { id: 'interviews', tab: 'interviews', element: '#tour-tab-interviews', title: 'Entretiens', description: 'Cette section contient l’ensemble des comptes-rendus réalisés avec les collaborateurs du groupe. Ils démontrent la couverture de l’ensemble de nos processus.' },
+        { id: 'matrixTab', tab: 'matrix', element: '#tour-tab-matrix', title: 'Matrice des risques', description: 'Retrouvez ici les risques éthiques du groupe présentés via 3 matrices. Vous avez la possibilité d’afficher l’ensemble des risques, ou de filtrer en fonction des thématiques, des entités concernées, pour une lecture adaptée à vos besoins.' },
+        { id: 'matrixBrut', tab: 'matrix', element: '#matrixGridBrut', title: 'Matrice du risque brut', description: 'La matrice des risques bruts présente le positionnement des risques inhérents à notre groupe, en fonction de leur probabilité et de leur impact théorique, c-à-d en l’absence de mesure de maîtrise.' },
+        { id: 'matrixNet', tab: 'matrix', element: '#matrixGridNet', title: 'Matrice du risque net', description: 'La matrice des risques nets présente les risques résiduels, c-à-d en tenant compte de l’efficacité de nos mesures de maîtrise.' },
+        { id: 'matrixPost', tab: 'matrix', element: '#matrixGridPost', title: 'Matrice après plan d’action', description: 'Enfin, nous projetons ici les risques tels qu’ils seraient post mise en place des plans d’action déterminés et validés.' },
+        { id: 'risksTab', tab: 'risks', element: '#tour-tab-risks', title: 'Registre des risques', description: 'Le registre des risques permet de revoir les informations risque par risque, avec des logiques de filtres plus précises.', side: 'bottom' },
         { id: 'riskViewBtn', tab: 'risks', element: '#risksTableBody tr:first-child .action-btn[title="Voir"]', title: 'Voir un risque', description: 'Cliquez sur Voir pour ouvrir la fiche complète.', action: 'openRiskView' },
-        { id: 'riskViewEvolution', tab: 'risks', element: '#riskViewModal .risk-view-evolution-section', title: 'Lecture détaillée du risque', description: 'Retrouvez la matrice d’évolution et les informations générales / scoring.' },
-        { id: 'riskEditBtn', tab: 'risks', element: '#riskViewModal .btn.btn-primary', title: 'Modifier ce risque', description: 'Le bouton Modifier ouvre la configuration complète du risque.', action: 'openRiskEdit' },
+        { id: 'riskViewEvolution', tab: 'risks', element: '#riskViewModal .risk-view-evolution-section', title: 'Lecture détaillée du risque', description: 'Retrouvez l’évolution des scores du brut au post plan d’action.' },
+        { id: 'riskViewInfo', tab: 'risks', element: '#riskViewModal .risk-view-section', title: 'Informations', description: 'Retrouvez l’ensemble des informations indiquées pour ce risque.' },
+        { id: 'riskEditBtn', tab: 'risks', element: '#riskViewModal .btn.btn-primary', title: 'Modifier ce risque', description: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.', action: 'openRiskEdit' },
         { id: 'riskTheme', tab: 'risks', element: '#riskModal #riskTheme', title: 'Configuration – Thématique', description: 'Choisissez la thématique et les champs métiers associés.' },
         { id: 'riskBrutEdit', tab: 'risks', element: '#riskModal #riskMatrixEditBrut', title: 'Configuration – Matrice brute', description: 'Ajustez probabilité/impact directement dans la matrice brute.' },
-        { id: 'riskMitigation', tab: 'risks', element: '#riskModal #mitigationSlider', title: 'Configuration – Niveau de maîtrise', description: 'Simulez l’effet des contrôles sur le risque net.' },
-        { id: 'controlsTab', tab: 'controls', element: '#tour-tab-controls', title: 'Contrôles & atténuation', description: 'Catalogue et pilotage des contrôles.', action: 'closeRiskModal' },
-        { id: 'plansTab', tab: 'plans', element: '#tour-tab-plans', title: 'Plans d’action', description: 'Suivi opérationnel des remédiations.' },
-        { id: 'legendsTab', tab: 'legends', element: '#tour-tab-legends', title: 'Légendes', description: 'Référentiel de lecture des scores et niveaux.' }
+        { id: 'riskMitigation', tab: 'risks', element: '#riskModal #mitigationSlider', title: 'Configuration – Niveau de maîtrise', description: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.' },
+        { id: 'controlsTab', tab: 'controls', element: '#tour-tab-controls', title: 'Contrôles & atténuation', description: 'Vous avez à ce niveau la possibilité de rattacher des contrôles / mesures de prévention pour justifier votre positionnement.', action: 'closeRiskModal' },
+        { id: 'plansTab', tab: 'plans', element: '#tour-tab-plans', title: 'Plans d’action', description: 'Ajoutez des plans d’action.' },
+        { id: 'legendsTab', tab: 'legends', element: '#tour-tab-legends', title: 'Légendes', description: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' }
     ];
 
     function switchAndWait(tabName) { if (typeof window.switchTab === 'function') { window.switchTab(tabName); } return new Promise((r) => window.setTimeout(r, 220)); }
