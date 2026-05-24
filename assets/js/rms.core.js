@@ -12823,15 +12823,15 @@ class RiskManagementSystem {
                 ];
             const mitigationOrder = mitigationOptions.map(option => option.value);
             const grossRows = [
-                { score: 16, label: 'Critique', helper: '16' },
-                { score: 12, label: 'Critique', helper: '12' },
-                { score: 9, label: 'Élevé', helper: '9' },
-                { score: 8, label: 'Élevé', helper: '8' },
-                { score: 6, label: 'Élevé', helper: '6' },
-                { score: 4, label: 'Modéré', helper: '4' },
-                { score: 3, label: 'Modéré', helper: '3' },
-                { score: 2, label: 'Faible', helper: '2' },
-                { score: 1, label: 'Faible', helper: '1' }
+                { score: 16, label: 'Critique' },
+                { score: 12, label: 'Critique' },
+                { score: 9, label: 'Élevé' },
+                { score: 8, label: 'Élevé' },
+                { score: 6, label: 'Élevé' },
+                { score: 4, label: 'Modéré' },
+                { score: 3, label: 'Modéré' },
+                { score: 2, label: 'Faible' },
+                { score: 1, label: 'Faible' }
             ];
             const severityStops = [
                 { min: 0, max: 3, className: 'level-1' },
@@ -12890,12 +12890,12 @@ class RiskManagementSystem {
             const cells = grossRows.map(row => mitigationOptions.map(option => {
                 const coefficient = Math.min(Math.max(Number(option.coefficient) || 1, 0.25), 1);
                 const netScore = row.score * coefficient;
-                return `<div class="risk-view-evolution-cell ${getSeverityClassFromScore(netScore)}" title="${escapeHtml(`${row.label} ${row.helper} • ${option.label} • score ${formatNumber(netScore)}`)}"></div>`;
+                return `<div class="risk-view-evolution-cell ${getSeverityClassFromScore(netScore)}" title="${escapeHtml(`${row.label} • ${option.label} • score ${formatNumber(netScore)}`)}"></div>`;
             }).join('')).join('');
             const rows = grossRows.map(row => `
                 <span>
                     <strong>${escapeHtml(row.label)}</strong>
-                    <small>${escapeHtml(row.helper)}</small>
+                    
                 </span>
             `).join('');
             const columns = mitigationOptions.map(option => `<span>${escapeHtml(option.label)}</span>`).join('');
@@ -12934,10 +12934,10 @@ class RiskManagementSystem {
                     <div class="risk-view-section-heading">
                         <div>
                             <h4>Évolution du risque</h4>
-                            <p>Positionnement du risque brut, net et après plan d’action sur une matrice de risque net.</p>
+                            <p>Positionnement du risque brut, net et après plan d’action</p>
                         </div>
                         <div class="risk-view-evolution-legend" aria-label="Légende des puces">
-                            <span><i class="gross"></i> Brut</span>
+                            <span><i class="gross"></i> Risque brut (colonne Ineffective)</span>
                             <span><i class="net"></i> Net</span>
                             <span><i class="post"></i> Après plan d’action</span>
                         </div>
@@ -12950,7 +12950,7 @@ class RiskManagementSystem {
                         </div>
                     </div>
                     <div class="risk-view-evolution-col-labels" aria-hidden="true">${columns}</div>
-                    <div class="risk-view-evolution-axis">Niveau de risque brut ↑ · Efficacité des contrôles →</div>
+                    <div class="risk-view-evolution-axis">Niveau de risque brut ↑ Efficacité des contrôles →</div>
                 </section>
             `;
         };
