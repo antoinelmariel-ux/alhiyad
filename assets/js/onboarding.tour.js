@@ -18,7 +18,11 @@
         { id: 'riskBrutEdit', tab: 'risks', element: '#riskModal #riskMatrixEditBrut', title: 'Configuration – Matrice brute', description: 'Ajustez probabilité/impact directement dans la matrice brute.' },
         { id: 'riskMitigation', tab: 'risks', element: '#riskModal #mitigationSlider', title: 'Configuration – Niveau de maîtrise', description: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.' },
         { id: 'controlsTab', tab: 'controls', element: '#tour-tab-controls', title: 'Contrôles & atténuation', description: 'Vous avez à ce niveau la possibilité de rattacher des contrôles / mesures de prévention pour justifier votre positionnement.', action: 'closeRiskModal' },
-        { id: 'plansTab', tab: 'plans', element: '#tour-tab-plans', title: 'Plans d’action', description: 'Ajoutez des plans d’action.' },
+        { id: 'controlCreateBtn', tab: 'controls', element: '#tour-open-control-modal-btn', title: 'Créer un contrôle', description: 'Depuis cet onglet, ouvrez la modal pour ajouter un nouveau contrôle.', action: 'openControlModal' },
+        { id: 'controlModal', tab: 'controls', element: '#controlModal.show .modal-content', title: 'Modal de contrôle', description: 'La modal vous permet de saisir toutes les informations de contrôle sans quitter la SPA.', side: 'right' },
+        { id: 'plansTab', tab: 'plans', element: '#tour-tab-plans', title: 'Plans d’action', description: 'Ajoutez des plans d’action.' , action: 'closeControlModal'},
+        { id: 'planCreateBtn', tab: 'plans', element: '#tour-open-plan-modal-btn', title: 'Créer un plan d’action', description: 'Cet onglet centralise la création et le suivi des plans d’action.', action: 'openActionPlanModal' },
+        { id: 'actionPlanModal', tab: 'plans', element: '#actionPlanModal.show .modal-content', title: 'Modal de plan d’action', description: 'Cette modal permet de décrire le plan, son responsable et son échéance, puis de revenir à la vue courante.', side: 'right' },
         { id: 'legendsTab', tab: 'legends', element: '#tour-tab-legends', title: 'Légendes', description: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' }
     ];
 
@@ -76,6 +80,12 @@
             const editBtn = await waitForElement('#riskViewModal .btn.btn-primary', 2500, { visible: true }); if (editBtn) editBtn.click(); await waitForElement('#riskModal.show', 2500, { visible: true });
         } else if (action === 'closeRiskModal') {
             if (typeof window.closeModal === 'function') window.closeModal('riskModal');
+        } else if (action === 'openControlModal') {
+            const btn = await waitForElement('#tour-open-control-modal-btn', 2500, { visible: true }); if (btn) btn.click(); await waitForElement('#controlModal.show', 2500, { visible: true });
+        } else if (action === 'closeControlModal') {
+            if (typeof window.closeModal === 'function') window.closeModal('controlModal');
+        } else if (action === 'openActionPlanModal') {
+            const btn = await waitForElement('#tour-open-plan-modal-btn', 2500, { visible: true }); if (btn) btn.click(); await waitForElement('#actionPlanModal.show', 2500, { visible: true });
         }
     }
 
