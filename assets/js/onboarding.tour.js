@@ -102,11 +102,26 @@
         }
     }
 
+    function isButtonLikeElement(element) {
+        if (!element || !element.tagName) return false;
+        const tag = element.tagName.toLowerCase();
+        return tag === 'button' || tag === 'summary' || element.getAttribute('role') === 'button';
+    }
+
+    function clickStepElementIfButton(step) {
+        if (!step?.element) return;
+        const target = document.querySelector(step.element);
+        if (!isButtonLikeElement(target)) return;
+        if (target.disabled || target.getAttribute('aria-disabled') === 'true') return;
+        target.click();
+    }
+
     function buildDriverSteps(tour, steps) {
         return steps.map((step, index) => ({
             element: step.element,
             popover: { title: step.title, description: step.description, side: step.side || 'bottom' },
             onNextClick: async () => {
+                clickStepElementIfButton(step);
                 const nextStep = steps[index + 1];
                 if (nextStep) await prepareStepTransition(nextStep);
                 tour.moveNext();
