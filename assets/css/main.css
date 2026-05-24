@@ -6876,6 +6876,33 @@ tbody tr:hover {
     color: rgba(255, 255, 255, 0.78);
 }
 
+.legend-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.legend-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.legend-modal-grid section {
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: rgba(248, 250, 252, 0.95);
+}
+
+.legend-modal-grid h4 {
+    margin: 0 0 8px;
+    color: var(--primary-color);
+}
+
+.legend-modal-grid p {
+    margin: 6px 0;
+}
+
 @media (max-width: 768px) {
     .legend-panel-header {
         flex-direction: column;
@@ -6883,6 +6910,10 @@ tbody tr:hover {
 
     .legend-formula-card code {
         white-space: normal;
+    }
+
+    .legend-modal-grid {
+        grid-template-columns: 1fr;
     }
 }
 
