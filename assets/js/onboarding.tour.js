@@ -42,12 +42,24 @@
         });
     }
 
+    function normalizeSteps(steps) {
+        if (!Array.isArray(steps) || !steps.length) return defaultSteps;
+        return steps.map((step, index) => {
+            const defaultStep = defaultSteps.find((item) => item.id === step.id) || defaultSteps[index] || {};
+            return {
+                ...defaultStep,
+                ...step,
+                tab: step.tab || defaultStep.tab || null
+            };
+        });
+    }
+
     function loadTourConfig() {
         try {
             const raw = localStorage.getItem(TOUR_STORAGE_KEY);
             if (!raw) return defaultSteps;
             const parsed = JSON.parse(raw);
-            return Array.isArray(parsed.steps) && parsed.steps.length ? parsed.steps : defaultSteps;
+            return normalizeSteps(parsed.steps);
         } catch (error) {
             return defaultSteps;
         }
