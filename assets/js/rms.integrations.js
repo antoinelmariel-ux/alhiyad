@@ -3374,6 +3374,7 @@ function applyPatch() {
           setControlFieldValue('controlType', lastControlData.type);
           setControlFieldValue('controlOwner', lastControlData.owner);
           setControlFieldValue('controlMode', lastControlData.mode);
+          setControlFieldValue('controlLevel', lastControlData.level);
           setControlFieldValue('controlEffectiveness', lastControlData.effectiveness);
           setControlFieldValue('controlDescription', lastControlData.description);
           selectedRisksForControl = [...(lastControlData.risks || [])];
@@ -3417,6 +3418,7 @@ function applyPatch() {
         setControlFieldValue('controlType', control.type);
         setControlFieldValue('controlOwner', control.owner);
         setControlFieldValue('controlMode', control.mode);
+        setControlFieldValue('controlLevel', control.level);
         setControlFieldValue('controlEffectiveness', control.effectiveness);
         setControlFieldValue('controlDescription', control.description);
 
@@ -3591,6 +3593,7 @@ function applyPatch() {
           type: formData.get('type'),
           owner: String(formData.get('owner') || '').trim(),
           mode: formData.get('mode'),
+          level: formData.get('level'),
           effectiveness: formData.get('effectiveness'),
           description: formData.get('description'),
           risks: [...selectedRisksForControl]
