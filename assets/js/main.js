@@ -211,10 +211,10 @@ function buildOnboardingTour() {
             { title: 'Informations', target: '#riskViewModal .risk-view-overview-sections', content: 'Retrouvez ici les blocs « Informations générales » et « Évaluation du risque » pour une lecture complète du contexte et des scores.' },
             { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.' },
             { title: 'Configuration – Thématique', target: '#riskFormThemeSection', content: 'Choisissez la thématique et les champs métiers associés.' },
-            { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.' },
-            { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles s’appliquent en fonction du type de risque.' },
-            { title: 'Configuration – Risque net', target: '#net-matrix-wrapper', content: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.' },
-            { title: 'Configuration – Risque post plan d’action', target: '#controls-section', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.' },
+            { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', dialogTarget: '#riskFormThemeSection', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.' },
+            { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', dialogTarget: '#riskFormThemeSection', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles s’appliquent en fonction du type de risque.' },
+            { title: 'Configuration – Risque net', target: '#net-matrix-wrapper', dialogTarget: '#riskFormThemeSection', content: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.' },
+            { title: 'Configuration – Risque post plan d’action', target: '#controls-section', dialogTarget: '#riskFormThemeSection', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.' },
             { title: 'Légendes', target: '#tab-legends', content: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' }
         ]
     });
