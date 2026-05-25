@@ -168,8 +168,6 @@ function bindOnboardingDialogButtons(tg) {
         if (nextBtn) {
             event.preventDefault();
             event.stopPropagation();
-            const nextIndex = Number.isInteger(tg.activeStep) ? tg.activeStep + 2 : 1;
-            prepareOnboardingStep(nextIndex);
             tg.nextStep();
             return;
         }
@@ -178,8 +176,6 @@ function bindOnboardingDialogButtons(tg) {
         if (prevBtn) {
             event.preventDefault();
             event.stopPropagation();
-            const prevIndex = Number.isInteger(tg.activeStep) ? tg.activeStep : 1;
-            prepareOnboardingStep(prevIndex);
             tg.prevStep();
         }
     }, true);
