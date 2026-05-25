@@ -69,6 +69,26 @@ function prepareOnboardingStep(stepIndex) {
     }
 }
 
+
+function bindOnboardingDialogButtons(tg) {
+    document.addEventListener('click', (event) => {
+        const nextBtn = event.target.closest('.tg-dialog-next-btn');
+        if (nextBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+            tg.nextStep();
+            return;
+        }
+
+        const prevBtn = event.target.closest('.tg-dialog-prev-btn');
+        if (prevBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+            tg.prevStep();
+        }
+    }, true);
+}
+
 function buildOnboardingTour() {
     const TourGuideClient = window.TourGuideClient || window.tourguide?.TourGuideClient;
     if (!TourGuideClient) {
@@ -122,6 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startTourButton = document.getElementById('startOnboardingTourBtn');
     const tg = buildOnboardingTour();
+    if (tg) {
+        bindOnboardingDialogButtons(tg);
+    }
+
     if (startTourButton && tg) {
         startTourButton.addEventListener('click', () => {
             prepareOnboardingStep(1);
