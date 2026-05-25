@@ -12,11 +12,45 @@ function prepareOnboardingStep(stepIndex) {
         const modal = document.querySelector(modalSelector);
         const target = document.querySelector(targetSelector);
         if (!modal || !target) return;
+
         const modalScrollHost = modal.querySelector('.modal-body') || modal;
-        const hostRect = modalScrollHost.getBoundingClientRect();
-        const targetRect = target.getBoundingClientRect();
-        const scrollTop = targetRect.top - hostRect.top + modalScrollHost.scrollTop - offset;
-        modalScrollHost.scrollTo({ top: Math.max(scrollTop, 0), behavior: 'smooth' });
+        const modalHeader = modal.querySelector('.modal-header');
+        const modalFooter = modal.querySelector('.modal-footer');
+        const headerHeight = modalHeader ? modalHeader.getBoundingClientRect().height : 0;
+        const footerHeight = modalFooter ? modalFooter.getBoundingClientRect().height : 0;
+        const effectiveOffsetTop = Math.max(offset, 16) + Math.min(headerHeight * 0.4, 32);
+        const effectiveOffsetBottom = Math.max(20, Math.min(footerHeight + 12, 80));
+
+        const previousScrollMargin = target.style.scrollMargin;
+        const previousScrollMarginBlock = target.style.scrollMarginBlock;
+        target.style.scrollMargin = `${effectiveOffsetTop}px 0 ${effectiveOffsetBottom}px 0`;
+        target.style.scrollMarginBlock = `${effectiveOffsetTop}px ${effectiveOffsetBottom}px`;
+
+        const alignTargetInView = () => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+
+            requestAnimationFrame(() => {
+                const hostRect = modalScrollHost.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
+                const visibleTop = hostRect.top + effectiveOffsetTop;
+                const visibleBottom = hostRect.bottom - effectiveOffsetBottom;
+
+                if (targetRect.bottom > visibleBottom) {
+                    const deltaDown = targetRect.bottom - visibleBottom;
+                    modalScrollHost.scrollBy({ top: deltaDown, behavior: 'smooth' });
+                } else if (targetRect.top < visibleTop) {
+                    const deltaUp = visibleTop - targetRect.top;
+                    modalScrollHost.scrollBy({ top: -deltaUp, behavior: 'smooth' });
+                }
+            });
+
+            setTimeout(() => {
+                target.style.scrollMargin = previousScrollMargin;
+                target.style.scrollMarginBlock = previousScrollMarginBlock;
+            }, 500);
+        };
+
+        requestAnimationFrame(alignTargetInView);
     };
 
     const scrollRiskPanelTop = () => {
