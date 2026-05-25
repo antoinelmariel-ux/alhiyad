@@ -8,15 +8,15 @@ function prepareOnboardingStep(stepIndex) {
         }
     };
 
-    const scrollWithinModalTo = (modalSelector, targetSelector) => {
+    const scrollWithinModalTo = (modalSelector, targetSelector, offset = 24) => {
         const modal = document.querySelector(modalSelector);
         const target = document.querySelector(targetSelector);
         if (!modal || !target) return;
         const modalScrollHost = modal.querySelector('.modal-body') || modal;
         const hostRect = modalScrollHost.getBoundingClientRect();
         const targetRect = target.getBoundingClientRect();
-        const offset = targetRect.top - hostRect.top + modalScrollHost.scrollTop - 24;
-        modalScrollHost.scrollTo({ top: Math.max(offset, 0), behavior: 'smooth' });
+        const scrollTop = targetRect.top - hostRect.top + modalScrollHost.scrollTop - offset;
+        modalScrollHost.scrollTo({ top: Math.max(scrollTop, 0), behavior: 'smooth' });
     };
 
     const scrollRiskPanelTop = () => {
@@ -74,11 +74,10 @@ function prepareOnboardingStep(stepIndex) {
                 window.rms.viewRisk(1);
                 if (stepIndex === 10) {
                     setTimeout(() => {
-                        scrollWithinModalTo('#riskViewModal', '#riskViewModal .risk-view-section');
-                        scrollToElement('#riskViewModal .risk-view-section', { block: 'center' });
+                        scrollWithinModalTo('#riskViewModal', '#riskViewModal .risk-view-overview-sections');
                     }, 180);
                 } else {
-                    setTimeout(() => scrollToElement('#riskViewModal .risk-view-evolution-matrix', { block: 'center' }), 180);
+                    setTimeout(() => scrollWithinModalTo('#riskViewModal', '#riskViewModal .risk-view-evolution-section'), 180);
                 }
                 break;
             }
@@ -105,32 +104,27 @@ function prepareOnboardingStep(stepIndex) {
             if (stepIndex === 12) {
                 setTimeout(() => {
                     scrollWithinModalTo('#riskModal', '#riskForm');
-                    scrollToElement('#riskForm', { block: 'center' });
                 }, 180);
             }
             if (stepIndex === 13) {
                 setTimeout(() => slowScrollMainTo(window.scrollY + 180), 120);
                 setTimeout(() => {
                     scrollWithinModalTo('#riskModal', '#risk-matrix-editor');
-                    scrollToElement('#risk-matrix-editor', { block: 'center' });
                 }, 320);
             }
             if (stepIndex === 14) {
                 setTimeout(() => {
                     scrollWithinModalTo('#riskModal', '#aggravatingFactorsBlock');
-                    scrollToElement('#aggravatingFactorsBlock', { block: 'center' });
                 }, 180);
             }
             if (stepIndex === 15) {
                 setTimeout(() => {
                     scrollWithinModalTo('#riskModal', '#net-matrix-wrapper');
-                    scrollToElement('#net-matrix-wrapper', { block: 'center' });
                 }, 180);
             }
             if (stepIndex === 16) {
                 setTimeout(() => {
                     scrollWithinModalTo('#riskModal', '#controls-section');
-                    scrollToElement('#controls-section', { block: 'center' });
                 }, 180);
             }
             break;
