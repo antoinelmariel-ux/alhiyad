@@ -7,6 +7,13 @@ function prepareOnboardingStep(stepIndex) {
         }
     };
 
+    const closeRiskViewModal = () => {
+        const riskViewModal = document.getElementById('riskViewModal');
+        if (riskViewModal?.classList.contains('show') && typeof window.closeModal === 'function') {
+            window.closeModal('riskViewModal');
+        }
+    };
+
     switch (stepIndex) {
         case 1:
         case 2:
@@ -66,6 +73,7 @@ function prepareOnboardingStep(stepIndex) {
             break;
         }
         case 17:
+            closeRiskViewModal();
             switchTab('legends');
             stickMenuTop();
             break;
@@ -119,7 +127,7 @@ function buildOnboardingTour() {
             { title: 'Matrice du risque brut', target: '#matrixGridBrut', content: 'La matrice des risques bruts présentent le positionnement des risques inhérents à notre groupe, en fonction de leur probabilité et de leur impact théorique, c-à-d en l’absence de mesure de maîtrise.', dialogPlacement: 'right' },
             { title: 'Matrice du risque net', target: '#matrixGridNet', content: 'La matrice des risques nets présentes les risques résiduels, c-à-d en tenant compte de l’efficacité de nos mesures de maitrise.', dialogPlacement: 'bottom' },
             { title: 'Matrice après plan d’action', target: '#matrixGridPost', content: 'Enfin, nous projetons ici les risques tels qu’ils seraient post mise en place des plans d’action déterminés et validés.', dialogPlacement: 'bottom' },
-            { title: 'Tri des risques', target: '#riskDetailsTitlePost .risk-details-sort', content: 'Utilisez ce sélecteur pour trier les risques par ID ou par score avant d’ouvrir une fiche.' },
+            { title: 'Risques après plan d’action', target: '.matrix-container[data-view="post"] .risk-details-panel', content: 'Retrouvez ici les risques post plan d’action. Cliquez sur l’icône œil d’un risque pour afficher plus de détails sur le risque sélectionné.' },
             { title: 'Lecture détaillée du risque', target: '#riskViewModal .risk-view-evolution-matrix', content: 'Retrouvez l’évolution du risque, de son score brut à son score post plan d’action.' },
             { title: 'Informations', target: '#riskViewModal .risk-view-section:nth-of-type(2)', content: 'Retrouvez l’ensemble des informations indiquées pour ce risque.' },
             { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.' },

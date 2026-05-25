@@ -7182,6 +7182,12 @@ tbody tr:hover {
 }
 
 
+
+.tg-dialog,
+.tg-backdrop {
+    z-index: 2500 !important;
+}
+
 /* Onboarding tour footer layout fix */
 .tg-dialog .tg-dialog-footer {
     justify-content: space-between;
