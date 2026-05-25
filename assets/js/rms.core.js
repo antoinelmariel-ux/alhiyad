@@ -348,6 +348,7 @@ class RiskManagementSystem {
             'controlOrigins',
             'controlFrequencies',
             'controlModes',
+            'controlLevels',
             'controlEffectiveness',
             'controlStatuses'
         ];
@@ -362,6 +363,14 @@ class RiskManagementSystem {
                 { value: 'personal-data', label: 'Données Personnelles', color: '#0ea5e9' },
                 { value: 'international-sanctions', label: 'Sanctions internationales', color: '#f97316' },
                 { value: 'discrimination', label: 'Discrimination', color: '#ec4899' }
+            ];
+        }
+
+        if (!Array.isArray(config.controlLevels) || !config.controlLevels.length) {
+            config.controlLevels = [
+                { value: 'niveau-1', label: 'Niveau 1' },
+                { value: 'niveau-2', label: 'Niveau 2' },
+                { value: 'niveau-3', label: 'Niveau 3' }
             ];
         }
 
@@ -620,6 +629,7 @@ class RiskManagementSystem {
             'controlOrigins',
             'controlFrequencies',
             'controlModes',
+            'controlLevels',
             'controlEffectiveness',
             'controlStatuses'
         ];
@@ -3321,6 +3331,7 @@ class RiskManagementSystem {
             window.renderRiskTierFilterOptions();
         }
         fill('controlType', this.config.controlTypes, 'Sélectionner...');
+        fill('controlLevel', this.config.controlLevels, 'Sélectionner...');
         fill('controlFrequency', this.config.controlFrequencies, 'Sélectionner...');
         fill('controlMode', this.config.controlModes, 'Sélectionner...');
         fill('controlEffectiveness', this.config.controlEffectiveness, 'Sélectionner...');
@@ -3701,6 +3712,7 @@ class RiskManagementSystem {
             { key: 'controlOrigins', label: 'Origine des contrôles' },
             { key: 'controlFrequencies', label: 'Fréquences des contrôles' },
             { key: 'controlModes', label: "Modes d'exécution" },
+            { key: 'controlLevels', label: 'Niveaux de contrôle' },
             { key: 'controlEffectiveness', label: 'Efficacités' },
             { key: 'controlStatuses', label: 'Statuts des contrôles' }
         ];
