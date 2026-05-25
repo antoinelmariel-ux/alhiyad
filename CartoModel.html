@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.173</title>
+    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.15.0</title>
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sjmc11/tourguidejs@0.3.3/dist/css/tour.min.css">
+
     <!-- Local dependencies with CDN fallback -->
     <script>
         const LIBRARY_FALLBACKS = {
@@ -101,6 +103,9 @@
                         <button class="btn btn-feedback" id="feedbackToggleButton" type="button" aria-pressed="false" hidden>
                             <span class="btn-icon">📝</span> Retour
                         </button>
+                        <button class="btn btn-outline" id="startOnboardingTourBtn" type="button">
+                            <span class="btn-icon">🧭</span> Tour guidé
+                        </button>
                         <button class="btn btn-primary" onclick="exportOperationalData()">
                             <span class="btn-icon">💾</span> Enregistrer
                         </button>
@@ -136,14 +141,14 @@
         <!-- Navigation Tabs -->
         <div class="nav-tabs">
             <div class="tabs-container">
-                <button class="tab active" onclick="switchTab('dashboard')">
+                <button class="tab active" id="tab-dashboard" onclick="switchTab('dashboard')">
                     📊 Tableau de bord
                     <span class="tab-badge">0</span>
                 </button>
-                <button class="tab" onclick="switchTab('interviews')">
+                <button class="tab" id="tab-interviews" onclick="switchTab('interviews')">
                     🗣️ Entretiens
                 </button>
-                <button class="tab" onclick="switchTab('matrix')">
+                <button class="tab" id="tab-matrix" onclick="switchTab('matrix')">
                     📈 Matrice des risques
                 </button>
                 <button class="tab" onclick="switchTab('risks')">
@@ -155,7 +160,7 @@
                 <button class="tab" onclick="switchTab('plans')">
                     📝 Plans d’action
                 </button>
-                <button class="tab" onclick="switchTab('legends')">
+                <button class="tab" id="tab-legends" onclick="switchTab('legends')">
                     🧭 Légendes
                 </button>
                 <button class="tab" onclick="switchTab('config')">
@@ -1025,7 +1030,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.173</span>
+            <span class="app-version">Version 2.15.0</span>
         </footer>
     </div>
 
@@ -1748,7 +1753,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('riskViewModal')">Fermer</button>
-                <button class="btn btn-primary" type="button" onclick="rms.editRiskFromView()">Modifier</button>
+                <button class="btn btn-primary" id="riskViewEditButton" type="button" onclick="rms.editRiskFromView()">Modifier</button>
             </div>
         </div>
     </div>
@@ -1763,6 +1768,7 @@
     <script defer src="assets/js/rms.core.js"></script>
     <script defer src="assets/js/rms.integrations.js"></script>
     <script defer src="assets/js/feedback.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@sjmc11/tourguidejs@0.3.3/dist/tour.min.js"></script>
     <script defer src="assets/js/main.js"></script>
 </body>
 </html>
