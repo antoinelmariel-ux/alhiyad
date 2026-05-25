@@ -4466,7 +4466,7 @@ tbody tr:hover {
 .controls-table-header,
 .controls-table-row {
     display: grid;
-    grid-template-columns: minmax(220px, 2fr) minmax(120px, 1fr) minmax(180px, 1.2fr) minmax(150px, 1fr) minmax(120px, 0.7fr);
+    grid-template-columns: minmax(220px, 2fr) minmax(120px, 1fr) minmax(180px, 1.2fr) minmax(130px, 0.9fr) minmax(150px, 1fr) minmax(120px, 0.7fr);
     gap: 16px;
     align-items: center;
     padding: 18px 22px;
