@@ -1145,6 +1145,7 @@ const RISK_MULTI_SELECT_CHIP_CONFIG = {
     typeCorruption: { containerId: 'typeCorruptionChips', defaultColor: '#db2777' },
     corruptionExposure: { containerId: 'corruptionExposureChips', defaultColor: '#7c3aed' },
     corruptionMode: { containerId: 'corruptionModeChips', defaultColor: '#0ea5e9' },
+    targetAudience: { containerId: 'targetAudienceChips', defaultColor: '#14b8a6' },
     tiers: { containerId: 'tiersChips', defaultColor: '#16a34a' }
 };
 
@@ -1564,8 +1565,8 @@ function saveRisk() {
         corruptionExposureTypes: corruptionExposure,
         corruptionMode: corruptionMode[0] || '',
         corruptionModes: corruptionMode,
-        targetAudience: '',
-        targetAudiences: [],
+        targetAudience: Array.from(document.getElementById('targetAudience').selectedOptions).map(o => o.value)[0] || '',
+        targetAudiences: Array.from(document.getElementById('targetAudience').selectedOptions).map(o => o.value),
         statut: document.getElementById('statut').value,
         tiers: Array.from(document.getElementById('tiers').selectedOptions).map(o => o.value),
         avantagesIndus: shouldPersistBenefits ? [...(riskBenefitsState.undue || [])] : [],
