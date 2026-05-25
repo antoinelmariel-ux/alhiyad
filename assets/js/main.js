@@ -1,22 +1,10 @@
 function prepareOnboardingStep(stepIndex) {
     const stickMenuTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-
     const scrollToElement = (selector, options = { block: 'center' }) => {
         const target = document.querySelector(selector);
-        if (!target) return;
-
-        const modalBody = target.closest('.modal-body');
-        if (modalBody) {
-            const modalRect = modalBody.getBoundingClientRect();
-            const targetRect = target.getBoundingClientRect();
-            const current = modalBody.scrollTop;
-            const desired = current + (targetRect.top - modalRect.top) - Math.max((modalRect.height - targetRect.height) / 2, 0);
-            modalBody.scrollTo({ top: Math.max(desired, 0), behavior: 'smooth' });
-            target.scrollIntoView({ behavior: 'smooth', block: options.block || 'center', inline: 'nearest' });
-            return;
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: options.block || 'center' });
         }
-
-        target.scrollIntoView({ behavior: 'smooth', block: options.block || 'center', inline: 'nearest' });
     };
 
     const scrollRiskPanelTop = () => {
@@ -170,23 +158,9 @@ function buildOnboardingTour() {
         ]
     });
 
-    const setTourFocusElement = () => {
-        document.querySelectorAll('.onboarding-tour-focus').forEach((el) => el.classList.remove('onboarding-tour-focus'));
-        const activeStep = tg.tourSteps?.[tg.activeStep];
-        const target = activeStep?.target;
-        if (target instanceof Element && target !== document.body) {
-            target.classList.add('onboarding-tour-focus');
-        }
-    };
-
     tg.onAfterStepChange(() => {
         const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 1 : 0;
         prepareOnboardingStep(index);
-        setTourFocusElement();
-    });
-
-    tg.onAfterExit(() => {
-        document.querySelectorAll('.onboarding-tour-focus').forEach((el) => el.classList.remove('onboarding-tour-focus'));
     });
 
     return tg;
