@@ -4975,7 +4975,7 @@ class RiskManagementSystem {
 
         const helper = document.createElement('p');
         helper.className = 'config-template-helper';
-        helper.textContent = "Create, edit, and reuse templates to prefill interview reports.";
+        helper.textContent = "Créez, modifiez et réutilisez des modèles pour préremplir les comptes rendus d’entretien.";
         manager.appendChild(helper);
 
         const listWrapper = document.createElement('div');
@@ -7482,7 +7482,7 @@ class RiskManagementSystem {
         }
 
         if (!loadedInterviews.length) {
-            alert('Detected files do not contain valid interview reports.');
+            alert('Les fichiers détectés ne contiennent pas de comptes rendus d’entretien valides.');
             return;
         }
 
@@ -11558,7 +11558,7 @@ class RiskManagementSystem {
         this.closeInterviewTemplateModal();
 
         if (typeof showNotification === 'function') {
-            showNotification('success', 'Template applied to the interview report');
+            showNotification('success', 'Modèle appliqué au compte rendu d’entretien');
         }
     }
 
@@ -11625,7 +11625,7 @@ class RiskManagementSystem {
         this.interviewMindMapState = this.normalizeMindMapState(targetInterview?.mindMap);
 
         if (modalTitle) {
-            modalTitle.textContent = targetInterview ? 'Edit interview report' : 'New interview report';
+            modalTitle.textContent = targetInterview ? 'Modifier le compte rendu d’entretien' : 'Nouveau compte rendu d’entretien';
         }
 
         this.renderInterviewScopeSelection();
@@ -12110,7 +12110,7 @@ class RiskManagementSystem {
             "'": '&#39;'
         }[match] || match));
 
-        const title = interview.title ? escapeHtml(interview.title) : 'Untitled interview report';
+        const title = interview.title ? escapeHtml(interview.title) : 'Compte rendu d’entretien sans titre';
         const dateLabel = this.formatInterviewDate(interview.date);
         const updatedLabel = this.formatInterviewDateTime(interview.updatedAt || interview.createdAt);
 
@@ -12119,7 +12119,7 @@ class RiskManagementSystem {
             dateElement.textContent = dateLabel ? `Interview held on ${dateLabel}` : '';
         }
         if (updatedElement) {
-            updatedElement.textContent = updatedLabel ? `Last updated: ${updatedLabel}` : '';
+            updatedElement.textContent = updatedLabel ? `Dernière mise à jour : ${updatedLabel}` : '';
         }
 
         if (referentsContainer) {
@@ -12301,12 +12301,12 @@ class RiskManagementSystem {
             : [];
 
         if (!referents.length) {
-            alert('Select at least one referent for the interview report.');
+            alert('Sélectionnez au moins un référent pour le compte rendu d’entretien.');
             return;
         }
 
         if (!dateValue) {
-            alert('Provide a valid date for the interview report.');
+            alert('Renseignez une date valide pour le compte rendu d’entretien.');
             return;
         }
 
@@ -12440,7 +12440,7 @@ class RiskManagementSystem {
             return;
         }
 
-        if (!confirm('Do you confirm deleting this interview report?')) {
+        if (!confirm('Confirmez-vous la suppression de ce compte rendu d’entretien ?')) {
             return;
         }
 
@@ -12449,7 +12449,7 @@ class RiskManagementSystem {
         this.updateInterviewsList();
 
         if (typeof showNotification === 'function') {
-            showNotification('success', 'Interview report deleted.');
+            showNotification('success', 'Compte rendu d’entretien supprimé.');
         }
     }
 
@@ -12478,14 +12478,14 @@ class RiskManagementSystem {
 
         if (!interviews.length) {
             if (countElement) {
-                countElement.textContent = '0 interview report';
+                countElement.textContent = '0 compte rendu d’entretien';
             }
             const button = this.supportsInterviewFolderPicker()
-                ? '<button class="btn btn-outline" type="button" onclick="rms.openInterviewFolderPicker()">📂 Load an interviews folder</button>'
+                ? '<button class="btn btn-outline" type="button" onclick="rms.openInterviewFolderPicker()">📂 Charger un dossier d’entretiens</button>'
                 : '';
             const message = this.supportsInterviewFolderPicker()
-                ? 'No interview report loaded. Select the folder containing your interviewX.json files.'
-                : 'No interview report loaded.';
+                ? 'Aucun compte rendu d’entretien chargé. Sélectionnez le dossier contenant vos fichiers interviewX.json.'
+                : 'Aucun compte rendu d’entretien chargé.';
             container.innerHTML = `<div class="interview-empty">${message}${button}</div>`;
             return;
         }
@@ -12627,12 +12627,12 @@ class RiskManagementSystem {
 
         if (countElement) {
             const total = filtered.length;
-            const label = total <= 1 ? `${total} interview report` : `${total} interview reports`;
+            const label = total <= 1 ? `${total} compte rendu d’entretien` : `${total} comptes rendus d’entretien`;
             countElement.textContent = label;
         }
 
         if (!filtered.length) {
-            container.innerHTML = '<div class="interview-empty">No interview report matches selected filters.</div>';
+            container.innerHTML = '<div class="interview-empty">Aucun compte rendu d’entretien ne correspond aux filtres sélectionnés.</div>';
             return;
         }
 
@@ -12645,7 +12645,7 @@ class RiskManagementSystem {
         }[match] || match));
 
         container.innerHTML = filtered.map(interview => {
-            const title = interview.title ? escapeHtml(interview.title) : 'Untitled interview report';
+            const title = interview.title ? escapeHtml(interview.title) : 'Compte rendu d’entretien sans titre';
             const dateLabel = this.formatInterviewDate(interview.date);
             const referentsChips = Array.isArray(interview.referents)
                 ? interview.referents.map(ref => `<span class="interview-referent-chip">${escapeHtml(ref)}</span>`).join('')
@@ -12675,12 +12675,11 @@ class RiskManagementSystem {
                     <div class="interview-card-meta interview-referents">${referentsChips}</div>
                     <div class="interview-card-tags">${tags}</div>
                     <footer class="interview-card-footer">
-                        <div class="interview-card-meta">Last updated: ${escapeHtml(updatedLabel || 'Unknown date')}</div>
+                        <div class="interview-card-meta">Dernière mise à jour : ${escapeHtml(updatedLabel || 'Date inconnue')}</div>
                         <div class="interview-card-actions">
-                            <button class="interview-action-btn view" onclick='rms.openInterviewViewer(${idAttribute})'>View</button>
-                            <button class="interview-action-btn edit" onclick='rms.openInterviewModal(${idAttribute})'>Edit</button>
-                            <button class="interview-action-btn download" onclick='rms.downloadInterviewFile(${idAttribute})'>Export</button>
-                            <button class="interview-action-btn delete" onclick='rms.deleteInterview(${idAttribute})'>Delete</button>
+                            <button class="interview-action-btn view" onclick='rms.openInterviewViewer(${idAttribute})'>Voir</button>
+                            <button class="interview-action-btn edit" onclick='rms.openInterviewModal(${idAttribute})'>Modifier</button>
+                            <button class="interview-action-btn delete" onclick='rms.deleteInterview(${idAttribute})'>Supprimer</button>
                         </div>
                     </footer>
                 </article>
