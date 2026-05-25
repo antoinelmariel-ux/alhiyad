@@ -51,6 +51,8 @@ function buildOnboardingTour() {
     const tg = new TourGuideClient({
         showStepDots: true,
         exitOnEscape: true,
+        exitOnClickOutside: false,
+        activeStepInteraction: false,
         rememberStep: false,
         steps: [
             { title: 'Introduction', content: 'Bienvenue sur notre cartographie des risques du groupe Al Hiyad. Nous vous proposons une rapide explication sur le fonctionnement de notre outil.' },
@@ -74,7 +76,7 @@ function buildOnboardingTour() {
     });
 
     tg.onBeforeStepChange(() => {
-        const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 1 : 0;
+        const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 2 : 0;
         prepareOnboardingStep(index);
     });
 
