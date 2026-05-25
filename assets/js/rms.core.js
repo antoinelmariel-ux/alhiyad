@@ -13009,33 +13009,35 @@ class RiskManagementSystem {
                 <span class="table-badge badge-info">${escapeHtml(this.getStatusLabel('risk', statusValue, risk?.statusLabel, risk?.status, risk?.statut) || 'Non défini')}</span>
             </div>
             ${renderRiskEvolutionMatrix({ brutScore, netInfo, postInfo })}
-            ${renderSection('Informations générales', [
-                { label: 'Thématique', value: resolveLabel(themeMap, theme) },
-                { label: 'Processus', value: processes },
-                { label: 'Sous-processus', value: subProcesses },
-                { label: 'Type de corruption', value: corruptionTypes },
-                { label: 'Corruption publique / privée', value: corruptionExposure },
-                { label: 'Corruption directe / indirecte', value: corruptionModes },
-                { label: 'Public cible', value: targetAudiences },
-                { label: 'Tiers concernés', value: tiers },
-                { label: 'Entités concernées', value: entities },
-                { label: 'Description', value: risk.description },
-                { label: 'Avantages indus', value: risk.avantagesIndus },
-                { label: 'Résultats attendus', value: risk.avantagesAttendus },
-                { label: 'Exemple', value: risk.example }
-            ])}
-            ${renderSection('Évaluation du risque', [
-                { label: 'Probabilité brute', value: formatNumber(risk.probBrut) },
-                { label: 'Impact brut', value: formatNumber(risk.impactBrut) },
-                { label: 'Score brut aggravé', value: formatNumber(brutScore) },
-                { label: 'Facteurs aggravants très significatifs', value: group1Factors },
-                { label: 'Facteurs aggravants significatifs', value: group2Factors },
-                { label: 'Coefficient aggravant', value: formatNumber(aggravatingCoefficient) },
-                { label: 'Niveau de maîtrise', value: netInfo.label },
-                { label: 'Score net', value: formatNumber(netInfo.score) },
-                { label: 'Niveau de maîtrise après plan d’action', value: postInfo.label },
-                { label: 'Score net après plan d’action', value: formatNumber(postInfo.score) }
-            ])}
+            <div class="risk-view-overview-sections">
+                ${renderSection('Informations générales', [
+                    { label: 'Thématique', value: resolveLabel(themeMap, theme) },
+                    { label: 'Processus', value: processes },
+                    { label: 'Sous-processus', value: subProcesses },
+                    { label: 'Type de corruption', value: corruptionTypes },
+                    { label: 'Corruption publique / privée', value: corruptionExposure },
+                    { label: 'Corruption directe / indirecte', value: corruptionModes },
+                    { label: 'Public cible', value: targetAudiences },
+                    { label: 'Tiers concernés', value: tiers },
+                    { label: 'Entités concernées', value: entities },
+                    { label: 'Description', value: risk.description },
+                    { label: 'Avantages indus', value: risk.avantagesIndus },
+                    { label: 'Résultats attendus', value: risk.avantagesAttendus },
+                    { label: 'Exemple', value: risk.example }
+                ])}
+                ${renderSection('Évaluation du risque', [
+                    { label: 'Probabilité brute', value: formatNumber(risk.probBrut) },
+                    { label: 'Impact brut', value: formatNumber(risk.impactBrut) },
+                    { label: 'Score brut aggravé', value: formatNumber(brutScore) },
+                    { label: 'Facteurs aggravants très significatifs', value: group1Factors },
+                    { label: 'Facteurs aggravants significatifs', value: group2Factors },
+                    { label: 'Coefficient aggravant', value: formatNumber(aggravatingCoefficient) },
+                    { label: 'Niveau de maîtrise', value: netInfo.label },
+                    { label: 'Score net', value: formatNumber(netInfo.score) },
+                    { label: 'Niveau de maîtrise après plan d’action', value: postInfo.label },
+                    { label: 'Score net après plan d’action', value: formatNumber(postInfo.score) }
+                ])}
+            </div>
             ${renderSection('Contrôles et plans d’action', [
                 { label: 'Contrôles associés', value: controls },
                 { label: 'Plans d’action associés', value: actionPlans }
