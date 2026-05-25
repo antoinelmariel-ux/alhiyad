@@ -21,33 +21,18 @@ function prepareOnboardingStep(stepIndex) {
         const effectiveOffsetTop = Math.max(offset, 16) + Math.min(headerHeight * 0.4, 32);
         const effectiveOffsetBottom = Math.max(20, Math.min(footerHeight + 12, 80));
 
-        const previousScrollMargin = target.style.scrollMargin;
-        const previousScrollMarginBlock = target.style.scrollMarginBlock;
-        target.style.scrollMargin = `${effectiveOffsetTop}px 0 ${effectiveOffsetBottom}px 0`;
-        target.style.scrollMarginBlock = `${effectiveOffsetTop}px ${effectiveOffsetBottom}px`;
-
         const alignTargetInView = () => {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+            const hostRect = modalScrollHost.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+            const currentScrollTop = modalScrollHost.scrollTop;
+            const relativeTop = targetRect.top - hostRect.top + currentScrollTop;
+            const maxScrollTop = Math.max(0, modalScrollHost.scrollHeight - modalScrollHost.clientHeight);
+            const nextScrollTop = Math.max(
+                0,
+                Math.min(maxScrollTop, relativeTop - effectiveOffsetTop)
+            );
 
-            requestAnimationFrame(() => {
-                const hostRect = modalScrollHost.getBoundingClientRect();
-                const targetRect = target.getBoundingClientRect();
-                const visibleTop = hostRect.top + effectiveOffsetTop;
-                const visibleBottom = hostRect.bottom - effectiveOffsetBottom;
-
-                if (targetRect.bottom > visibleBottom) {
-                    const deltaDown = targetRect.bottom - visibleBottom;
-                    modalScrollHost.scrollBy({ top: deltaDown, behavior: 'smooth' });
-                } else if (targetRect.top < visibleTop) {
-                    const deltaUp = visibleTop - targetRect.top;
-                    modalScrollHost.scrollBy({ top: -deltaUp, behavior: 'smooth' });
-                }
-            });
-
-            setTimeout(() => {
-                target.style.scrollMargin = previousScrollMargin;
-                target.style.scrollMarginBlock = previousScrollMarginBlock;
-            }, 500);
+            modalScrollHost.scrollTo({ top: nextScrollTop, behavior: 'smooth' });
         };
 
         requestAnimationFrame(alignTargetInView);

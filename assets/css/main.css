@@ -7202,3 +7202,10 @@ tbody tr:hover {
 .tg-dialog .tg-dialog-footer button.tg-dialog-btn + button {
     margin-left: 0;
 }
+
+
+.tg-backdrop {
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+}
