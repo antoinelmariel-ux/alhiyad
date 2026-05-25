@@ -68,6 +68,15 @@ function prepareOnboardingStep(stepIndex) {
         }
     };
 
+    const focusModalTourTarget = (targetSelector, offset = 24, delay = 180) => {
+        setTimeout(() => {
+            scrollWithinModalTo('#riskModal', targetSelector, offset);
+            setTimeout(() => {
+                scrollWithinModalTo('#riskModal', targetSelector, offset);
+            }, 220);
+        }, delay);
+    };
+
     switch (stepIndex) {
         case 1:
         case 2:
@@ -136,30 +145,19 @@ function prepareOnboardingStep(stepIndex) {
             }
 
             if (stepIndex === 12) {
-                setTimeout(() => {
-                    scrollWithinModalTo('#riskModal', '#riskFormThemeSection', 12);
-                }, 180);
+                focusModalTourTarget('#riskFormThemeSection', 12);
             }
             if (stepIndex === 13) {
-                setTimeout(() => slowScrollMainTo(window.scrollY + 180), 120);
-                setTimeout(() => {
-                    scrollWithinModalTo('#riskModal', '#risk-matrix-editor');
-                }, 320);
+                focusModalTourTarget('#risk-matrix-editor');
             }
             if (stepIndex === 14) {
-                setTimeout(() => {
-                    scrollWithinModalTo('#riskModal', '#aggravatingFactorsBlock');
-                }, 180);
+                focusModalTourTarget('#aggravatingFactorsBlock');
             }
             if (stepIndex === 15) {
-                setTimeout(() => {
-                    scrollWithinModalTo('#riskModal', '#net-matrix-wrapper');
-                }, 180);
+                focusModalTourTarget('#net-matrix-wrapper');
             }
             if (stepIndex === 16) {
-                setTimeout(() => {
-                    scrollWithinModalTo('#riskModal', '#controls-section');
-                }, 180);
+                focusModalTourTarget('#controls-section');
             }
             break;
         }
