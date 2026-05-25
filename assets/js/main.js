@@ -75,8 +75,8 @@ function buildOnboardingTour() {
         ]
     });
 
-    tg.onBeforeStepChange(() => {
-        const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 2 : 0;
+    tg.onAfterStepChange(() => {
+        const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 1 : 0;
         prepareOnboardingStep(index);
     });
 
