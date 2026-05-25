@@ -1,5 +1,11 @@
 function prepareOnboardingStep(stepIndex) {
     const stickMenuTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    const scrollToElement = (selector) => {
+        const target = document.querySelector(selector);
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
 
     switch (stepIndex) {
         case 1:
@@ -12,12 +18,24 @@ function prepareOnboardingStep(stepIndex) {
             stickMenuTop();
             break;
         case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 8:
             switchTab('matrix');
             stickMenuTop();
+            break;
+        case 5:
+            switchTab('matrix');
+            setTimeout(() => scrollToElement('#matrixGridBrut'), 120);
+            break;
+        case 6:
+            switchTab('matrix');
+            setTimeout(() => scrollToElement('#matrixGridNet'), 120);
+            break;
+        case 7:
+            switchTab('matrix');
+            setTimeout(() => scrollToElement('#matrixGridPost'), 120);
+            break;
+        case 8:
+            switchTab('matrix');
+            setTimeout(() => scrollToElement('#riskDetailsListPost'), 120);
             break;
         case 9:
         case 10:
@@ -69,7 +87,7 @@ function buildOnboardingTour() {
             { title: 'Tableau de bord', target: '#tab-dashboard', content: 'Grâce au tableau de bord, vous aurez une vision globale de l’exposition du groupe aux risques éthiques.' },
             { title: 'Entretiens', target: '#tab-interviews', content: 'Cette section contient l’ensemble des comptes-rendus réalisés avec les collaborateurs du groupe. Ils démontrent la couverture de l’ensemble de nos processus.' },
             { title: 'Matrice des risques', target: '#tab-matrix', content: 'Retrouvez ici les risques éthiques du groupes présentés via 3 matrices. Vous avez la possibilité d’afficher l’ensemble des risques, ou de filtrer en fonction des thématiques, des entités concernées, … pour une lecture adaptée à vos besoins.' },
-            { title: 'Matrice du risque brut', target: '#matrixGridBrut', content: 'La matrice des risques bruts présentent le positionnement des risques inhérents à notre groupe, en fonction de leur probabilité et de leur impact théorique, c-à-d en l’absence de mesure de maîtrise.', dialogPlacement: 'bottom' },
+            { title: 'Matrice du risque brut', target: '#matrixGridBrut', content: 'La matrice des risques bruts présentent le positionnement des risques inhérents à notre groupe, en fonction de leur probabilité et de leur impact théorique, c-à-d en l’absence de mesure de maîtrise.', dialogPlacement: 'right' },
             { title: 'Matrice du risque net', target: '#matrixGridNet', content: 'La matrice des risques nets présentes les risques résiduels, c-à-d en tenant compte de l’efficacité de nos mesures de maitrise.', dialogPlacement: 'bottom' },
             { title: 'Matrice après plan d’action', target: '#matrixGridPost', content: 'Enfin, nous projetons ici les risques tels qu’ils seraient post mise en place des plans d’action déterminés et validés.', dialogPlacement: 'bottom' },
             { title: 'Voir le détail', target: '#riskDetailsListPost .action-btn[aria-label="Voir le risque Risque corruption à déterminer 1"]', content: 'Cliquez pour ouvrir la fiche complète du risque.' },
