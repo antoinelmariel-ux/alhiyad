@@ -26,8 +26,13 @@ function prepareOnboardingStep(stepIndex) {
         case 13:
         case 14:
         case 15:
-        case 16:
+        case 16: {
+            const riskDetailButton = document.querySelector('#riskDetailsListPost .action-btn[aria-label="Voir le risque Risque corruption à déterminer 1"]');
+            if (riskDetailButton) {
+                riskDetailButton.click();
+            }
             break;
+        }
         case 17:
             switchTab('legends');
             stickMenuTop();
@@ -55,10 +60,10 @@ function buildOnboardingTour() {
             { title: 'Tableau de bord', target: '#tab-dashboard', content: 'Grâce au tableau de bord, vous aurez une vision globale de l’exposition du groupe aux risques éthiques.' },
             { title: 'Entretiens', target: '#tab-interviews', content: 'Cette section contient l’ensemble des comptes-rendus réalisés avec les collaborateurs du groupe. Ils démontrent la couverture de l’ensemble de nos processus.' },
             { title: 'Matrice des risques', target: '#tab-matrix', content: 'Retrouvez ici les risques éthiques du groupes présentés via 3 matrices. Vous avez la possibilité d’afficher l’ensemble des risques, ou de filtrer en fonction des thématiques, des entités concernées, … pour une lecture adaptée à vos besoins.' },
-            { title: 'Matrice du risque brut', target: '#matrixGridBrut', content: 'La matrice des risques bruts présentent le positionnement des risques inhérents à notre groupe, en fonction de leur probabilité et de leur impact théorique, c-à-d en l’absence de mesure de maîtrise.' },
-            { title: 'Matrice du risque net', target: '#matrixGridNet', content: 'La matrice des risques nets présentes les risques résiduels, c-à-d en tenant compte de l’efficacité de nos mesures de maitrise.' },
-            { title: 'Matrice après plan d’action', target: '#matrixGridPost', content: 'Enfin, nous projetons ici les risques tels qu’ils seraient post mise en place des plans d’action déterminés et validés.' },
-            { title: 'Voir le détail', target: '#riskDetailsListPost .action-btn', content: 'Cliquez pour ouvrir la fiche complète du risque.' },
+            { title: 'Matrice du risque brut', target: '#matrixGridBrut', content: 'La matrice des risques bruts présentent le positionnement des risques inhérents à notre groupe, en fonction de leur probabilité et de leur impact théorique, c-à-d en l’absence de mesure de maîtrise.', dialogPlacement: 'bottom' },
+            { title: 'Matrice du risque net', target: '#matrixGridNet', content: 'La matrice des risques nets présentes les risques résiduels, c-à-d en tenant compte de l’efficacité de nos mesures de maitrise.', dialogPlacement: 'bottom' },
+            { title: 'Matrice après plan d’action', target: '#matrixGridPost', content: 'Enfin, nous projetons ici les risques tels qu’ils seraient post mise en place des plans d’action déterminés et validés.', dialogPlacement: 'bottom' },
+            { title: 'Voir le détail', target: '#riskDetailsListPost .action-btn[aria-label="Voir le risque Risque corruption à déterminer 1"]', content: 'Cliquez pour ouvrir la fiche complète du risque.' },
             { title: 'Lecture détaillée du risque', target: '#riskViewModal .risk-view-evolution-matrix', content: 'Retrouvez l’évolution du risque, de son score brut à son score post plan d’action.' },
             { title: 'Informations', target: '#riskViewModal .risk-view-section:nth-of-type(2)', content: 'Retrouvez l’ensemble des informations indiquées pour ce risque.' },
             { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.' },
