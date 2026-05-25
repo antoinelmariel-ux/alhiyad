@@ -714,13 +714,13 @@ function renderBenefitFirstAssignment() {
     const benefitTerm = getRiskUndueBenefitTerminology();
 
     container.innerHTML = `
-        <div class="benefit-first-assignment-title">Affectation guidée par ${benefitTerm.bare}</div>
+        <div class="benefit-first-assignment-title">Affectation par ${benefitTerm.bare}</div>
         <div class="benefit-first-assignment-grid">
             ${undueBenefits.map(label => {
                 const linkedControls = getAssignedControlsForBenefit(label);
                 const summary = linkedControls.length
-                    ? `${linkedControls.length} linked control${linkedControls.length > 1 ? 's' : ''}`
-                    : 'No linked control';
+                    ? `${linkedControls.length} contrôle${linkedControls.length > 1 ? 's' : ''} lié${linkedControls.length > 1 ? 's' : ''}`
+                    : 'Aucun contrôle lié';
                 const linkedHtml = linkedControls.length
                     ? `<div class="benefit-first-linked-controls">
                         ${linkedControls.map(item => `<span class="benefit-first-linked-chip">#${item.id} - ${item.name}</span>`).join('')}
@@ -734,7 +734,7 @@ function renderBenefitFirstAssignment() {
                             ${linkedHtml}
                         </div>
                         <div class="benefit-first-actions">
-                            <button type="button" class="btn btn-outline" onclick="openControlSelectorForBenefit('${encodeURIComponent(label)}')">Add control</button>
+                            
                         </div>
                     </div>
                 `;

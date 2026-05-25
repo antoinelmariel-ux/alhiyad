@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.171</title>
+    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.14.173</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <!-- Local dependencies with CDN fallback -->
     <script>
@@ -312,9 +312,6 @@
                         <button class="btn btn-primary" onclick="rms.openInterviewModal()">
                             + Nouveau compte rendu d’entretien
                         </button>
-                        <button class="btn btn-outline" type="button" onclick="rms.openInterviewFolderPicker()">
-                            📂 Charger un dossier d’entretiens
-                        </button>
                         <button class="btn btn-secondary" type="button" onclick="rms.openMentionsModal()">
                             À clarifier
                         </button>
@@ -567,11 +564,8 @@
         <div id="risks-tab" class="tab-content">
             <div class="main-content">
                 <div class="toolbar">
-                    <div class="toolbar-title">Risque Register</div>
+                    <div class="toolbar-title">Registre des risques</div>
                     <div class="toolbar-actions">
-                        <button class="btn btn-secondary" onclick="exportRisks()">
-                            📤 Exporter
-                        </button>
                         <button class="btn btn-success" onclick="addNewRisk()">
                             + Nouveau risque
                         </button>
@@ -597,7 +591,7 @@
                             </select>
                         </div>
                         <div class="filter-group" id="risksTypeFilterGroup" hidden>
-                            <label class="filter-label" for="risksTypeFilter">Risque Type</label>
+                            <label class="filter-label" for="risksTypeFilter">Type de risque</label>
                             <select class="filter-select" id="risksTypeFilter" data-risk-filter="type" onchange="applyFilters('type', this.value, this)">
                                 <option value="">Tous les types</option>
                             </select>
@@ -1010,12 +1004,6 @@
                         <button class="btn btn-outline" type="button" onclick="importRisksAssessmentCsv()">
                             ⬆️ Importer les risques (CSV historique)
                         </button>
-                        <button class="btn btn-outline" type="button" onclick="exportReportsRisksXlsx()">
-                            ⬇️ Exporter les risques (XLSX)
-                        </button>
-                        <button class="btn btn-outline" type="button" onclick="exportRisksAssessmentCsv()">
-                            ⬇️ Exporter les risques (CSV historique)
-                        </button>
                         <button class="btn btn-outline" type="button" onclick="importControlsCsv()">
                             ⬆️ Importer les contrôles (CSV)
                         </button>
@@ -1037,7 +1025,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.14.172</span>
+            <span class="app-version">Version 2.14.173</span>
         </footer>
     </div>
 
@@ -1147,14 +1135,6 @@
         </div>
     </div>
 
-    <div id="mindmapModal" class="modal mindmap-modal">
-        <div class="modal-content fullscreen mindmap-content">
-            <button class="mindmap-modal-close modal-close" type="button" aria-label="Fermer l’atelier de cartographie mentale" onclick="rms.closeMindMapModal()">&times;</button>
-            <div class="modal-body mindmap-body">
-                <iframe id="mindmapFrame" class="mindmap-iframe" title="Atelier de cartographie mentale" src="mindmap/index.html"></iframe>
-            </div>
-        </div>
-    </div>
 
     <div id="interviewTemplateModal" class="modal">
         <div class="modal-content medium">
@@ -1199,7 +1179,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" id="openInterviewMindmapButton" onclick="rms.openInterviewMindMapViewer()" disabled>Voir la carte mentale</button>
                 <button class="btn btn-secondary" type="button" onclick="rms.closeInterviewViewModal()">Fermer</button>
             </div>
         </div>
@@ -1774,7 +1753,6 @@
         </div>
     </div>
 
-    <script defer src="assets/js/mindmap.renderer.js"></script>
     <script defer src="assets/js/rms.utils.js"></script>
     <script defer src="assets/js/rms.constants.js"></script>
     <script defer src="assets/js/rms.data.processes.js"></script>
