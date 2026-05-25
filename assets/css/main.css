@@ -7180,3 +7180,19 @@ tbody tr:hover {
         font-size: 0.7rem;
     }
 }
+
+
+/* Onboarding tour footer layout fix */
+.tg-dialog .tg-dialog-footer {
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.tg-dialog .tg-dialog-footer .tg-dialog-footer-sup {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.tg-dialog .tg-dialog-footer button.tg-dialog-btn + button {
+    margin-left: 0;
+}

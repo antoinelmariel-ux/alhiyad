@@ -1,19 +1,4 @@
-function waitForElement(selector, timeout = 3000) {
-    return new Promise((resolve) => {
-        const existing = document.querySelector(selector);
-        if (existing) return resolve(existing);
-        const started = Date.now();
-        const timer = setInterval(() => {
-            const el = document.querySelector(selector);
-            if (el || Date.now() - started > timeout) {
-                clearInterval(timer);
-                resolve(el || null);
-            }
-        }, 120);
-    });
-}
-
-async function prepareOnboardingStep(stepIndex) {
+function prepareOnboardingStep(stepIndex) {
     const stickMenuTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
     switch (stepIndex) {
@@ -40,14 +25,12 @@ async function prepareOnboardingStep(stepIndex) {
         case 8:
         case 9:
         case 10:
-            await waitForElement('#riskViewModal.show', 1200);
             break;
         case 11:
         case 12:
         case 13:
         case 14:
         case 15:
-            await waitForElement('#riskModal.show', 1200);
             break;
         case 16:
             switchTab('legends');
@@ -90,9 +73,9 @@ function buildOnboardingTour() {
         ]
     });
 
-    tg.onBeforeStepChange(async () => {
-        const index = tg.activeStep || 0;
-        await prepareOnboardingStep(index);
+    tg.onBeforeStepChange(() => {
+        const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 1 : 0;
+        prepareOnboardingStep(index);
     });
 
     return tg;
