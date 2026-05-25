@@ -1030,7 +1030,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.15.19</span>
+            <span class="app-version">Version 2.15.20</span>
         </footer>
     </div>
 
@@ -1603,7 +1603,7 @@
 
                     <div class="form-section">
                         <div class="form-section-title">Évaluation du risque</div>
-                        <div class="risk-matrix-editor">
+                        <div class="risk-matrix-editor" id="risk-matrix-editor">
                             <div class="matrix-info-row risk-matrix-layout">
                                 <div class="edit-matrix-group" data-state="brut">
                                     <div class="edit-matrix-heading">Risque brut</div>
@@ -1660,7 +1660,7 @@
                     <div class="form-section">
                         <div class="form-section-title">Évaluation du risque Net</div>
                         <div class="net-matrix-editor">
-                            <div class="net-matrix-wrapper">
+                            <div class="net-matrix-wrapper" id="net-matrix-wrapper">
                                 <div class="net-slider-layout">
                                     <div class="net-slider-panel" data-state="net">
                                         <div class="net-slider-header">
@@ -1692,7 +1692,7 @@
 
                     <div class="form-section">
                         <div class="form-section-title">Plans d’action associés</div>
-                        <div class="controls-section">
+                        <div class="controls-section" id="controls-section">
                             <button type="button" class="btn btn-secondary" onclick="openActionPlanSelector()">
                                 + Ajouter un plan d’action
                             </button>

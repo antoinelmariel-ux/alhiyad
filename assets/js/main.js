@@ -1,10 +1,22 @@
 function prepareOnboardingStep(stepIndex) {
     const stickMenuTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    const slowScrollMainTo = (top) => window.scrollTo({ top, behavior: 'smooth' });
     const scrollToElement = (selector, options = { block: 'center' }) => {
         const target = document.querySelector(selector);
         if (target) {
             target.scrollIntoView({ behavior: 'smooth', block: options.block || 'center' });
         }
+    };
+
+    const scrollWithinModalTo = (modalSelector, targetSelector) => {
+        const modal = document.querySelector(modalSelector);
+        const target = document.querySelector(targetSelector);
+        if (!modal || !target) return;
+        const modalScrollHost = modal.querySelector('.modal-body') || modal;
+        const hostRect = modalScrollHost.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const offset = targetRect.top - hostRect.top + modalScrollHost.scrollTop - 24;
+        modalScrollHost.scrollTo({ top: Math.max(offset, 0), behavior: 'smooth' });
     };
 
     const scrollRiskPanelTop = () => {
@@ -60,7 +72,14 @@ function prepareOnboardingStep(stepIndex) {
         case 11: {
             if (window.rms && typeof window.rms.viewRisk === 'function') {
                 window.rms.viewRisk(1);
-                setTimeout(() => scrollToElement('#riskViewModal .risk-view-evolution-matrix', { block: 'center' }), 180);
+                if (stepIndex === 10) {
+                    setTimeout(() => {
+                        scrollWithinModalTo('#riskViewModal', '#riskViewModal .risk-view-section');
+                        scrollToElement('#riskViewModal .risk-view-section', { block: 'center' });
+                    }, 180);
+                } else {
+                    setTimeout(() => scrollToElement('#riskViewModal .risk-view-evolution-matrix', { block: 'center' }), 180);
+                }
                 break;
             }
 
@@ -83,18 +102,49 @@ function prepareOnboardingStep(stepIndex) {
                 }
             }
 
-            if (stepIndex === 12) setTimeout(() => scrollToElement('#riskTheme', { block: 'center' }), 180);
-            if (stepIndex === 13) setTimeout(() => scrollToElement('#riskMatrixEditBrut', { block: 'center' }), 180);
-            if (stepIndex === 14) setTimeout(() => scrollToElement('#aggravatingFactorsBlock', { block: 'center' }), 180);
-            if (stepIndex === 15) setTimeout(() => scrollToElement('#netMitigationSlider', { block: 'center' }), 180);
-            if (stepIndex === 16) setTimeout(() => scrollToElement('#postActionMitigationSlider', { block: 'center' }), 180);
+            if (stepIndex === 12) {
+                setTimeout(() => {
+                    scrollWithinModalTo('#riskModal', '#riskForm');
+                    scrollToElement('#riskForm', { block: 'center' });
+                }, 180);
+            }
+            if (stepIndex === 13) {
+                setTimeout(() => slowScrollMainTo(window.scrollY + 180), 120);
+                setTimeout(() => {
+                    scrollWithinModalTo('#riskModal', '#risk-matrix-editor');
+                    scrollToElement('#risk-matrix-editor', { block: 'center' });
+                }, 320);
+            }
+            if (stepIndex === 14) {
+                setTimeout(() => {
+                    scrollWithinModalTo('#riskModal', '#aggravatingFactorsBlock');
+                    scrollToElement('#aggravatingFactorsBlock', { block: 'center' });
+                }, 180);
+            }
+            if (stepIndex === 15) {
+                setTimeout(() => {
+                    scrollWithinModalTo('#riskModal', '#net-matrix-wrapper');
+                    scrollToElement('#net-matrix-wrapper', { block: 'center' });
+                }, 180);
+            }
+            if (stepIndex === 16) {
+                setTimeout(() => {
+                    scrollWithinModalTo('#riskModal', '#controls-section');
+                    scrollToElement('#controls-section', { block: 'center' });
+                }, 180);
+            }
             break;
         }
-        case 17:
+        case 17: {
+            const riskModal = document.getElementById('riskModal');
+            if (riskModal?.classList.contains('show') && typeof window.closeModal === 'function') {
+                window.closeModal('riskModal');
+            }
             closeRiskViewModal();
             switchTab('legends');
             stickMenuTop();
             break;
+        }
         default:
             break;
     }
@@ -147,13 +197,13 @@ function buildOnboardingTour() {
             { title: 'Matrice après plan d’action', target: '#matrixGridPost', content: 'Enfin, nous projetons ici les risques tels qu’ils seraient post mise en place des plans d’action déterminés et validés.', dialogPlacement: 'bottom' },
             { title: 'Risques après plan d’action', target: '.matrix-container[data-view="post"] .risk-details-panel', content: 'Le panneau est automatiquement repositionné en haut pour afficher la liste complète des risques post plan d’action. Cliquez sur l’icône œil d’un risque pour afficher son détail.' },
             { title: 'Lecture détaillée du risque', target: '#riskViewModal .risk-view-section.risk-view-evolution-section', content: 'Le focus est centré sur la matrice d’évolution afin de visualiser immédiatement le passage du score brut au score post plan d’action.' },
-            { title: 'Informations', target: '#riskViewModal .risk-view-section:nth-of-type(2)', content: 'Retrouvez l’ensemble des informations indiquées pour ce risque.' },
+            { title: 'Informations', target: '#riskViewModal .risk-view-section', content: 'Retrouvez l’ensemble des informations indiquées pour ce risque.' },
             { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.' },
-            { title: 'Configuration – Thématique', target: '#riskTheme', content: 'Choisissez la thématique et les champs métiers associés.' },
-            { title: 'Configuration – Matrice brute', target: '#riskMatrixEditBrut', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.' },
+            { title: 'Configuration – Thématique', target: '#riskForm', content: 'Choisissez la thématique et les champs métiers associés.' },
+            { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.' },
             { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles s’appliquent en fonction du type de risque.' },
-            { title: 'Configuration – Risque net', target: '#netMitigationSlider', content: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.' },
-            { title: 'Configuration – Risque post plan d’action', target: '#postActionMitigationSlider', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.' },
+            { title: 'Configuration – Risque net', target: '#net-matrix-wrapper', content: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.' },
+            { title: 'Configuration – Risque post plan d’action', target: '#controls-section', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.' },
             { title: 'Légendes', target: '#tab-legends', content: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' }
         ]
     });
