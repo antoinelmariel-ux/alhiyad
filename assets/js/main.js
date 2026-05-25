@@ -21,15 +21,24 @@ function prepareOnboardingStep(stepIndex) {
             break;
         case 9:
         case 10:
-        case 11:
+        case 11: {
+            const riskDetailButton = document.querySelector('#riskDetailsListPost .action-btn[aria-label="Voir le risque Risque corruption à déterminer 1"]');
+            if (riskDetailButton) {
+                riskDetailButton.click();
+            }
+            break;
+        }
         case 12:
         case 13:
         case 14:
         case 15:
         case 16: {
-            const riskDetailButton = document.querySelector('#riskDetailsListPost .action-btn[aria-label="Voir le risque Risque corruption à déterminer 1"]');
-            if (riskDetailButton) {
-                riskDetailButton.click();
+            const isRiskModalOpen = document.getElementById('riskModal')?.classList.contains('show');
+            if (!isRiskModalOpen) {
+                const editButton = document.getElementById('riskViewEditButton');
+                if (editButton) {
+                    editButton.click();
+                }
             }
             break;
         }
