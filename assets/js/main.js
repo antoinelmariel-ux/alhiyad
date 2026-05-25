@@ -139,7 +139,7 @@ function prepareOnboardingStep(stepIndex) {
                 focusModalTourTarget('#aggravatingFactorsBlock');
             }
             if (stepIndex === 15) {
-                focusModalTourTarget('#net-matrix-wrapper');
+                focusModalTourTarget('#riskControlsSection');
             }
             if (stepIndex === 16) {
                 focusModalTourTarget('#controls-section');
