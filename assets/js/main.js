@@ -137,7 +137,7 @@ function prepareOnboardingStep(stepIndex) {
 
             if (stepIndex === 12) {
                 setTimeout(() => {
-                    scrollWithinModalTo('#riskModal', '#riskForm');
+                    scrollWithinModalTo('#riskModal', '#riskFormThemeSection', 12);
                 }, 180);
             }
             if (stepIndex === 13) {
@@ -227,7 +227,7 @@ function buildOnboardingTour() {
             { title: 'Lecture détaillée du risque', target: '#riskViewModal .risk-view-section.risk-view-evolution-section', content: 'Le focus est centré sur la matrice d’évolution afin de visualiser immédiatement le passage du score brut au score post plan d’action.' },
             { title: 'Informations', target: '#riskViewModal .risk-view-overview-sections', content: 'Retrouvez ici les blocs « Informations générales » et « Évaluation du risque » pour une lecture complète du contexte et des scores.' },
             { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.' },
-            { title: 'Configuration – Thématique', target: '#riskForm', content: 'Choisissez la thématique et les champs métiers associés.' },
+            { title: 'Configuration – Thématique', target: '#riskFormThemeSection', content: 'Choisissez la thématique et les champs métiers associés.' },
             { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.' },
             { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles s’appliquent en fonction du type de risque.' },
             { title: 'Configuration – Risque net', target: '#net-matrix-wrapper', content: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.' },
