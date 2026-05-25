@@ -52,7 +52,7 @@ function buildOnboardingTour() {
         showStepDots: true,
         exitOnEscape: true,
         exitOnClickOutside: false,
-        activeStepInteraction: false,
+        activeStepInteraction: true,
         rememberStep: false,
         steps: [
             { title: 'Introduction', content: 'Bienvenue sur notre cartographie des risques du groupe Al Hiyad. Nous vous proposons une rapide explication sur le fonctionnement de notre outil.' },
