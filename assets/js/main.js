@@ -40,7 +40,12 @@ function prepareOnboardingStep(stepIndex) {
         case 9:
         case 10:
         case 11: {
-            const riskDetailButton = document.querySelector('#riskDetailsListPost .action-btn[aria-label="Voir le risque Risque corruption à déterminer 1"]');
+            if (window.rms && typeof window.rms.viewRisk === 'function') {
+                window.rms.viewRisk(1);
+                break;
+            }
+
+            const riskDetailButton = document.querySelector('#riskDetailsListPost .risk-item[data-risk-id="1"] .action-btn[title="Voir le risque"]');
             if (riskDetailButton) {
                 riskDetailButton.click();
             }
