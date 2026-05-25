@@ -181,6 +181,25 @@ function bindOnboardingDialogButtons(tg) {
     }, true);
 }
 
+
+
+function ensureOnboardingIgnoreButton(tg) {
+    const dialogFooter = document.querySelector('.tg-dialog .tg-dialog-footer');
+    if (!dialogFooter || dialogFooter.querySelector('.tg-dialog-ignore-btn')) return;
+
+    const ignoreBtn = document.createElement('button');
+    ignoreBtn.type = 'button';
+    ignoreBtn.className = 'tg-dialog-btn tg-dialog-ignore-btn';
+    ignoreBtn.textContent = 'Ignorer';
+    ignoreBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        tg.exit();
+    });
+
+    dialogFooter.prepend(ignoreBtn);
+}
+
 function buildOnboardingTour() {
     const TourGuideClient = window.TourGuideClient || window.tourguide?.TourGuideClient;
     if (!TourGuideClient) {
@@ -190,6 +209,9 @@ function buildOnboardingTour() {
 
     const tg = new TourGuideClient({
         showStepDots: true,
+        prevLabel: '<',
+        nextLabel: '>',
+        finishLabel: 'Fin',
         exitOnEscape: true,
         exitOnClickOutside: false,
         activeStepInteraction: true,
@@ -209,9 +231,11 @@ function buildOnboardingTour() {
             { title: 'Configuration – Thématique', target: '#riskFormThemeSection', content: "Choisissez la thématique. En fonction certains champs spécifiques s'affichent.", dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', dialogTarget: '#riskFormThemeSection', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.', dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', dialogTarget: '#riskFormThemeSection', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles sont dépendants du type de risque.', dialogPlacement: 'top-start', forceDialogTopRight: true },
+            { title: 'Contrôle', target: '#riskControlsSection', dialogTarget: '#riskFormThemeSection', content: 'Vous pouvez rattacher au risque brut les contrôles et mesures de maîtrise issues de votre référentiel de contrôles.', dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Configuration – Risque net', target: '#controls-section', dialogTarget: '#riskFormThemeSection', content: 'Sur cette base, évaluez le niveau de maîtrise du risque pour évaluer le risque net.', dialogPlacement: 'top-start', forceDialogTopRight: true },
           { title: 'Configuration – Risque post plan d’action', target: '#controls-section', dialogTarget: '#riskFormThemeSection', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.', dialogPlacement: 'top-start', forceDialogTopRight: true },
-            { title: 'Légendes', target: '#tab-legends', content: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' }
+            { title: 'Légendes', target: '#tab-legends', content: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' },
+            { title: 'Relancer la présentation', target: '#startOnboardingTourBtn', content: 'Vous pouvez relancer à tout moment le tour de présentation de la cartographie via ce bouton.' }
         ]
     });
 
@@ -223,6 +247,7 @@ function buildOnboardingTour() {
         if (dialog) {
             dialog.classList.toggle('tg-dialog-absolute-top-right', Boolean(activeStepConfig?.forceDialogTopRight));
         }
+        ensureOnboardingIgnoreButton(tg);
     });
 
     return tg;
@@ -248,5 +273,11 @@ document.addEventListener('DOMContentLoaded', () => {
             prepareOnboardingStep(1);
             tg.start();
         });
+    }
+
+    if (tg && !localStorage.getItem('alhiyad-onboarding-autostarted')) {
+        localStorage.setItem('alhiyad-onboarding-autostarted', '1');
+        prepareOnboardingStep(1);
+        tg.start();
     }
 });
