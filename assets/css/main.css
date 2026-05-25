@@ -28,9 +28,9 @@
     --border-radius: 12px;
     --shadow: 0 10px 30px rgba(15, 41, 51, 0.08);
     --shadow-hover: 0 15px 40px rgba(15, 41, 51, 0.12);
-    --feedback-layer-base: 12000;
-    --feedback-button-layer: 12020;
-    --feedback-panel-layer: 12030;
+    --feedback-layer-base: 90;
+    --feedback-button-layer: 92;
+    --feedback-panel-layer: 93;
 }
 
 body {
