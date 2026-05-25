@@ -10652,6 +10652,16 @@ class RiskManagementSystem {
             const typeLabel = normalizedType ? (typeMap[normalizedType] || rawType) : 'Non défini';
             const typeClass = normalizedType ? normalizedType.replace(/[^a-z0-9-]+/g, '-') : 'type-undefined';
             const ownerLabel = control?.owner || '';
+            const rawLevel = control?.level ?? '';
+            const normalizedLevel = rawLevel ? String(rawLevel).toLowerCase() : '';
+            const levelLabelMap = {
+                'niveau-1': 'Niveau 1',
+                'niveau-2': 'Niveau 2',
+                'niveau-3': 'Niveau 3'
+            };
+            const levelLabel = normalizedLevel
+                ? (levelLabelMap[normalizedLevel] || rawLevel)
+                : '';
             const rawEffectiveness = control?.effectiveness ?? '';
             const normalizedEffectiveness = rawEffectiveness ? String(rawEffectiveness).toLowerCase() : '';
             const effectivenessLabel = normalizedEffectiveness
@@ -10668,6 +10678,9 @@ class RiskManagementSystem {
                     </div>
                     <div class="controls-table-cell control-owner-cell">
                         ${ownerLabel ? `<span class="control-owner">${ownerLabel}</span>` : `<span class="text-placeholder">Not defined</span>`}
+                    </div>
+                    <div class="controls-table-cell control-level-cell">
+                        ${levelLabel ? `<span class="control-status-badge">${levelLabel}</span>` : `<span class="text-placeholder">Not defined</span>`}
                     </div>
                     <div class="controls-table-cell control-effectiveness-cell">
                         ${effectivenessLabel ? `<span class="control-status-badge">${effectivenessLabel}</span>` : `<span class="text-placeholder">Not defined</span>`}
