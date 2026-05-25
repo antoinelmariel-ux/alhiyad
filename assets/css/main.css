@@ -389,6 +389,23 @@ body.feedback-mode-paused .feedback-panel * {
     color: var(--surface-color);
 }
 
+
+.admin-toolbar-actions .btn-outline {
+    color: var(--surface-color);
+    border-color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.14);
+    font-weight: 600;
+    text-shadow: 0 1px 1px rgba(13, 31, 60, 0.35);
+}
+
+.admin-toolbar-actions .btn-outline:hover,
+.admin-toolbar-actions .btn-outline:focus-visible {
+    background: var(--surface-color);
+    color: var(--primary-color);
+    border-color: var(--surface-color);
+    text-shadow: none;
+}
+
 .feedback-import-label {
     display: inline-flex;
     align-items: center;
