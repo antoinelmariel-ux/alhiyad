@@ -10090,7 +10090,10 @@ class RiskManagementSystem {
 
         const processMetrics = filteredRisks.reduce((acc, risk) => {
             const rawLabel = risk?.processus;
-            const label = rawLabel && String(rawLabel).trim() ? String(rawLabel).trim() : 'Non défini';
+            const normalizedProcess = rawLabel && String(rawLabel).trim() ? String(rawLabel).trim() : '';
+            const label = normalizedProcess
+                ? (this.getProcessLabel(normalizedProcess) || normalizedProcess)
+                : 'Non défini';
             if (!acc[label]) {
                 acc[label] = { count: 0, scores: [], maxScore: 0 };
             }
