@@ -3,36 +3,32 @@ function prepareOnboardingStep(stepIndex) {
 
     switch (stepIndex) {
         case 1:
+        case 2:
             switchTab('dashboard');
             stickMenuTop();
             break;
-        case 2:
-            switchTab('interviews');
-            stickMenuTop();
-            break;
         case 3:
-            switchTab('matrix');
+            switchTab('interviews');
             stickMenuTop();
             break;
         case 4:
         case 5:
         case 6:
-            switchTab('matrix');
-            break;
         case 7:
-            switchTab('matrix');
-            break;
         case 8:
+            switchTab('matrix');
+            stickMenuTop();
+            break;
         case 9:
         case 10:
-            break;
         case 11:
         case 12:
         case 13:
         case 14:
         case 15:
-            break;
         case 16:
+            break;
+        case 17:
             switchTab('legends');
             stickMenuTop();
             break;
@@ -95,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const startTourButton = document.getElementById('startOnboardingTourBtn');
     const tg = buildOnboardingTour();
     if (startTourButton && tg) {
-        startTourButton.addEventListener('click', () => tg.start());
+        startTourButton.addEventListener('click', () => {
+            prepareOnboardingStep(1);
+            tg.start();
+        });
     }
 });
