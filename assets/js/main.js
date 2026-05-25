@@ -206,11 +206,11 @@ function buildOnboardingTour() {
             { title: 'Lecture détaillée du risque', target: '#riskViewModal .risk-view-section.risk-view-evolution-section', content: 'Le focus est centré sur la matrice d’évolution afin de visualiser immédiatement le passage du score brut au score post plan d’action.' },
             { title: 'Informations', target: '#riskViewModal .risk-view-overview-sections', content: 'Retrouvez ici les blocs « Informations générales » et « Évaluation du risque » pour une lecture complète du contexte et des scores.' },
             { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.' },
-            { title: 'Configuration – Thématique', target: '#riskFormThemeSection', content: "Choisissez la thématique. En fonction certains champs spécifiques s'affichent.", dialogPlacement: 'top-start' },
-            { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', dialogTarget: '#riskFormThemeSection', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.', dialogPlacement: 'top-start' },
-            { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', dialogTarget: '#riskFormThemeSection', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles sont dépendants du type de risque.', dialogPlacement: 'top-start' },
-            { title: 'Configuration – Risque net', target: '#net-matrix-wrapper', dialogTarget: '#riskFormThemeSection', content: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.', dialogPlacement: 'top-start' },
-            { title: 'Configuration – Risque post plan d’action', target: '#controls-section', dialogTarget: '#riskFormThemeSection', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.', dialogPlacement: 'top-start' },
+            { title: 'Configuration – Thématique', target: '#riskFormThemeSection', content: "Choisissez la thématique. En fonction certains champs spécifiques s'affichent.", dialogPlacement: 'top-start', forceDialogTopLeft: true },
+            { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', dialogTarget: '#riskFormThemeSection', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.', dialogPlacement: 'top-start', forceDialogTopLeft: true },
+            { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', dialogTarget: '#riskFormThemeSection', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles sont dépendants du type de risque.', dialogPlacement: 'top-start', forceDialogTopLeft: true },
+            { title: 'Configuration – Risque net', target: '#net-matrix-wrapper', dialogTarget: '#riskFormThemeSection', content: 'Indiquez le niveau de maîtrise pour passer du risque brut au risque net.', dialogPlacement: 'top-start', forceDialogTopLeft: true },
+            { title: 'Configuration – Risque post plan d’action', target: '#controls-section', dialogTarget: '#riskFormThemeSection', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.', dialogPlacement: 'top-start', forceDialogTopLeft: true },
             { title: 'Légendes', target: '#tab-legends', content: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' }
         ]
     });
@@ -218,6 +218,11 @@ function buildOnboardingTour() {
     tg.onAfterStepChange(() => {
         const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 1 : 0;
         prepareOnboardingStep(index);
+        const activeStepConfig = tg.tourSteps?.[tg.activeStep];
+        const dialog = document.querySelector('.tg-dialog');
+        if (dialog) {
+            dialog.classList.toggle('tg-dialog-absolute-top-left', Boolean(activeStepConfig?.forceDialogTopLeft));
+        }
     });
 
     return tg;
