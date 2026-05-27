@@ -3697,6 +3697,7 @@ class RiskManagementSystem {
                 renderer: (body) => this.renderCountryColumnManager(body)
             },
             { key: 'tiers', label: 'Tiers' },
+            { key: 'targetAudiences', label: 'Fonctions exposées' },
             { key: 'riskStatuses', label: 'Statuts des risques' },
             { key: 'controlTypes', label: 'Types de contrôle' },
             { key: 'controlOrigins', label: 'Origine des contrôles' },
