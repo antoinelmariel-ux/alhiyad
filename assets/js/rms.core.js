@@ -9888,7 +9888,7 @@ class RiskManagementSystem {
                 dueDate: dueDate ? dueDate.toISOString() : null,
                 formattedDueDate: dueDate ? dueDate.toLocaleDateString('en-GB') : (plan?.dueDate || '-'),
                 id: plan?.id,
-                isBlurred: Number(plan?.id) > 3
+                isBlurred: Number(plan?.id) > 5
             }));
 
         return { severeRisks, overdueActionPlans };
@@ -10852,7 +10852,7 @@ class RiskManagementSystem {
             const statusClass = normalizedStatus ? normalizedStatus.replace(/[^a-z0-9-]+/g, '-') : '';
             const ownerLabel = plan?.owner ? String(plan.owner) : '';
             const dueDateLabel = formatDueDate(plan?.dueDate);
-            const isBlurred = Number(plan?.id) > 3;
+            const isBlurred = Number(plan?.id) > 5;
             const rowClass = `controls-table-row${isBlurred ? ' action-plan-row-blurred' : ''}`;
             const rowAttributes = isBlurred ? ' aria-hidden="true"' : '';
             const disabledAttr = isBlurred ? ' disabled aria-hidden="true" tabindex="-1"' : '';
@@ -13229,7 +13229,8 @@ class RiskManagementSystem {
 
             document.getElementById('titre').value = risk.titre || '';
             document.getElementById('description').value = risk.description || '';
-            document.getElementById('scenarios').value = risk.scenarios || '';
+            const scenariosInput = document.getElementById('scenarios');
+            if (scenariosInput) scenariosInput.value = risk.scenarios || '';
             document.getElementById('example').value = risk.example || '';
             document.getElementById('comment').value = risk.comment || '';
             document.getElementById('probBrut').value = risk.probBrut;

@@ -1557,7 +1557,6 @@ function saveRisk() {
         sousProcessusAssocies,
         titre: document.getElementById('titre').value,
         description: document.getElementById('description').value,
-        scenarios: document.getElementById('scenarios').value,
         example: document.getElementById('example').value,
         comment: document.getElementById('comment').value,
         typeCorruption: typesCorruption[0] || '',
