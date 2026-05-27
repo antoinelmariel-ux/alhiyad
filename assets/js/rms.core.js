@@ -12814,11 +12814,12 @@ class RiskManagementSystem {
                     <div class="risk-view-value">${escapeHtml(formatValue(row.value))}</div>
                 </div>
             `).join('');
-        const renderSection = (sectionTitle, rows) => {
+        const renderSection = (sectionTitle, rows, sectionId = '') => {
             const html = renderRows(rows);
             if (!html) return '';
+            const sectionAttr = sectionId ? ` data-risk-view-section="${escapeHtml(sectionId)}"` : '';
             return `
-                <section class="risk-view-section">
+                <section class="risk-view-section"${sectionAttr}>
                     <h4>${escapeHtml(sectionTitle)}</h4>
                     <div class="risk-view-grid">${html}</div>
                 </section>
@@ -13029,6 +13030,15 @@ class RiskManagementSystem {
             title.textContent = `Risque #${risk.id} — ${risk.titre || risk.description || 'Sans titre'}`;
         }
         modal.dataset.riskId = risk.id;
+        const riskLevelLabel = (score) => {
+            const value = Number(score) || 0;
+            if (value >= 12) return 'Critique';
+            if (value >= 6) return 'Élevé';
+            if (value >= 3) return 'Modéré';
+            return 'Faible';
+        };
+        const controlsCount = controls.length;
+        const actionPlansCount = actionPlans.length;
         body.innerHTML = `
             <div class="risk-view-summary">
                 <div>
@@ -13037,6 +13047,34 @@ class RiskManagementSystem {
                 </div>
                 <span class="table-badge badge-info">${escapeHtml(this.getStatusLabel('risk', statusValue, risk?.statusLabel, risk?.status, risk?.statut) || 'Non défini')}</span>
             </div>
+            <div class="risk-view-score-cards">
+                <div class="risk-view-score-card">
+                    <span>Score brut</span>
+                    <strong>${escapeHtml(formatNumber(brutScore) || '0')}</strong>
+                    <small>${escapeHtml(riskLevelLabel(brutScore))}</small>
+                </div>
+                <div class="risk-view-score-card">
+                    <span>Score net</span>
+                    <strong>${escapeHtml(formatNumber(netInfo.score) || '0')}</strong>
+                    <small>${escapeHtml(riskLevelLabel(netInfo.score))}</small>
+                </div>
+                <div class="risk-view-score-card">
+                    <span>Après plan d’action</span>
+                    <strong>${escapeHtml(formatNumber(postInfo.score) || '0')}</strong>
+                    <small>${escapeHtml(riskLevelLabel(postInfo.score))}</small>
+                </div>
+                <div class="risk-view-score-card">
+                    <span>Maîtrise</span>
+                    <strong>${escapeHtml(netInfo.label || 'Non défini')}</strong>
+                    <small>${escapeHtml(`Contrôles: ${controlsCount} · Plans: ${actionPlansCount}`)}</small>
+                </div>
+            </div>
+            <nav class="risk-view-tabs" aria-label="Sections du risque">
+                <button type="button" class="risk-view-tab is-active" data-target="evaluation">Évaluation</button>
+                <button type="button" class="risk-view-tab" data-target="general">Informations</button>
+                <button type="button" class="risk-view-tab" data-target="associations">Contrôles & plans</button>
+                <button type="button" class="risk-view-tab" data-target="comment">Commentaire</button>
+            </nav>
             ${renderRiskEvolutionMatrix({ brutScore, netInfo, postInfo })}
             ${renderSection('Informations générales', [
                 { label: 'Thématique', value: resolveLabel(themeMap, theme) },
@@ -13052,7 +13090,7 @@ class RiskManagementSystem {
                 { label: 'Avantages indus', value: risk.avantagesIndus },
                 { label: 'Résultats attendus', value: risk.avantagesAttendus },
                 { label: 'Exemple', value: risk.example }
-            ])}
+            ], 'general')}
             ${renderSection('Évaluation du risque', [
                 { label: 'Probabilité brute', value: formatNumber(risk.probBrut) },
                 { label: 'Impact brut', value: formatNumber(risk.impactBrut) },
@@ -13064,15 +13102,29 @@ class RiskManagementSystem {
                 { label: 'Score net', value: formatNumber(netInfo.score) },
                 { label: 'Niveau de maîtrise après plan d’action', value: postInfo.label },
                 { label: 'Score net après plan d’action', value: formatNumber(postInfo.score) }
-            ])}
+            ], 'evaluation')}
             ${renderSection('Contrôles et plans d’action', [
                 { label: 'Contrôles associés', value: controls },
                 { label: 'Plans d’action associés', value: actionPlans }
-            ])}
+            ], 'associations')}
             ${renderSection('Commentaire', [
                 { label: 'Commentaire', value: risk.comment }
-            ])}
+            ], 'comment')}
         `;
+        const sectionNodes = Array.from(body.querySelectorAll('[data-risk-view-section]'));
+        const tabNodes = Array.from(body.querySelectorAll('.risk-view-tab'));
+        const activateSection = (targetKey) => {
+            sectionNodes.forEach(section => {
+                section.classList.toggle('is-active', section.dataset.riskViewSection === targetKey);
+            });
+            tabNodes.forEach(tab => {
+                tab.classList.toggle('is-active', tab.dataset.target === targetKey);
+            });
+        };
+        tabNodes.forEach(tab => {
+            tab.addEventListener('click', () => activateSection(tab.dataset.target || 'evaluation'));
+        });
+        activateSection('evaluation');
 
         if (typeof window.bringModalToFront === 'function') {
             window.bringModalToFront(modal);
