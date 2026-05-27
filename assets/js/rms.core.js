@@ -2779,7 +2779,7 @@ class RiskManagementSystem {
 
             const select = document.createElement('select');
             select.className = 'mindmap-tag-select';
-            ['','Préventif','Réactif'].forEach(optionValue => {
+            ['','Préventif','Détectif'].forEach(optionValue => {
                 const option = document.createElement('option');
                 option.value = optionValue;
                 option.textContent = optionValue || 'Non renseigné';
@@ -10676,7 +10676,8 @@ class RiskManagementSystem {
             const levelLabelMap = {
                 'niveau-1': 'Niveau 1',
                 'niveau-2': 'Niveau 2',
-                'niveau-3': 'Niveau 3'
+                'niveau-3': 'Niveau 3',
+                'na': 'N/A'
             };
             const levelLabel = normalizedLevel
                 ? (levelLabelMap[normalizedLevel] || rawLevel)
@@ -12974,14 +12975,18 @@ class RiskManagementSystem {
                         </div>
                     </div>
                     <div class="risk-view-evolution-layout">
-                        <div class="risk-view-evolution-row-labels" aria-hidden="true">${rows}</div>
                         <div class="risk-view-evolution-matrix" role="img" aria-label="Matrice d'évolution du risque">
                             <div class="risk-view-evolution-grid">${cells}</div>
                             ${markers}
                         </div>
                     </div>
                     <div class="risk-view-evolution-col-labels" aria-hidden="true">${columns}</div>
-                    <div class="risk-view-evolution-axis">Efficacité des contrôles →</div>
+                    <div class="risk-view-evolution-color-legend" aria-label="Légende des niveaux de risque">
+                        <span><i class="level-1"></i> Faible</span>
+                        <span><i class="level-2"></i> Modéré</span>
+                        <span><i class="level-3"></i> Élevé</span>
+                        <span><i class="level-4"></i> Critique</span>
+                    </div>
                 </section>
             `;
         };
