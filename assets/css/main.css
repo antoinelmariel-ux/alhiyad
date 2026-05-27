@@ -1885,8 +1885,22 @@ tbody tr.risk-row-blurred:hover {
     transform: none;
 }
 
+
 .action-plan-row-blurred .action-btn {
     cursor: not-allowed;
+}
+
+/* Blur also applies to attachment boxes (box de rattachement) */
+.risk-row-blurred .control-assignment-card,
+.risk-row-blurred .benefit-first-card,
+.risk-row-blurred .control-benefit-focus-card,
+.action-plan-row-blurred .control-assignment-card,
+.action-plan-row-blurred .benefit-first-card,
+.action-plan-row-blurred .control-benefit-focus-card {
+    filter: blur(4px);
+    opacity: 0.72;
+    user-select: none;
+    pointer-events: none;
 }
 
 /* Legend améliorée */
