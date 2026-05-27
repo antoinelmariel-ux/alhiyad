@@ -2142,7 +2142,7 @@ function saveActionPlan() {
     if (isDraftPlan) {
         planData.title = `Untitled draft (${new Date().toLocaleDateString('en-US')})`;
     }
-    if (!planData.status || isDraftPlan) {
+    if (!planData.status) {
         planData.status = 'brouillon';
     }
 
