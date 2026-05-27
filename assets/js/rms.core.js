@@ -3251,10 +3251,24 @@ class RiskManagementSystem {
                 }
 
                 optionList.forEach(o => {
-                    if (!o || typeof o !== 'object') return;
+                    if (o === null || o === undefined) return;
+
+                    let value = '';
+                    let label = '';
+
+                    if (typeof o === 'object') {
+                        value = o.value != null ? String(o.value) : '';
+                        label = o.label != null ? String(o.label) : value;
+                    } else {
+                        value = String(o);
+                        label = value;
+                    }
+
+                    if (!value && !label) return;
+
                     const opt = document.createElement('option');
-                    opt.value = o.value;
-                    opt.textContent = o.label;
+                    opt.value = value;
+                    opt.textContent = label || value;
                     el.appendChild(opt);
                 });
 
