@@ -164,13 +164,11 @@ function prepareOnboardingStep(stepIndex) {
 
 function bindOnboardingDialogButtons(tg) {
     document.addEventListener('click', (event) => {
-        const scheduleCleanup = () => window.setTimeout(cleanupOnboardingInteractivityLock, 120);
         const nextBtn = event.target.closest('.tg-dialog-next-btn');
         if (nextBtn) {
             event.preventDefault();
             event.stopPropagation();
             tg.nextStep();
-            scheduleCleanup();
             return;
         }
 
@@ -179,25 +177,8 @@ function bindOnboardingDialogButtons(tg) {
             event.preventDefault();
             event.stopPropagation();
             tg.prevStep();
-            scheduleCleanup();
-        }
-
-        if (event.target.closest('#tg-dialog-close-btn, .tg-dialog-ignore-btn')) {
-            scheduleCleanup();
         }
     }, true);
-}
-
-function cleanupOnboardingInteractivityLock() {
-    document.body.classList.remove('tg-no-interaction');
-    const dialog = document.querySelector('.tg-dialog');
-    if (dialog) {
-        dialog.classList.remove('tg-dialog-absolute-top-right');
-    }
-    const backdrop = document.querySelector('.tg-backdrop');
-    if (backdrop && (!dialog || getComputedStyle(dialog).display === 'none')) {
-        backdrop.style.display = 'none';
-    }
 }
 
 
@@ -268,14 +249,6 @@ function buildOnboardingTour() {
         }
         ensureOnboardingIgnoreButton(tg);
     });
-
-    if (typeof tg.onAfterExit === 'function') {
-        tg.onAfterExit(() => cleanupOnboardingInteractivityLock());
-    }
-
-    if (typeof tg.onFinish === 'function') {
-        tg.onFinish(() => cleanupOnboardingInteractivityLock());
-    }
 
     return tg;
 }
