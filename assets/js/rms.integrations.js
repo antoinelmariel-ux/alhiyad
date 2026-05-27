@@ -2085,37 +2085,113 @@ function exportReportsRisksXlsx() {
         };
     });
 
+    const buildLegendRows = () => {
+        const rows = [];
+        const pushOptionRows = (category, options = []) => {
+            if (!Array.isArray(options) || options.length === 0) return;
+            options.forEach((entry, index) => {
+                rows.push({
+                    'Catégorie': category,
+                    'Ordre': index + 1,
+                    'Code': normalizeId(entry?.value),
+                    'Libellé': entry?.label || normalizeId(entry?.value),
+                    'Description': entry?.description || '',
+                    'Couleur': entry?.color || ''
+                });
+            });
+        };
+
+        pushOptionRows('Type de corruption', rms?.config?.riskTypes);
+        pushOptionRows("Exposition à la corruption", rms?.config?.corruptionExposureTypes);
+        pushOptionRows('Mode de corruption', rms?.config?.corruptionModes);
+        pushOptionRows('Tiers', rms?.config?.tiers);
+        pushOptionRows('Pays exposés', rms?.config?.countries);
+        pushOptionRows('Efficacité des contrôles', typeof getMitigationEffectivenessOptions === 'function' ? getMitigationEffectivenessOptions() : []);
+        pushOptionRows('Statut des risques', Array.isArray(rms?.config?.riskStatuses) ? rms.config.riskStatuses : []);
+        pushOptionRows("Statut des plans d'action", Array.isArray(rms?.config?.actionPlanStatuses) ? rms.config.actionPlanStatuses : []);
+
+        return rows;
+    };
+
+    const buildScaleRows = () => {
+        const rows = [];
+        const scaleMap = [
+            { category: 'Probabilité', key: 'probabilityLevels' },
+            { category: 'Impact', key: 'impactLevels' },
+            { category: 'Niveau de risque', key: 'riskScaleLevels' }
+        ];
+
+        scaleMap.forEach(({ category, key }) => {
+            const items = Array.isArray(rms?.config?.[key]) ? rms.config[key] : [];
+            items.forEach((item, index) => {
+                rows.push({
+                    'Échelle': category,
+                    'Niveau': item?.value ?? index + 1,
+                    'Libellé': item?.label || '',
+                    'Description': item?.description || '',
+                    'Couleur': item?.color || ''
+                });
+            });
+        });
+        return rows;
+    };
+
     ensureXlsxLibrary()
         .then((xlsx) => {
             const worksheet = xlsx.utils.json_to_sheet(riskRows, { skipHeader: false });
             const workbook = xlsx.utils.book_new();
             xlsx.utils.book_append_sheet(workbook, worksheet, 'Risques');
+            const legendsSheet = xlsx.utils.json_to_sheet(buildLegendRows(), { skipHeader: false });
+            const scalesSheet = xlsx.utils.json_to_sheet(buildScaleRows(), { skipHeader: false });
+            xlsx.utils.book_append_sheet(workbook, legendsSheet, 'Légendes');
+            xlsx.utils.book_append_sheet(workbook, scalesSheet, 'Échelles');
 
-            const headerRange = xlsx.utils.decode_range(worksheet['!ref'] || 'A1');
-            for (let columnIndex = headerRange.s.c; columnIndex <= headerRange.e.c; columnIndex += 1) {
-                const cellAddress = xlsx.utils.encode_cell({ r: 0, c: columnIndex });
-                if (!worksheet[cellAddress]) continue;
-                worksheet[cellAddress].s = {
-                    font: { bold: true, color: { rgb: 'FFFFFF' } },
-                    fill: { patternType: 'solid', fgColor: { rgb: '0B3D60' } },
-                    alignment: { vertical: 'center', horizontal: 'center', wrapText: true }
-                };
-            }
-
-            const rowCount = Math.max(riskRows.length, 1);
-            for (let rowIndex = 1; rowIndex <= rowCount; rowIndex += 1) {
-                for (let columnIndex = headerRange.s.c; columnIndex <= headerRange.e.c; columnIndex += 1) {
-                    const cellAddress = xlsx.utils.encode_cell({ r: rowIndex, c: columnIndex });
-                    if (!worksheet[cellAddress]) continue;
-                    worksheet[cellAddress].s = {
-                        fill: {
-                            patternType: 'solid',
-                            fgColor: { rgb: rowIndex % 2 === 0 ? 'F5F7FA' : 'FFFFFF' }
-                        },
-                        alignment: { vertical: 'top', wrapText: true }
+            const applySheetStyle = (sheet, {
+                headerColor = '0B3D60',
+                oddColor = 'FFFFFF',
+                evenColor = 'F5F7FA',
+                colorColumn = null
+            } = {}) => {
+                const ref = sheet['!ref'] || 'A1';
+                const range = xlsx.utils.decode_range(ref);
+                for (let columnIndex = range.s.c; columnIndex <= range.e.c; columnIndex += 1) {
+                    const cellAddress = xlsx.utils.encode_cell({ r: 0, c: columnIndex });
+                    if (!sheet[cellAddress]) continue;
+                    sheet[cellAddress].s = {
+                        font: { bold: true, color: { rgb: 'FFFFFF' } },
+                        fill: { patternType: 'solid', fgColor: { rgb: headerColor } },
+                        alignment: { vertical: 'center', horizontal: 'center', wrapText: true }
                     };
                 }
-            }
+
+                for (let rowIndex = 1; rowIndex <= range.e.r; rowIndex += 1) {
+                    for (let columnIndex = range.s.c; columnIndex <= range.e.c; columnIndex += 1) {
+                        const cellAddress = xlsx.utils.encode_cell({ r: rowIndex, c: columnIndex });
+                        if (!sheet[cellAddress]) continue;
+                        const baseStyle = {
+                            fill: {
+                                patternType: 'solid',
+                                fgColor: { rgb: rowIndex % 2 === 0 ? evenColor : oddColor }
+                            },
+                            alignment: { vertical: 'top', wrapText: true }
+                        };
+
+                        if (colorColumn != null && columnIndex === colorColumn) {
+                            const rawColor = normalizeId(sheet[cellAddress].v).replace('#', '').toUpperCase();
+                            if (/^[0-9A-F]{6}$/.test(rawColor)) {
+                                baseStyle.fill.fgColor = { rgb: rawColor };
+                                baseStyle.font = { bold: true, color: { rgb: '111827' } };
+                                baseStyle.alignment.horizontal = 'center';
+                            }
+                        }
+                        sheet[cellAddress].s = baseStyle;
+                    }
+                }
+            };
+
+            applySheetStyle(worksheet, { headerColor: '0B3D60' });
+            applySheetStyle(legendsSheet, { headerColor: '7C3AED', oddColor: 'FDF4FF', evenColor: 'FAE8FF', colorColumn: 5 });
+            applySheetStyle(scalesSheet, { headerColor: '0F766E', oddColor: 'F0FDFA', evenColor: 'CCFBF1', colorColumn: 4 });
 
             const columnWidths = {
                 'ID du risque': 14,
@@ -2138,6 +2214,12 @@ function exportReportsRisksXlsx() {
             };
             const headers = Object.keys(riskRows[0] || { 'ID du risque': '' });
             worksheet['!cols'] = headers.map((header) => ({ wch: columnWidths[header] || 22 }));
+            legendsSheet['!cols'] = [
+                { wch: 28 }, { wch: 8 }, { wch: 22 }, { wch: 34 }, { wch: 42 }, { wch: 14 }
+            ];
+            scalesSheet['!cols'] = [
+                { wch: 22 }, { wch: 10 }, { wch: 30 }, { wch: 44 }, { wch: 14 }
+            ];
 
             const filename = `report-risques-${new Date().toISOString().slice(0, 10)}.xlsx`;
             xlsx.writeFile(workbook, filename, { bookType: 'xlsx', cellStyles: true });
