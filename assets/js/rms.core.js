@@ -12844,6 +12844,20 @@ class RiskManagementSystem {
                 </section>
             `;
         };
+        const getRiskLevelLabelFromScore = (score) => {
+            const value = Number(score) || 0;
+            if (value >= 12) return 'Critique';
+            if (value >= 6) return 'Élevé';
+            if (value >= 3) return 'Modéré';
+            return 'Faible';
+        };
+        const getStatusVisualClass = (status) => {
+            const normalized = String(status || '').toLowerCase();
+            if (normalized.includes('valid')) return 'is-valid';
+            if (normalized.includes('draft') || normalized.includes('brouillon')) return 'is-draft';
+            if (normalized.includes('review') || normalized.includes('revue')) return 'is-review';
+            return 'is-neutral';
+        };
         const renderRiskEvolutionMatrix = ({ brutScore, netInfo, postInfo }) => {
             const mitigationOptions = typeof getMitigationEffectivenessOptions === 'function'
                 ? getMitigationEffectivenessOptions()
@@ -13043,9 +13057,17 @@ class RiskManagementSystem {
                     <span class="risk-view-kicker">Risque #${escapeHtml(risk.id)}</span>
                     <h3>${escapeHtml(risk.titre || risk.description || 'Sans titre')}</h3>
                 </div>
-                <span class="table-badge badge-info">${escapeHtml(this.getStatusLabel('risk', statusValue, risk?.statusLabel, risk?.status, risk?.statut) || 'Non défini')}</span>
+                <span class="risk-view-status-pill ${getStatusVisualClass(statusValue)}">${escapeHtml(this.getStatusLabel('risk', statusValue, risk?.statusLabel, risk?.status, risk?.statut) || 'Non défini')}</span>
+            </div>
+            <div class="risk-view-score-pills">
+                <div class="risk-view-score-pill"><span>Score brut</span><strong>${escapeHtml(formatNumber(brutScore) || '0')}</strong></div>
+                <div class="risk-view-score-pill"><span>Score net</span><strong>${escapeHtml(formatNumber(netInfo.score) || '0')}</strong></div>
+                <div class="risk-view-score-pill"><span>Score post-plan</span><strong>${escapeHtml(formatNumber(postInfo.score) || '0')}</strong></div>
             </div>
             ${renderRiskEvolutionMatrix({ brutScore, netInfo, postInfo })}
+            <p class="risk-view-evolution-sentence">
+                Le risque passe de <strong>${escapeHtml(getRiskLevelLabelFromScore(brutScore))}</strong> à <strong>${escapeHtml(getRiskLevelLabelFromScore(netInfo.score))}</strong> après contrôles, puis à <strong>${escapeHtml(getRiskLevelLabelFromScore(postInfo.score))}</strong> après plan.
+            </p>
             <div class="risk-view-overview-sections">
                 ${renderSection('Informations générales', [
                     { label: 'Thématique', value: resolveLabel(themeMap, theme) },
@@ -13072,8 +13094,8 @@ class RiskManagementSystem {
                     { label: 'Coefficient aggravant', value: formatNumber(aggravatingCoefficient) },
                     { label: 'Niveau de maîtrise', value: netInfo.label },
                     { label: 'Score net', value: formatNumber(netInfo.score) },
-                    { label: 'Niveau de maîtrise après plan d’action', value: postInfo.label },
-                    { label: 'Score net après plan d’action', value: formatNumber(postInfo.score) }
+                    { label: 'Après plan — niveau de maîtrise', value: postInfo.label },
+                    { label: 'Après plan — score net', value: formatNumber(postInfo.score) }
                 ])}
             </div>
             ${renderSection('Contrôles et plans d’action', [
