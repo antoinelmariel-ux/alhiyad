@@ -6935,14 +6935,73 @@ tbody tr:hover {
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
+.risk-view-score-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.risk-view-score-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.risk-view-score-card span {
+    font-size: 0.78rem;
+    color: var(--muted-text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.risk-view-score-card strong {
+    font-size: 1.08rem;
+    color: var(--text-color);
+}
+
+.risk-view-score-card small {
+    color: var(--muted-text-color);
+}
+
+.risk-view-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.risk-view-tab {
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 600;
+    color: var(--muted-text-color);
+    cursor: pointer;
+}
+
+.risk-view-tab.is-active {
+    color: var(--surface-color);
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
 
 .risk-view-section {
     padding: 18px 0;
     border-top: 1px solid var(--border-color);
+    display: none;
 }
 
 .risk-view-section:first-of-type {
     border-top: 0;
+}
+.risk-view-section.is-active {
+    display: block;
 }
 
 .risk-view-section h4 {
@@ -6950,6 +7009,12 @@ tbody tr:hover {
     color: var(--primary-color);
     font-size: 1rem;
     font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .risk-view-score-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 .risk-view-grid {
