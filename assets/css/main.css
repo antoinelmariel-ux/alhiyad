@@ -1813,6 +1813,7 @@ body.feedback-mode-paused .feedback-panel * {
 .risk-item-description {
     font-size: 0.85em;
     color: var(--muted-text-color);
+    white-space: pre-line;
 }
 
 .risk-item-score {
