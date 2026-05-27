@@ -1427,6 +1427,7 @@ class RiskManagementSystem {
         normalized.riskTheme = allowedRiskThemes.has(riskTheme) ? riskTheme : 'corruption';
         normalized.targetAudience = normalized.targetAudiences[0] || '';
         normalized.titre = typeof risk?.titre === 'string' ? risk.titre.trim() : '';
+        normalized.scenarios = typeof risk?.scenarios === 'string' ? risk.scenarios.trim() : '';
         normalized.example = typeof risk?.example === 'string' ? risk.example.trim() : '';
         normalized.avantagesIndus = normalizeMultiValues(risk?.avantagesIndus);
         normalized.avantagesAttendus = normalizeMultiValues(risk?.avantagesAttendus);
@@ -13039,6 +13040,7 @@ class RiskManagementSystem {
                     { label: 'Description', value: risk.description },
                     { label: 'Avantages indus', value: risk.avantagesIndus },
                     { label: 'Résultats attendus', value: risk.avantagesAttendus },
+                    { label: 'Scénarios', value: risk.scenarios },
                     { label: 'Exemple', value: risk.example }
                 ])}
                 ${renderSection('Évaluation du risque', [
@@ -13226,6 +13228,7 @@ class RiskManagementSystem {
 
             document.getElementById('titre').value = risk.titre || '';
             document.getElementById('description').value = risk.description || '';
+            document.getElementById('scenarios').value = risk.scenarios || '';
             document.getElementById('example').value = risk.example || '';
             document.getElementById('comment').value = risk.comment || '';
             document.getElementById('probBrut').value = risk.probBrut;
