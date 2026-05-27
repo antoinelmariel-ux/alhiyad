@@ -13086,16 +13086,12 @@ class RiskManagementSystem {
                     { label: 'Exemple', value: risk.example }
                 ])}
                 ${renderSection('Évaluation du risque', [
-                    { label: 'Probabilité brute', value: formatNumber(risk.probBrut) },
-                    { label: 'Impact brut', value: formatNumber(risk.impactBrut) },
-                    { label: 'Score brut aggravé', value: formatNumber(brutScore) },
-                    { label: 'Facteurs aggravants très significatifs', value: group1Factors },
-                    { label: 'Facteurs aggravants significatifs', value: group2Factors },
-                    { label: 'Coefficient aggravant', value: formatNumber(aggravatingCoefficient) },
-                    { label: 'Niveau de maîtrise', value: netInfo.label },
-                    { label: 'Score net', value: formatNumber(netInfo.score) },
-                    { label: 'Après plan — niveau de maîtrise', value: postInfo.label },
-                    { label: 'Après plan — score net', value: formatNumber(postInfo.score) }
+                    { label: 'Probabilité brute', value: `${RISK_PROBABILITY_INFO?.[Number(risk.probBrut)]?.label || ''} (${formatNumber(risk.probBrut) || '0'})` },
+                    { label: 'Impact brut', value: `${RISK_IMPACT_INFO?.[Number(risk.impactBrut)]?.label || ''} (${formatNumber(risk.impactBrut) || '0'})` },
+                    { label: 'Facteurs aggravants retenus', value: [...group1Factors, ...group2Factors] },
+                    { label: 'Coefficient aggravant retenu', value: formatNumber(aggravatingCoefficient) },
+                    { label: 'Niveau de maîtrise', value: `${netInfo.label || 'Non défini'} (${formatNumber(netInfo.coefficient) || '1'})` },
+                    { label: 'Après plan — niveau de maîtrise', value: `${postInfo.label || 'Non défini'} (${formatNumber(postInfo.coefficient) || '1'})` }
                 ])}
             </div>
             ${renderSection('Contrôles et plans d’action', [
