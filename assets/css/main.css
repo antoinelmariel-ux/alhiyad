@@ -7049,6 +7049,10 @@ tbody tr:hover {
     background: var(--light-bg);
 }
 
+.risk-view-field-full {
+    grid-column: 1 / -1;
+}
+
 .risk-view-label {
     margin-bottom: 6px;
     color: var(--muted-text-color);

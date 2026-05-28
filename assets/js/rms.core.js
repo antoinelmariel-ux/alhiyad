@@ -12829,7 +12829,7 @@ class RiskManagementSystem {
         const renderRows = (rows) => rows
             .filter(row => formatValue(row.value))
             .map(row => `
-                <div class="risk-view-field">
+                <div class="risk-view-field${row.fullWidth ? " risk-view-field-full" : ""}">
                     <div class="risk-view-label">${escapeHtml(row.label)}</div>
                     <div class="risk-view-value">${escapeHtml(formatValue(row.value))}</div>
                 </div>
@@ -13079,7 +13079,7 @@ class RiskManagementSystem {
                     { label: 'Public cible', value: targetAudiences },
                     { label: 'Tiers concernés', value: tiers },
                     { label: 'Entités concernées', value: entities },
-                    { label: 'Description', value: risk.description },
+                    { label: 'Description', value: risk.description, fullWidth: true },
                     { label: 'Avantages indus', value: risk.avantagesIndus },
                     { label: 'Résultats attendus', value: risk.avantagesAttendus },
                     { label: 'Scénarios', value: risk.scenarios },
