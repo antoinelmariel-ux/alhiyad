@@ -898,8 +898,9 @@ class RiskManagementSystem {
 
     applyEntityModelMigration() {
         const targetEntities = [
-            { value: 'HQ Dubai', label: 'Siège de Dubaï', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
-            { value: 'Dubai Operations', label: 'Opérations de Dubaï', referents: ['Karim Haddad — VP Luxury Operations'] },
+            { value: 'HQ Dubai', label: 'HQ', referents: ['Amina El Mansouri — Chief Compliance Officer'] },
+            { value: 'fondation', label: 'Fondation', referents: [] },
+            { value: 'Dubai Operations', label: 'Opérations Dubaï', referents: ['Karim Haddad — VP Luxury Operations'] },
             {
                 value: 'Turkey Subsidiary',
                 label: 'Filiale Turquie',
@@ -916,19 +917,14 @@ class RiskManagementSystem {
 
         const targetColumns = [
             {
-                key: 'dubai-platform',
-                label: 'Plateforme de Dubaï',
-                countries: ['HQ Dubai', 'Dubai Operations']
+                key: 'corporate-entities',
+                label: 'Entités Corporate',
+                countries: ['HQ Dubai', 'fondation']
             },
             {
-                key: 'turkey-covered-markets',
-                label: 'Turquie — Europe, Amériques, Moyen-Orient',
-                countries: ['Turkey Subsidiary']
-            },
-            {
-                key: 'indonesia-premium-markets',
-                label: 'Indonésie — marchés premium asiatiques en croissance',
-                countries: ['Indonesia Subsidiary']
+                key: 'operational-entities',
+                label: 'Entités opérationnelles',
+                countries: ['Dubai Operations', 'Turkey Subsidiary', 'Indonesia Subsidiary']
             }
         ];
 
@@ -980,6 +976,15 @@ class RiskManagementSystem {
                 }
                 return normalized;
             });
+
+            const updatedSet = new Set(this.config.countries.map(entry => String(entry?.value || '')));
+            targetEntities.forEach(entity => {
+                if (!updatedSet.has(entity.value)) {
+                    this.config.countries.push({ ...entity });
+                    updatedSet.add(entity.value);
+                    changed = true;
+                }
+            });
         }
 
         const normalizedTargets = this.normalizeCountryColumns(
@@ -993,7 +998,10 @@ class RiskManagementSystem {
             'lfb-usa',
             'europasma',
             'pharma-affiliates-jv-plus-50',
-            'distributors-jv-minus-50'
+            'distributors-jv-minus-50',
+            'dubai-platform',
+            'turkey-covered-markets',
+            'indonesia-premium-markets'
         ];
         const hasDeprecatedColumns = existing.some(column => legacyColumnKeys.includes(column?.key));
         const hasTargetColumns = targetColumns.every(target => existing.some(column => column?.key === target.key));
@@ -3899,7 +3907,7 @@ class RiskManagementSystem {
             const clearButton = document.createElement('button');
             clearButton.type = 'button';
             clearButton.className = 'btn btn-outline btn-small';
-            clearButton.textContent = 'Deselect all';
+            clearButton.textContent = 'Tout désélectionner';
             clearButton.addEventListener('click', () => {
                 if (typeof deselectRiskCountryColumn === 'function' && column?.key) {
                     deselectRiskCountryColumn(column.key);
