@@ -2299,6 +2299,7 @@ tbody tr.risk-row-blurred:hover {
 
 .risk-register-description {
     color: var(--text-color);
+    white-space: pre-line;
 }
 
 .table-header {
