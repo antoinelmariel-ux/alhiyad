@@ -2059,8 +2059,10 @@ function exportReportsRisksXlsx() {
             "Exposition à la corruption": mapListToLabels(corruptionExposureTypes, rms?.config?.corruptionExposureTypes),
             'Mode de corruption': mapListToLabels(corruptionModes, rms?.config?.corruptionModes),
             'Tiers': tiers,
-            [risk?.riskTheme === 'personal-data' ? 'Système de stockage' : 'Avantages indus']: stringifyList(risk?.avantagesIndus || []),
-            [risk?.riskTheme === 'personal-data' ? 'Type de données' : 'Résultats attendus']: stringifyList(risk?.avantagesAttendus || []),
+            ...(new Set(['international-sanctions', 'discrimination']).has(risk?.riskTheme) ? {} : {
+                [risk?.riskTheme === 'personal-data' ? 'Système d’information' : 'Avantages indus']: stringifyList(risk?.avantagesIndus || []),
+                [risk?.riskTheme === 'personal-data' ? 'Type de données' : 'Résultats attendus']: stringifyList(risk?.avantagesAttendus || [])
+            }),
             'Scénario': risk?.description || risk?.titre || '',
             'Probabilité brut': probBrut || '',
             'Impact brut': impactBrut || '',
