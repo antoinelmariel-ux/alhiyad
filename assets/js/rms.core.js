@@ -13105,7 +13105,7 @@ class RiskManagementSystem {
                     { label: 'Description', value: risk.description, fullWidth: true },
                     ...benefitRows,
                     { label: 'Scénarios', value: risk.scenarios },
-                    { label: 'Exemple', value: risk.example }
+                    { label: 'Cas connus (en interne ou en externe)', value: risk.example }
                 ])}
                 ${renderSection('Évaluation du risque', [
                     { label: 'Probabilité brute', value: `${RISK_PROBABILITY_INFO?.[Number(risk.probBrut)]?.label || ''} (${formatNumber(risk.probBrut) || '0'})` },
