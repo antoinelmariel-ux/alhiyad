@@ -791,12 +791,20 @@ class RiskManagementSystem {
 
         const targetTierValues = [
             'autorites-locales',
+            'agents-publics',
+            'clients-publics',
+            'family-office',
+            'trusts-offshore',
+            'clients-uhnwi',
+            'touristes',
             'agences-de-tourisme',
             'groupes-hoteliers',
-            'vip',
-            'touristes-hors-vip',
             'concierges-partenaires',
-            'prestataires'
+            'agents-commerciaux',
+            'banques',
+            'prestataires',
+            'prestataire-si',
+            'candidats'
         ];
         const legacyTierValues = [
             'HealthcareProfessionals',

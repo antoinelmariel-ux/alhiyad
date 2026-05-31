@@ -60,7 +60,7 @@
             points: [
                 'Financial: < 25% of profits',
                 'Legal: sanctions at subsidiary level',
-                'Reputational: image damage among B2B customers or VIP customers; start of external exposure',
+                'Reputational: image damage among B2B customers or UHNWI customers; start of external exposure',
                 'Operational: significant disorganization of a subsidiary, service, or customer portfolio',
                 'Human: degradation of working climate, absenteeism, open conflict'
             ]
