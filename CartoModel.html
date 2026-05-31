@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.15.51</title>
+    <title>Cartographie des risques &amp; compliance Al Hiyad - v2.15.52</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/tour.min.css">
 
@@ -195,7 +195,7 @@
 
                             <div class="stat-card warning">
                                 <div class="stat-header">
-                                    <span class="stat-title">Risques élevés</span>
+                                    <span class="stat-title">Risques majeurs</span>
                                     <span class="stat-icon">⚡</span>
                                 </div>
                                 <div class="stat-value warning">5</div>
@@ -272,7 +272,7 @@
                         </div>
                         <div class="alerts-sections">
                             <section class="alerts-section">
-                                <div class="alerts-section-title">Risques modérés, élevés ou critiques sans plan d’action</div>
+                                <div class="alerts-section-title">Risques moyens, majeurs ou critiques sans plan d’action</div>
                                 <table class="alerts-table">
                                     <thead>
                                         <tr>
@@ -448,7 +448,7 @@
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.6));"></div>
-                                    <span>Élevé (≥ 6 ; < 12)</span>
+                                    <span>Majeur (≥ 6 ; < 12)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.5), rgba(231, 76, 60, 0.7));"></div>
@@ -498,7 +498,7 @@
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.6));"></div>
-                                    <span>Élevé (≥ 6 ; < 12)</span>
+                                    <span>Majeur (≥ 6 ; < 12)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.5), rgba(231, 76, 60, 0.7));"></div>
@@ -548,7 +548,7 @@
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.6));"></div>
-                                    <span>Élevé (≥ 6 ; &lt; 12)</span>
+                                    <span>Majeur (≥ 6 ; &lt; 12)</span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.5), rgba(231, 76, 60, 0.7));"></div>
@@ -991,6 +991,50 @@
                         <code>Score cible = Score brut aggravé × Coefficient de maîtrise cible</code>
                         <p>Le score cible illustre le risque résiduel attendu après la mise en œuvre des plans d’action.</p>
                     </div>
+
+
+                    <section class="legend-panel">
+                        <div class="legend-panel-header">
+                            <span class="legend-panel-icon">🧭</span>
+                            <div>
+                                <h2>Légende des niveaux de risque net</h2>
+                                <p>Repères de lecture des seuils appliqués aux scores nets pour prioriser la surveillance et les plans d’action.</p>
+                            </div>
+                        </div>
+                        <div class="legend-table-wrapper">
+                            <table class="legend-table">
+                                <thead>
+                                    <tr>
+                                        <th>Niveau</th>
+                                        <th>Score</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-1">Faible</span></td>
+                                        <td>&lt; 3</td>
+                                        <td>Risque accepté. Surveillance légère. Pas de plan d’action immédiat.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-2">Moyen</span></td>
+                                        <td>≥ 3 et &lt; 6</td>
+                                        <td>Risque à surveiller. Plan d’amélioration à moyen terme.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-3">Majeur</span></td>
+                                        <td>≥ 6 et &lt; 12</td>
+                                        <td>Risque prioritaire. Plan d’action obligatoire.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="legend-level-badge level-4">Critique</span></td>
+                                        <td>≥ 12</td>
+                                        <td>Risque inacceptable. Action immédiate. Reporting régulier au Comité de Direction.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
@@ -1030,7 +1074,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.15.51</span>
+            <span class="app-version">Version 2.15.52</span>
         </footer>
     </div>
 

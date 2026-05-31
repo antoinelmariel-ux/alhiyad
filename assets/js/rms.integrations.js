@@ -221,7 +221,7 @@ function writeDashboardPdfTextContent(writer, data, formatters) {
     const criticalShare = stats.total ? Math.round((stats.critical / stats.total) * 100) : 0;
     const highShare = stats.total ? Math.round((stats.high / stats.total) * 100) : 0;
     writer.addParagraph(`Risques critiques : ${formatNumber(stats.critical)} (${criticalShare}% du total)`);
-    writer.addParagraph(`Risques élevés : ${formatNumber(stats.high)} (${highShare}% du total)`);
+    writer.addParagraph(`Risques majeurs : ${formatNumber(stats.high)} (${highShare}% du total)`);
     writer.addParagraph(`Score global de maîtrise : ${formatNumber(metrics.globalScore)} %`);
     writer.addParagraph(`Réduction moyenne du score net : ${formatNumber(metrics.averageReduction, { decimals: 1 })}`);
     writer.addParagraph(`Contrôles actifs : ${formatNumber(metrics.activeControls)} sur ${formatNumber(metrics.totalControls)}`);
@@ -433,7 +433,7 @@ class JsPdfDashboardWriter {
             {
                 title: 'Risques validés',
                 value: formatValue(stats.total) === '-' ? '—' : formatValue(stats.total),
-                meta: `Critiques ${formatValue(stats.critical)} • Élevés ${formatValue(stats.high)}`,
+                meta: `Critiques ${formatValue(stats.critical)} • Majeurs ${formatValue(stats.high)}`,
                 color: this.palette.primary
             },
             {
@@ -594,8 +594,8 @@ class JsPdfDashboardWriter {
         const cols = 2;
         const cells = [
             { label: 'Critiques', value: stats.critical, color: { r: 200, g: 54, b: 54 } },
-            { label: 'Élevés', value: stats.high, color: { r: 235, g: 152, b: 0 } },
-            { label: 'Modérés', value: stats.medium, color: { r: 241, g: 196, b: 15 } },
+            { label: 'Majeurs', value: stats.high, color: { r: 235, g: 152, b: 0 } },
+            { label: 'Moyens', value: stats.medium, color: { r: 241, g: 196, b: 15 } },
             { label: 'Faibles', value: stats.low, color: { r: 88, g: 214, b: 141 } }
         ];
 
@@ -1991,8 +1991,8 @@ function exportReportsRisksXlsx() {
             ?? (typeof getRiskSeverityFromScore === 'function' ? getRiskSeverityFromScore(riskNetScore) : '');
         const netLevelLabel = mapToLabel(netLevel, [
             { value: 'faible', label: 'Faible' },
-            { value: 'modere', label: 'Modéré' },
-            { value: 'fort', label: 'Fort' },
+            { value: 'modere', label: 'Moyen' },
+            { value: 'fort', label: 'Majeur' },
             { value: 'critique', label: 'Critique' }
         ]);
         const mitigationLabel = netInfo?.label || mapToLabel(

@@ -25,8 +25,8 @@ function updateNetSeverityBadge(input, state = 'net') {
 
     const severityLabels = {
         critique: 'Risque critique',
-        fort: 'Risque élevé',
-        modere: 'Risque modéré',
+        fort: 'Risque majeur',
+        modere: 'Risque moyen',
         faible: 'Risque faible'
     };
 

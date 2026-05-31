@@ -7891,10 +7891,10 @@ class RiskManagementSystem {
                 ];
 
             const brutLevels = [
-                { value: 'critique', label: 'Critical Risk', min: 12, max: 16 },
-                { value: 'fort', label: 'High Risk', min: 6, max: 12 },
-                { value: 'modere', label: 'Moderate Risk', min: 3, max: 6 },
-                { value: 'faible', label: 'Low Risk', min: 0, max: 3 }
+                { value: 'critique', label: 'Risque critique', min: 12, max: 16 },
+                { value: 'fort', label: 'Risque majeur', min: 6, max: 12 },
+                { value: 'modere', label: 'Risque moyen', min: 3, max: 6 },
+                { value: 'faible', label: 'Risque faible', min: 0, max: 3 }
             ];
 
             const severityStops = [
@@ -7970,10 +7970,10 @@ class RiskManagementSystem {
                         { value: 'inefficace', label: 'Inefficace', coefficient: 1 }
                     ];
                 const brutLevels = [
-                    { value: 'critique', label: 'Critical Risk', min: 12, max: 16 },
-                    { value: 'fort', label: 'High Risk', min: 6, max: 12 },
-                    { value: 'modere', label: 'Moderate Risk', min: 3, max: 6 },
-                    { value: 'faible', label: 'Low Risk', min: 0, max: 3 }
+                    { value: 'critique', label: 'Risque critique', min: 12, max: 16 },
+                    { value: 'fort', label: 'Risque majeur', min: 6, max: 12 },
+                    { value: 'modere', label: 'Risque moyen', min: 3, max: 6 },
+                    { value: 'faible', label: 'Risque faible', min: 0, max: 3 }
                 ];
                 const severityStops = [
                     { min: 0, max: 3, className: 'level-1' },
@@ -8168,10 +8168,10 @@ class RiskManagementSystem {
             : ['inefficace', 'insuffisant', 'ameliorable', 'efficace'];
         const brutLevelsOrder = ['critique', 'fort', 'modere', 'faible'];
         const severityLabelMap = {
-            critique: 'Critical Risk',
-            fort: 'High Risk',
-            modere: 'Moderate Risk',
-            faible: 'Low Risk'
+            critique: 'Risque critique',
+            fort: 'Risque majeur',
+            modere: 'Risque moyen',
+            faible: 'Risque faible'
         };
         const defaultRiskThemeColors = {
             corruption: '#8b5cf6',
@@ -9799,9 +9799,9 @@ class RiskManagementSystem {
         };
 
         const severityLabels = {
-            critique: 'Critical Risk',
-            fort: 'High Risk',
-            modere: 'Moderate Risk'
+            critique: 'Risque critique',
+            fort: 'Risque majeur',
+            modere: 'Risque moyen'
         };
 
         const acceptableSeverities = new Set(['modere', 'fort', 'critique']);
@@ -9848,7 +9848,7 @@ class RiskManagementSystem {
                     id: risk.id,
                     description: risk.description || risk.titre || 'Sans description',
                     process: this.getProcessLabel(risk.processus || risk.process) || '-',
-                    level: severityLabels[severityKey] || 'Moderate',
+                    level: severityLabels[severityKey] || 'Risque moyen',
                     severity: severityKey,
                     score,
                     date: dateValue || null,
@@ -12847,8 +12847,8 @@ class RiskManagementSystem {
         const getRiskLevelLabelFromScore = (score) => {
             const value = Number(score) || 0;
             if (value >= 12) return 'Critique';
-            if (value >= 6) return 'Élevé';
-            if (value >= 3) return 'Modéré';
+            if (value >= 6) return 'Majeur';
+            if (value >= 3) return 'Moyen';
             return 'Faible';
         };
         const getStatusVisualClass = (status) => {
@@ -12871,11 +12871,11 @@ class RiskManagementSystem {
             const grossRows = [
                 { score: 16, label: 'Critique' },
                 { score: 12, label: 'Critique' },
-                { score: 9, label: 'Élevé' },
-                { score: 8, label: 'Élevé' },
-                { score: 6, label: 'Élevé' },
-                { score: 4, label: 'Modéré' },
-                { score: 3, label: 'Modéré' },
+                { score: 9, label: 'Majeur' },
+                { score: 8, label: 'Majeur' },
+                { score: 6, label: 'Majeur' },
+                { score: 4, label: 'Moyen' },
+                { score: 3, label: 'Moyen' },
                 { score: 2, label: 'Faible' },
                 { score: 1, label: 'Faible' }
             ];
@@ -12997,8 +12997,8 @@ class RiskManagementSystem {
                     <div class="risk-view-evolution-col-labels" aria-hidden="true">${columns}</div>
                     <div class="risk-view-evolution-color-legend" aria-label="Légende des niveaux de risque">
                         <span><i class="level-1"></i> Faible</span>
-                        <span><i class="level-2"></i> Modéré</span>
-                        <span><i class="level-3"></i> Élevé</span>
+                        <span><i class="level-2"></i> Moyen</span>
+                        <span><i class="level-3"></i> Majeur</span>
                         <span><i class="level-4"></i> Critique</span>
                     </div>
                 </section>
