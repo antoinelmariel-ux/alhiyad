@@ -100,12 +100,20 @@ function prepareOnboardingStep(stepIndex) {
         case 11: {
             if (window.rms && typeof window.rms.viewRisk === 'function') {
                 window.rms.viewRisk(1);
+                if (stepIndex === 9) {
+                    setTimeout(() => scrollWithinModalTo('#riskViewModal', '#riskViewModal .risk-view-evolution-section'), 180);
+                }
                 if (stepIndex === 10) {
                     setTimeout(() => {
                         scrollWithinModalTo('#riskViewModal', '#riskViewModal .risk-view-overview-sections');
                     }, 180);
-                } else {
-                    setTimeout(() => scrollWithinModalTo('#riskViewModal', '#riskViewModal .risk-view-evolution-section'), 180);
+                }
+                if (stepIndex === 11) {
+                    const editButton = document.getElementById('riskViewEditButton');
+                    setTimeout(() => {
+                        editButton?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                        editButton?.focus({ preventScroll: true });
+                    }, 180);
                 }
                 break;
             }
@@ -230,8 +238,8 @@ function buildOnboardingTour() {
             { title: 'Matrice après plan d’action', target: '#matrixGridPost', content: 'Enfin, nous projetons ici les risques tels qu’ils seraient post mise en place des plans d’action déterminés et validés.', dialogPlacement: 'bottom' },
             { title: 'Risques après plan d’action', target: '.matrix-container[data-view="post"] .risk-details-panel', content: 'Le panneau est automatiquement repositionné en haut pour afficher la liste complète des risques post plan d’action. Cliquez sur l’icône œil d’un risque pour afficher son détail.' },
             { title: 'Lecture détaillée du risque', target: '#riskViewModal .risk-view-section.risk-view-evolution-section', content: 'Le focus est centré sur la matrice d’évolution afin de visualiser immédiatement le passage du score brut au score post plan d’action.' },
-            { title: 'Informations', target: '#riskViewModal .risk-view-overview-sections', content: 'Retrouvez ici les blocs « Informations générales » et « Évaluation du risque » pour une lecture complète du contexte et des scores.' },
-            { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.', forceDialogTopRight: true },
+            { title: 'Informations', target: '#riskViewModal .risk-view-overview-sections', content: 'Retrouvez ici les blocs « Informations générales » et « Évaluation du risque » pour une lecture complète du contexte et des scores.', forceDialogTopRight: true },
+            { title: 'Modifier ce risque', target: '#riskViewEditButton', content: 'Le bouton permet de modifier le risque et de voir toutes les possibilités de la configuration.' },
             { title: 'Configuration – Thématique', target: '#riskFormThemeSection', content: "Choisissez la thématique. En fonction certains champs spécifiques s'affichent.", dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', dialogTarget: '#riskFormThemeSection', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.', dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', dialogTarget: '#riskFormThemeSection', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles sont dépendants du type de risque.', dialogPlacement: 'top-start', forceDialogTopRight: true },
