@@ -13062,6 +13062,13 @@ class RiskManagementSystem {
         }, {});
         const controls = normalizeList(risk.controls).map(ref => controlIndex[String(ref)]?.name || controlIndex[String(ref)]?.title || ref);
         const actionPlans = normalizeList(risk.actionPlans).map(ref => actionPlanIndex[String(ref)]?.name || actionPlanIndex[String(ref)]?.title || ref);
+        const shouldShowBenefitFields = !new Set(['international-sanctions', 'discrimination']).has(theme);
+        const benefitRows = shouldShowBenefitFields
+            ? [
+                { label: theme === 'personal-data' ? 'Système d’information' : 'Avantages indus', value: risk.avantagesIndus },
+                { label: theme === 'personal-data' ? 'Type de données' : 'Résultats attendus', value: risk.avantagesAttendus }
+            ]
+            : [];
 
         if (title) {
             title.textContent = `Risque #${risk.id} — ${risk.titre || risk.description || 'Sans titre'}`;
@@ -13096,8 +13103,7 @@ class RiskManagementSystem {
                     { label: 'Tiers concernés', value: tiers },
                     { label: 'Entités concernées', value: entities },
                     { label: 'Description', value: risk.description, fullWidth: true },
-                    { label: 'Avantages indus', value: risk.avantagesIndus },
-                    { label: 'Résultats attendus', value: risk.avantagesAttendus },
+                    ...benefitRows,
                     { label: 'Scénarios', value: risk.scenarios },
                     { label: 'Exemple', value: risk.example }
                 ])}
@@ -13230,6 +13236,9 @@ class RiskManagementSystem {
             }
             if (typeof updateCorruptionSpecificFieldsVisibility === 'function') {
                 updateCorruptionSpecificFieldsVisibility({ clearHiddenValues: false });
+            }
+            if (typeof updateRiskBenefitsBlockForTheme === 'function') {
+                updateRiskBenefitsBlockForTheme({ clearHiddenValues: false });
             }
             if (targetAudienceSelect) {
                 Array.from(targetAudienceSelect.options).forEach(opt => {

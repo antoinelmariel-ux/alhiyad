@@ -698,7 +698,7 @@ function getAssignedControlsForBenefit(label) {
 function getRiskUndueBenefitTerminology() {
     const riskThemeSelect = document.getElementById('riskTheme');
     return riskThemeSelect && riskThemeSelect.value === 'personal-data'
-        ? { bare: 'système de stockage', demonstrative: 'ce système de stockage' }
+        ? { bare: 'système d’information', demonstrative: 'ce système d’information' }
         : { bare: 'avantage indu', demonstrative: 'cet avantage indu' };
 }
 
@@ -1164,9 +1164,9 @@ function updateRiskBenefitsBlockForTheme(options = {}) {
     }
 
     if (theme === 'personal-data') {
-        if (undueLabel) undueLabel.textContent = 'Système de stockage';
+        if (undueLabel) undueLabel.textContent = 'Système d’information';
         if (expectedLabel) expectedLabel.textContent = 'Type de données';
-        if (undueInput) undueInput.placeholder = 'Saisir un système de stockage';
+        if (undueInput) undueInput.placeholder = 'Saisir un système d’information';
         if (expectedInput) expectedInput.placeholder = 'Saisir un type de données';
     } else {
         if (undueLabel) undueLabel.textContent = 'Avantages indus';
