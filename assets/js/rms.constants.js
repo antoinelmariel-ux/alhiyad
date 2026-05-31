@@ -2,12 +2,12 @@
 
 const RISK_PROBABILITY_INFO = {
     1: {
-        label: 'Peu probable',
-        text: 'Pourrait survenir une fois tous les 5 ans en l’absence de mesures de maîtrise.'
+        label: 'Rare',
+        text: 'Pourrait survenir une fois tous les 10 ans en l’absence de mesures de maîtrise.'
     },
     2: {
-        label: 'Moyennement probable',
-        text: 'Pourrait survenir une fois tous les 3 ans en l’absence de mesures de maîtrise.'
+        label: 'Peu probable',
+        text: 'Pourrait survenir une fois tous les 5 ans en l’absence de mesures de maîtrise.'
     },
     3: {
         label: 'Probable',
@@ -22,19 +22,19 @@ const RISK_PROBABILITY_INFO = {
 const RISK_IMPACT_INFO = {
     1: {
         label: 'Faible',
-        text: "<p><strong>Financier</strong></p><ul><li>&lt; 5% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Sanction interne disciplinaire envers un collaborateur</li></ul><p><strong>Réputationnel</strong></p><ul><li>Mécontentement isolé, sans exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Perturbation ponctuelle, résolue localement</li></ul><p><strong>Humain</strong></p><ul><li>Malaise ponctuel et baisse limitée de motivation sans impact durable</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>&lt; <5% du CA Groupe</li></ul><p><strong>Juridique</strong></p><ul><li>Sanction interne disciplinaire envers un collaborateur</li></ul><p><strong>Réputationnel</strong></p><ul><li>Mécontentement isolé, sans exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Perturbation ponctuelle, résolue localement</li></ul><p><strong>Humain</strong></p><ul><li>Malaise ponctuel et baisse limitée de motivation sans impact durable</li></ul>"
     },
     2: {
         label: 'Modéré',
-        text: "<p><strong>Financier</strong></p><ul><li>&lt; 10% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Procédure judiciaire ou administrative à l’échelle d’un collaborateur</li></ul><p><strong>Réputationnel</strong></p><ul><li>Réclamation client sensible, risque de bouche-à-oreille négatif dans un cercle restreint</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation locale ou sur plusieurs missions ; intervention HQ</li></ul><p><strong>Humain</strong></p><ul><li>Tensions récurrentes et désengagement individuel nécessitant une intervention managériale</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>&lt; <10% du CA Groupe</li></ul><p><strong>Juridique</strong></p><ul><li>Procédure judiciaire ou administrative à l’échelle d’un collaborateur</li></ul><p><strong>Réputationnel</strong></p><ul><li>Réclamation client sensible, risque de bouche-à-oreille négatif dans un cercle restreint</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation locale ou sur plusieurs missions ; intervention HQ</li></ul><p><strong>Humain</strong></p><ul><li>Tensions récurrentes et désengagement individuel nécessitant une intervention managériale</li></ul>"
     },
     3: {
         label: 'Fort',
-        text: "<p><strong>Financier</strong></p><ul><li>&lt; 25% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Sanctions à l’échelle d’une filiale</li></ul><p><strong>Réputationnel</strong></p><ul><li>Atteinte à l’image auprès de clients B2B ou clients UHNWI ; début d’exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation importante d’une filiale, d’un service ou d’un portefeuille client</li></ul><p><strong>Humain</strong></p><ul><li>Dégradation du climat de travail, absentéisme, conflit ouvert</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>&lt; <15% du CA Groupe</li></ul><p><strong>Juridique</strong></p><ul><li>Sanctions à l’échelle d’une filiale</li></ul><p><strong>Réputationnel</strong></p><ul><li>Atteinte à l’image auprès de clients B2B ou clients UHNWI ; début d’exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation importante d’une filiale, d’un service ou d’un portefeuille client</li></ul><p><strong>Humain</strong></p><ul><li>Dégradation du climat de travail, absentéisme, conflit ouvert</li></ul>"
     },
     4: {
         label: 'Critique',
-        text: "<p><strong>Financier</strong></p><ul><li>≥ 25% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Poursuites pénales majeures, interdiction d’opérer ou sanctions lourdes</li></ul><p><strong>Réputationnel</strong></p><ul><li>Forte exposition médiatique ; perte de confiance durable des clients</li></ul><p><strong>Opérationnel</strong></p><ul><li>Arrêt prolongé d’une activité critique ou rupture systémique du modèle opérationnel</li></ul><p><strong>Humain</strong></p><ul><li>Désengagement collectif, départs multiples et perte durable d’attractivité employeur</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>≥ 15% du CA Groupe</li></ul><p><strong>Juridique</strong></p><ul><li>Poursuites pénales majeures, interdiction d’opérer ou sanctions lourdes</li></ul><p><strong>Réputationnel</strong></p><ul><li>Forte exposition médiatique ; perte de confiance durable des clients</li></ul><p><strong>Opérationnel</strong></p><ul><li>Arrêt prolongé d’une activité critique ou rupture systémique du modèle opérationnel</li></ul><p><strong>Humain</strong></p><ul><li>Désengagement collectif, départs multiples et perte durable d’attractivité employeur</li></ul>"
     }
 };
 
