@@ -734,7 +734,9 @@ function renderBenefitFirstAssignment() {
                             ${linkedHtml}
                         </div>
                         <div class="benefit-first-actions">
-                            
+                            <button type="button" class="btn btn-outline btn-sm" onclick="openControlSelectorForBenefit('${encodeInlineArgument(label)}')">
+                                + Ajouter un contrôle
+                            </button>
                         </div>
                     </div>
                 `;
