@@ -882,13 +882,7 @@ function renderAggravatingFactors(theme, selectedFactors = null) {
         const selectedValues = Array.isArray(selected[groupKey]) && selected.theme === normalizedTheme
             ? selected[groupKey]
             : [];
-        const configuredValues = new Set(configuredFactors
-            .map(factor => factor && factor.value != null ? String(factor.value) : '')
-            .filter(Boolean));
-        const legacySelectedFactors = selectedValues
-            .filter(value => value && !configuredValues.has(value))
-            .map(value => ({ value, label: `Legacy factor: ${value}` }));
-        const factorList = [...configuredFactors, ...legacySelectedFactors];
+        const factorList = configuredFactors;
         const options = factorList.map((factor, index) => {
             const value = factor && factor.value != null ? String(factor.value) : '';
             const label = factor && factor.label != null ? String(factor.label) : value;

@@ -14,8 +14,15 @@ function updateNetSeverityBadge(input, state = 'net') {
     if (!badge) return;
 
     const numericInput = Number(input);
-    const severity = Number.isFinite(numericInput) && typeof getRiskSeverityFromScore === 'function'
-        ? getRiskSeverityFromScore(numericInput)
+    const getMitigatedSeverityFromScore = (score) => {
+        const numericScore = Number(score) || 0;
+        if (numericScore >= 12) return 'critique';
+        if (numericScore > 6) return 'fort';
+        if (numericScore >= 3) return 'modere';
+        return 'faible';
+    };
+    const severity = Number.isFinite(numericInput)
+        ? getMitigatedSeverityFromScore(numericInput)
         : (function resolveSeverityFromImpact(value) {
             const numericImpact = parseInt(value, 10) || 1;
             return typeof getSeverityFromNetImpactValue === 'function'
