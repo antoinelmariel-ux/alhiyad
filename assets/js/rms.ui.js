@@ -876,7 +876,7 @@ function renderAggravatingFactors(theme, selectedFactors = null) {
             group1: { coefficient: 1.4, inputName: 'aggravatingGroup1' },
             group2: { coefficient: 1.2, inputName: 'aggravatingGroup2' }
         };
-    const groupLabels = { group1: 'Critical', group2: 'Major' };
+    const groupLabels = { group1: 'Critique', group2: 'Majeur' };
 
     const renderGroup = (groupKey) => {
         const groupConfig = groups[groupKey] || {};
@@ -909,10 +909,10 @@ function renderAggravatingFactors(theme, selectedFactors = null) {
 
     block.innerHTML = `
                                 <div class="aggravating-factors-header">
-                                    <h4>Potential aggravating factors</h4>
-                                    <p>Select relevant factors for the selected theme to automatically adjust gross risk Probability.</p>
+                                    <h4>Potentiel facteurs aggravants</h4>
+                                    <p>Sélectionnez les facteurs aggravants qui viendront ajuster le score de risque brut.</p>
                                     <div class="aggravating-coefficient-summary">
-                                        Applied coefficient: <strong id="aggravatingCoefficientDisplay">1,0</strong>
+                                        Coefficient appliqué : <strong id="aggravatingCoefficientDisplay">1,0</strong>
                                     </div>
                                 </div>
                                 <div class="aggravating-factor-groups">${Object.keys(groups).map(renderGroup).join('')}
