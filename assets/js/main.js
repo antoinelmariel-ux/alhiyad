@@ -120,7 +120,8 @@ function prepareOnboardingStep(stepIndex) {
         case 13:
         case 14:
         case 15:
-        case 16: {
+        case 16:
+        case 17: {
             const isRiskModalOpen = document.getElementById('riskModal')?.classList.contains('show');
             if (!isRiskModalOpen) {
                 const editButton = document.getElementById('riskViewEditButton');
@@ -142,11 +143,14 @@ function prepareOnboardingStep(stepIndex) {
                 focusModalTourTarget('#riskControlsSection');
             }
             if (stepIndex === 16) {
-                focusModalTourTarget('#controls-section');
+                focusModalTourTarget('#netRiskAssessmentSection');
+            }
+            if (stepIndex === 17) {
+                focusModalTourTarget('#postActionAssessmentSection');
             }
             break;
         }
-        case 17: {
+        case 18: {
             const riskModal = document.getElementById('riskModal');
             if (riskModal?.classList.contains('show') && typeof window.closeModal === 'function') {
                 window.closeModal('riskModal');
@@ -232,16 +236,19 @@ function buildOnboardingTour() {
             { title: 'Configuration – Matrice brute', target: '#risk-matrix-editor', dialogTarget: '#riskFormThemeSection', content: 'Ajustez probabilité/impact directement dans la matrice brute en voyant automatiquement la légende s’ajuster.', dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Configuration - Facteurs aggravants', target: '#aggravatingFactorsBlock', dialogTarget: '#riskFormThemeSection', content: 'Indiquez les facteurs aggravants. Les facteurs disponibles sont dépendants du type de risque.', dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Contrôle', target: '#riskControlsSection', dialogTarget: '#riskFormThemeSection', content: 'Vous pouvez rattacher au risque brut les contrôles et mesures de maîtrise issues de votre référentiel de contrôles.', dialogPlacement: 'top-start', forceDialogTopRight: true },
-            { title: 'Configuration – Risque net', target: '#controls-section', dialogTarget: '#riskFormThemeSection', content: 'Sur cette base, évaluez le niveau de maîtrise du risque pour évaluer le risque net.', dialogPlacement: 'top-start', forceDialogTopRight: true },
-          { title: 'Configuration – Risque post plan d’action', target: '#controls-section', dialogTarget: '#riskFormThemeSection', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.', dialogPlacement: 'top-start', forceDialogTopRight: true },
+            { title: 'Configuration – Risque net', target: '#netRiskAssessmentSection', dialogTarget: '#riskFormThemeSection', content: 'Sur cette base, évaluez le niveau de maîtrise du risque pour évaluer le risque net.', dialogPlacement: 'top-start', forceDialogTopRight: true },
+            { title: 'Configuration – Risque post plan d’action', target: '#postActionAssessmentSection', dialogTarget: '#riskFormThemeSection', content: 'Vous avez à ce niveau la possibilité de rattacher des plans d’actions et d’indiquer le niveau de maîtrise projeté post plan d’action.', dialogPlacement: 'top-start', forceDialogTopRight: true },
             { title: 'Légendes', target: '#tab-legends', content: 'Retrouvez ici les échelles utilisées. Notez que les facteurs aggravants sont propres à chaque thématique de risque.' },
             { title: 'Relancer la présentation', target: '#startOnboardingTourBtn', content: 'Vous pouvez relancer à tout moment le tour de présentation de la cartographie via ce bouton.' }
         ]
     });
 
-    tg.onAfterStepChange(() => {
-        const index = Number.isInteger(tg.activeStep) ? tg.activeStep + 1 : 0;
+    tg.onBeforeStepChange((_currentStep, nextStep) => {
+        const index = Number.isInteger(nextStep) ? nextStep + 1 : 0;
         prepareOnboardingStep(index);
+    });
+
+    tg.onAfterStepChange(() => {
         const activeStepConfig = tg.tourSteps?.[tg.activeStep];
         const dialog = document.querySelector('.tg-dialog');
         if (dialog) {
