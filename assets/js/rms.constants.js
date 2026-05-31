@@ -30,7 +30,7 @@ const RISK_IMPACT_INFO = {
     },
     3: {
         label: 'Fort',
-        text: "<p><strong>Financier</strong></p><ul><li>&lt; 25% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Sanctions à l’échelle d’une filiale</li></ul><p><strong>Réputationnel</strong></p><ul><li>Atteinte à l’image auprès de clients B2B ou clients VIP ; début d’exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation importante d’une filiale, d’un service ou d’un portefeuille client</li></ul><p><strong>Humain</strong></p><ul><li>Dégradation du climat de travail, absentéisme, conflit ouvert</li></ul>"
+        text: "<p><strong>Financier</strong></p><ul><li>&lt; 25% des bénéfices</li></ul><p><strong>Juridique</strong></p><ul><li>Sanctions à l’échelle d’une filiale</li></ul><p><strong>Réputationnel</strong></p><ul><li>Atteinte à l’image auprès de clients B2B ou clients UHNWI ; début d’exposition externe</li></ul><p><strong>Opérationnel</strong></p><ul><li>Désorganisation importante d’une filiale, d’un service ou d’un portefeuille client</li></ul><p><strong>Humain</strong></p><ul><li>Dégradation du climat de travail, absentéisme, conflit ouvert</li></ul>"
     },
     4: {
         label: 'Critique',
