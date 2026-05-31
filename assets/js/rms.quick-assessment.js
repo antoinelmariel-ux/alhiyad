@@ -166,10 +166,10 @@
     }
 
     function scoreLabel(score) {
-        if (score >= 12) return 'Critical Risk';
-        if (score >= 6) return 'High Risk';
-        if (score >= 3) return 'Moderate Risk';
-        return 'Low Risk';
+        if (score >= 12) return 'Risque critique';
+        if (score >= 6) return 'Risque majeur';
+        if (score >= 3) return 'Risque moyen';
+        return 'Risque faible';
     }
 
     function replaceScenariosFromText(inputText) {
