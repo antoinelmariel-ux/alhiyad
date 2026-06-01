@@ -10,8 +10,6 @@ function switchTab(tabNameOrEvent, maybeTabName) {
     if (typeof tabNameOrEvent === 'object' && tabNameOrEvent !== null && !(tabNameOrEvent instanceof String)) {
         evt = tabNameOrEvent;
         tabName = maybeTabName;
-    } else {
-        evt = window.event || null;
     }
 
     if (typeof tabName !== 'string' || !tabName) {

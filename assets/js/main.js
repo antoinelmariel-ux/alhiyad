@@ -62,8 +62,12 @@ function setupRiskRegisterScrollCue() {
 }
 
 function prepareOnboardingStep(stepIndex) {
+    const safeSwitchTab = (tabName) => {
+        if (typeof window.switchTab === 'function') {
+            window.switchTab(tabName);
+        }
+    };
     const stickMenuTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-    const slowScrollMainTo = (top) => window.scrollTo({ top, behavior: 'smooth' });
     const scrollToElement = (selector, options = { block: 'center' }) => {
         const target = document.querySelector(selector);
         if (target) {
@@ -128,31 +132,31 @@ function prepareOnboardingStep(stepIndex) {
     switch (stepIndex) {
         case 1:
         case 2:
-            switchTab('dashboard');
+            safeSwitchTab('dashboard');
             stickMenuTop();
             break;
         case 3:
-            switchTab('interviews');
+            safeSwitchTab('interviews');
             stickMenuTop();
             break;
         case 4:
-            switchTab('matrix');
+            safeSwitchTab('matrix');
             stickMenuTop();
             break;
         case 5:
-            switchTab('matrix');
+            safeSwitchTab('matrix');
             setTimeout(() => scrollToElement('#matrixGridBrut'), 120);
             break;
         case 6:
-            switchTab('matrix');
+            safeSwitchTab('matrix');
             setTimeout(() => scrollToElement('#matrixGridNet'), 120);
             break;
         case 7:
-            switchTab('matrix');
+            safeSwitchTab('matrix');
             setTimeout(() => scrollToElement('#matrixGridPost'), 120);
             break;
         case 8:
-            switchTab('matrix');
+            safeSwitchTab('matrix');
             setTimeout(() => {
                 scrollRiskPanelTop();
                 scrollToElement('#riskDetailsListPost', { block: 'start' });
@@ -227,7 +231,7 @@ function prepareOnboardingStep(stepIndex) {
                 window.closeModal('riskModal');
             }
             closeRiskViewModal();
-            switchTab('legends');
+            safeSwitchTab('legends');
             stickMenuTop();
             break;
         }
@@ -316,7 +320,12 @@ function buildOnboardingTour() {
 
     tg.onBeforeStepChange((_currentStep, nextStep) => {
         const index = Number.isInteger(nextStep) ? nextStep + 1 : 0;
-        prepareOnboardingStep(index);
+
+        try {
+            prepareOnboardingStep(index);
+        } catch (error) {
+            console.warn('Préparation de l’étape du tour ignorée :', error);
+        }
     });
 
     tg.onAfterStepChange(() => {
