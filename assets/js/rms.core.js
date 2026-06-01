@@ -9445,14 +9445,26 @@ class RiskManagementSystem {
 
         const formatDetectivePreventiveSplit = (distribution, total) => {
             if (!total || !Array.isArray(distribution) || distribution.length === 0) {
-                return 'No active control';
+                return 'Aucun contrôle actif';
             }
 
-            const findCount = (needle) => distribution
+            const normalizeControlTypeText = (text) => String(text || '')
+                .trim()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+
+            const aliases = {
+                detective: new Set(['a-posteriori', 'detectif', 'detective']),
+                preventive: new Set(['a-priori', 'preventif', 'preventive'])
+            };
+
+            const findCount = (typeKey) => distribution
                 .filter(item => {
-                    const value = String(item?.value || '').toLowerCase();
-                    const label = String(item?.label || '').toLowerCase();
-                    return value === needle || label === needle;
+                    const value = normalizeControlTypeText(item?.value);
+                    const label = normalizeControlTypeText(item?.label);
+                    const acceptedValues = aliases[typeKey] || new Set();
+                    return acceptedValues.has(value) || acceptedValues.has(label);
                 })
                 .reduce((sum, item) => sum + (Number(item?.count) || 0), 0);
 
@@ -9461,7 +9473,7 @@ class RiskManagementSystem {
             const detectivePct = Math.round((detectiveCount / total) * 100);
             const preventivePct = Math.round((preventiveCount / total) * 100);
 
-            return `${detectivePct}% Detective vs ${preventivePct}% Preventive`;
+            return `Préventif : ${preventivePct}% • Détectif : ${detectivePct}%`;
         };
 
         const formatControlEffectivenessDistribution = (distribution) => {
