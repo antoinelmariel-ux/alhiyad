@@ -151,7 +151,7 @@ function updateNetSliderUI(probValue, state = 'net') {
         if (percentLabel) {
             const coefficientLabel = typeof formatMitigationCoefficient === 'function'
                 ? formatMitigationCoefficient(option.coefficient)
-                : (Number(option.coefficient) || 1).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                : `${Math.round((1 - Math.min(Math.max(Number(option.coefficient) || 1, 0.25), 1)) * 100).toLocaleString('fr-FR')} %`;
             percentLabel.textContent = `Coefficient ${coefficientLabel}`;
         }
     }
@@ -207,7 +207,7 @@ function initMitigationSlider(state = 'net') {
         mark.dataset.value = option.value;
         const coefficientLabel = typeof formatMitigationCoefficient === 'function'
             ? formatMitigationCoefficient(option.coefficient)
-            : (Number(option.coefficient) || 1).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            : `${Math.round((1 - Math.min(Math.max(Number(option.coefficient) || 1, 0.25), 1)) * 100).toLocaleString('fr-FR')} %`;
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'net-slider-mark-button';
@@ -411,7 +411,7 @@ function calculateScore(type) {
                 : '0';
             const mitigationLabel = typeof formatMitigationCoefficient === 'function'
                 ? formatMitigationCoefficient(coefficient)
-                : coefficient.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                : `${Math.round((1 - Math.min(Math.max(Number(coefficient) || 1, 0.25), 1)) * 100).toLocaleString('fr-FR')} %`;
             coordElement.textContent = `Brut ${brutLabel} × Coefficient ${mitigationLabel}`;
         } else {
             coordElement.textContent = `P${prob} × I${impact}`;

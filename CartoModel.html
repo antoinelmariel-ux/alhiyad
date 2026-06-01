@@ -934,8 +934,8 @@
 
                     <div class="legend-formula-card success">
                         <span class="legend-formula-label">Formule — risque net</span>
-                        <code>Score net = Score brut aggravé × Coefficient de maîtrise</code>
-                        <p>Le coefficient de maîtrise traduit l’efficacité des contrôles existants : plus il est faible, plus la réduction du risque est forte.</p>
+                        <code>Score net = Score brut aggravé × Facteur résiduel</code>
+                        <p>Le coefficient affiché côté utilisateur correspond au taux de maîtrise : plus il est élevé, plus la réduction du risque est forte.</p>
                     </div>
 
                     <section class="legend-panel">
@@ -951,34 +951,34 @@
                                 <thead>
                                     <tr>
                                         <th>Niveau</th>
-                                        <th>Coefficient</th>
-                                        <th>Réduction indicative</th>
+                                        <th>Coefficient utilisateur</th>
+                                        <th>Facteur de calcul</th>
                                         <th>Lecture pédagogique</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td><span class="legend-control-pill effective">Efficace</span></td>
-                                        <td>0,25</td>
                                         <td>75 %</td>
+                                        <td>0,25</td>
                                         <td>Gouvernance active, procédures formalisées, contrôles documentés, audits et formation ciblée avec taux élevé.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-control-pill improvable">Améliorable</span></td>
-                                        <td>0,50</td>
                                         <td>50 %</td>
+                                        <td>0,50</td>
                                         <td>Dispositif formalisé mais suivi, mise à jour, ciblage ou preuves d’exécution encore perfectibles.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-control-pill insufficient">Insuffisant</span></td>
-                                        <td>0,75</td>
                                         <td>25 %</td>
+                                        <td>0,75</td>
                                         <td>Processus informels ou partiellement mis en œuvre, contrôles ad hoc, sensibilisation limitée.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-control-pill ineffective">Inefficace</span></td>
-                                        <td>1,00</td>
                                         <td>0 %</td>
+                                        <td>1,00</td>
                                         <td>Absence ou inefficacité des procédures, contrôles, gouvernance et actions de formation.</td>
                                     </tr>
                                 </tbody>
@@ -1074,7 +1074,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <span class="app-version">Version 2.15.63</span>
+            <span class="app-version">Version 2.15.64</span>
         </footer>
     </div>
 
@@ -1726,7 +1726,7 @@
                                             <div class="net-slider-marks" id="netMitigationMarks"></div>
                                         </div>
                                         <div class="net-slider-footer">
-                                            <span class="net-slider-percent" id="netMitigationPercentLabel">Coefficient 0,50</span>
+                                            <span class="net-slider-percent" id="netMitigationPercentLabel">Coefficient 25 %</span>
                                             <span class="net-severity-badge" id="netSeverityLabel" data-severity="faible">Risque faible</span>
                                         </div>
                                     </div>
@@ -1740,7 +1740,7 @@
                             <div class="risk-score-card" data-state="net">
                                 <div class="risk-score-title">Risque net</div>
                                 <div class="risk-score-value" id="scoreNet">Score: 0</div>
-                                <div class="risk-score-meta" id="coordNet">Brut 0 × Coefficient 1,00</div>
+                                <div class="risk-score-meta" id="coordNet">Brut 0 × Coefficient 25 %</div>
                             </div>
                         </div>
                     </div>
@@ -1769,7 +1769,7 @@
                                                 <div class="net-slider-marks" id="postActionMitigationMarks"></div>
                                             </div>
                                             <div class="net-slider-footer">
-                                                <span class="net-slider-percent" id="postActionMitigationPercentLabel">Coefficient 0,50</span>
+                                                <span class="net-slider-percent" id="postActionMitigationPercentLabel">Coefficient 25 %</span>
                                                 <span class="net-severity-badge" id="postActionSeverityLabel" data-severity="faible">Risque faible</span>
                                             </div>
                                         </div>
@@ -1783,7 +1783,7 @@
                                 <div class="risk-score-card" data-state="post">
                                     <div class="risk-score-title">Risque net après plan d’action</div>
                                     <div class="risk-score-value" id="scorePost">Score: 0</div>
-                                    <div class="risk-score-meta" id="coordPost">Brut 0 × Coefficient 1,00</div>
+                                    <div class="risk-score-meta" id="coordPost">Brut 0 × Coefficient 25 %</div>
                                 </div>
                             </div>
                         </div>

@@ -12878,10 +12878,10 @@ class RiskManagementSystem {
             const mitigationOptions = typeof getMitigationEffectivenessOptions === 'function'
                 ? getMitigationEffectivenessOptions()
                 : [
-                    { value: 'efficace', label: 'Effective', coefficient: 0.25 },
-                    { value: 'ameliorable', label: 'Room for improvement', coefficient: 0.5 },
-                    { value: 'insuffisant', label: 'Insufficient', coefficient: 0.75 },
-                    { value: 'inefficace', label: 'Ineffective', coefficient: 1 }
+                    { value: 'efficace', label: 'Efficace', coefficient: 0.25 },
+                    { value: 'ameliorable', label: 'Améliorable', coefficient: 0.5 },
+                    { value: 'insuffisant', label: 'Insuffisant', coefficient: 0.75 },
+                    { value: 'inefficace', label: 'Inefficace', coefficient: 1 }
                 ];
             const mitigationOrder = mitigationOptions.map(option => option.value);
             const grossRows = [
@@ -13112,8 +13112,8 @@ class RiskManagementSystem {
                     { label: 'Impact brut', value: `${RISK_IMPACT_INFO?.[Number(risk.impactBrut)]?.label || ''} (${formatNumber(risk.impactBrut) || '0'})` },
                     { label: 'Facteurs aggravants retenus', value: [...group1Factors, ...group2Factors] },
                     { label: 'Coefficient aggravant retenu', value: formatNumber(aggravatingCoefficient) },
-                    { label: 'Niveau de maîtrise', value: `${netInfo.label || 'Non défini'} (${formatNumber(netInfo.coefficient) || '1'})` },
-                    { label: 'Après plan — niveau de maîtrise', value: `${postInfo.label || 'Non défini'} (${formatNumber(postInfo.coefficient) || '1'})` }
+                    { label: 'Niveau de maîtrise', value: `${netInfo.label || 'Non défini'} (${typeof formatMitigationCoefficient === 'function' ? formatMitigationCoefficient(netInfo.coefficient) : `${Math.round((1 - (netInfo.coefficient || 1)) * 100)} %`})` },
+                    { label: 'Après plan — niveau de maîtrise', value: `${postInfo.label || 'Non défini'} (${typeof formatMitigationCoefficient === 'function' ? formatMitigationCoefficient(postInfo.coefficient) : `${Math.round((1 - (postInfo.coefficient || 1)) * 100)} %`})` }
                 ])}
             </div>
             ${renderSection('Contrôles et plans d’action', [
