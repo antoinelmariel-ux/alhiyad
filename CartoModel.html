@@ -763,13 +763,13 @@
             <div class="main-content legends-page">
                 <div class="toolbar">
                     <div>
-                        <div class="toolbar-title">Légendes pédagogiques</div>
+                        <div class="toolbar-title">Légendes</div>
                         <p class="legends-toolbar-subtitle">Repères de lecture utilisés pour qualifier, pondérer et maîtriser les risques.</p>
                     </div>
                 </div>
                 <div class="content-area legends-content">
                     <div class="legend-formula-card">
-                        <span class="legend-formula-label">Formule — risque brut simple</span>
+                        <span class="legend-formula-label">Formule — risque brut</span>
                         <code>Score brut simple = Probabilité × Impact</code>
                         <p>Cette première lecture positionne le risque avant pondération par les facteurs aggravants.</p>
                     </div>
@@ -842,7 +842,7 @@
                             <span class="legend-panel-icon">🎲</span>
                             <div>
                                 <h2>Probabilité</h2>
-                                <p>Mesure la fréquence observée ou anticipée du scénario sur une échelle de 1 à 4.</p>
+                                <p>Mesure la fréquence observée ou anticipée du scénario en l’absence de contrôles.</p>
                             </div>
                         </div>
                         <div class="legend-table-wrapper">
@@ -882,7 +882,7 @@
 
                     <div class="legend-formula-card accent">
                         <span class="legend-formula-label">Formule — risque brut aggravé</span>
-                        <code>Score brut aggravé = Probabilité × Coefficient aggravant × Impact</code>
+                        <code>Score brut aggravé = Probabilité × Impact × Coefficient aggravant</code>
                         <p>Le coefficient vaut <strong>1</strong> sans facteur, <strong>1,2</strong> si au moins un facteur aggravant de groupe 2 est présent, et <strong>1,4</strong> si au moins un facteur aggravant de groupe 1 est présent.</p>
                     </div>
 
@@ -934,8 +934,8 @@
 
                     <div class="legend-formula-card success">
                         <span class="legend-formula-label">Formule — risque net</span>
-                        <code>Score net = Score brut aggravé × Facteur résiduel</code>
-                        <p>Le coefficient affiché côté utilisateur correspond au taux de maîtrise : plus il est élevé, plus la réduction du risque est forte.</p>
+                        <code>Score net = Score brut aggravé × (1-Coefficient de maîtrise cible)</code>
+                        <p>Plus le coefficient de maitrise est élevé, plus la réduction du risque est forte.</p>
                     </div>
 
                     <section class="legend-panel">
@@ -951,34 +951,32 @@
                                 <thead>
                                     <tr>
                                         <th>Niveau</th>
-                                        <th>Coefficient utilisateur</th>
-                                        <th>Facteur de calcul</th>
-                                        <th>Lecture pédagogique</th>
+                                        <th>Coefficient de maitrise</th>
+                                                                                <th>Description</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td><span class="legend-control-pill effective">Efficace</span></td>
                                         <td>75 %</td>
-                                        <td>0,25</td>
-                                        <td>Gouvernance active, procédures formalisées, contrôles documentés, audits et formation ciblée avec taux élevé.</td>
+                                                                               <td>Gouvernance active, procédures formalisées, contrôles documentés, audits et formation ciblée avec taux élevé.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-control-pill improvable">Améliorable</span></td>
                                         <td>50 %</td>
-                                        <td>0,50</td>
+                                        
                                         <td>Dispositif formalisé mais suivi, mise à jour, ciblage ou preuves d’exécution encore perfectibles.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-control-pill insufficient">Insuffisant</span></td>
                                         <td>25 %</td>
-                                        <td>0,75</td>
+                                    
                                         <td>Processus informels ou partiellement mis en œuvre, contrôles ad hoc, sensibilisation limitée.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="legend-control-pill ineffective">Inefficace</span></td>
                                         <td>0 %</td>
-                                        <td>1,00</td>
+                                       
                                         <td>Absence ou inefficacité des procédures, contrôles, gouvernance et actions de formation.</td>
                                     </tr>
                                 </tbody>
