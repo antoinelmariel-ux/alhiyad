@@ -43,6 +43,34 @@ function escapeHtml(value) {
     }[match] || match));
 }
 
+function normalizeSearchText(value) {
+    let normalized = value == null ? '' : String(value).toLowerCase();
+
+    if (typeof normalized.normalize === 'function') {
+        normalized = normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    return normalized;
+}
+
+function getSearchTokens(value) {
+    return normalizeSearchText(value).trim().split(/\s+/).filter(Boolean);
+}
+
+function matchesSearchQuery(value, query) {
+    const tokens = getSearchTokens(query);
+    if (!tokens.length) {
+        return true;
+    }
+
+    const haystack = normalizeSearchText(value);
+    if (!haystack) {
+        return false;
+    }
+
+    return tokens.every(token => haystack.includes(token));
+}
+
 function sanitizeRichText(input) {
     const raw = input == null ? '' : String(input);
     if (!raw.trim()) {
@@ -169,6 +197,9 @@ window.sanitizeId = sanitizeId;
 window.idsEqual = idsEqual;
 window.getNextSequentialId = getNextSequentialId;
 window.slugifyLabel = slugifyLabel;
+window.normalizeSearchText = normalizeSearchText;
+window.getSearchTokens = getSearchTokens;
+window.matchesSearchQuery = matchesSearchQuery;
 window.sanitizeRichText = sanitizeRichText;
 
 const AGGRAVATING_FACTOR_GROUPS = Object.freeze({
