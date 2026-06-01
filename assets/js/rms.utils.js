@@ -323,10 +323,10 @@ const MITIGATION_EFFECTIVENESS_ORDER = Object.freeze([
 ]);
 
 const MITIGATION_EFFECTIVENESS_SCALE = Object.freeze({
-    inefficace: { label: 'Ineffective', coefficient: 1 },
-    insuffisant: { label: 'Insufficient', coefficient: 0.75 },
-    ameliorable: { label: 'Room for improvement', coefficient: 0.5 },
-    efficace: { label: 'Effective', coefficient: 0.25 }
+    inefficace: { label: 'Inefficace', coefficient: 1 },
+    insuffisant: { label: 'Insuffisant', coefficient: 0.75 },
+    ameliorable: { label: 'Améliorable', coefficient: 0.5 },
+    efficace: { label: 'Efficace', coefficient: 0.25 }
 });
 
 const DEFAULT_MITIGATION_EFFECTIVENESS = 'insuffisant';
@@ -559,7 +559,16 @@ function getRiskPostActionInfo(risk) {
     };
 }
 
+function getMitigationDisplayCoefficient(value) {
+    const safe = clampMitigationFactor(value);
+    return Math.round((1 - safe) * 100);
+}
+
 function formatMitigationCoefficient(value) {
+    return `${getMitigationDisplayCoefficient(value).toLocaleString('fr-FR')} %`;
+}
+
+function formatMitigationCalculationFactor(value) {
     const safe = clampMitigationFactor(value);
     return safe.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -579,7 +588,9 @@ window.getRiskPostActionInfo = getRiskPostActionInfo;
 window.getRiskSeverityFromScore = getRiskSeverityFromScore;
 window.getRiskBrutLevel = getRiskBrutLevel;
 window.getRiskNetInfo = getRiskNetInfo;
+window.getMitigationDisplayCoefficient = getMitigationDisplayCoefficient;
 window.formatMitigationCoefficient = formatMitigationCoefficient;
+window.formatMitigationCalculationFactor = formatMitigationCalculationFactor;
 window.clampMitigationFactor = clampMitigationFactor;
 window.clampMitigationReduction = clampMitigationFactor;
 window.getMitigationColumnFromLevel = getMitigationColumnFromLevel;

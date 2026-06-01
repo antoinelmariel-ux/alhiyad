@@ -11,10 +11,10 @@
         'High turnover'
     ];
     const EFFECTIVENESS_LEVELS = [
-        { value: 0, label: 'Ineffective' },
-        { value: 25, label: 'Insufficient' },
-        { value: 50, label: 'Room for improvement' },
-        { value: 75, label: 'Effective' }
+        { value: 0, label: 'Inefficace' },
+        { value: 25, label: 'Insuffisant' },
+        { value: 50, label: 'Améliorable' },
+        { value: 75, label: 'Efficace' }
     ];
     const PROBABILITY_DETAILS = {
         1: {
@@ -375,7 +375,7 @@
             dom.impactTitle.textContent = IMPACT_DETAILS[1].title;
             dom.impactDetail.innerHTML = IMPACT_DETAILS[1].points.map((point) => `<li>${point}</li>`).join('');
             dom.effectiveness.value = 0;
-            dom.effectivenessLegend.textContent = '0% - Ineffective';
+            dom.effectivenessLegend.textContent = '0% - Inefficace';
             dom.comment.value = '';
             dom.matrix.querySelectorAll('.qa-cell').forEach((cell) => cell.classList.remove('active-cell'));
             if (dom.matrixDot) {
@@ -408,7 +408,7 @@
 
         const snapped = nearestEffectivenessLevel(scenario.effectiveness);
         dom.effectiveness.value = snapped;
-        dom.effectivenessLegend.textContent = `${snapped}% - ${EFFECTIVENESS_LEVELS.find((l) => l.value === snapped)?.label || 'Ineffective'}`;
+        dom.effectivenessLegend.textContent = `${snapped}% - ${EFFECTIVENESS_LEVELS.find((l) => l.value === snapped)?.label || 'Inefficace'}`;
         dom.comment.value = scenario.comment || '';
 
         const idx = state.data.scenarios.findIndex((s) => s.id === scenario.id);
