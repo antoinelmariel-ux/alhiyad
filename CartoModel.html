@@ -608,11 +608,21 @@
                             <input type="search" class="search-input" id="risksSearchInput" data-risk-filter="search" placeholder="🔍 Rechercher un risque..." oninput="searchRisks(this.value, this)">
                         </div>
                     </div>
-                    <div class="table-container">
+                    <div class="risk-register-scroll-hint" id="riskRegisterScrollHint">
+                        <div class="risk-register-scroll-hint-copy">
+                            <span class="risk-register-scroll-hint-kicker">Tableau large</span>
+                            <span>Faites défiler horizontalement pour consulter les scores, le plan d’actions, le statut et les actions.</span>
+                            <span class="risk-register-scroll-hint-arrow" aria-hidden="true">→</span>
+                        </div>
+                        <button class="btn btn-secondary risk-register-scroll-button" id="riskTableScrollButton" type="button" aria-controls="riskTableScrollContainer">
+                            Voir les colonnes à droite →
+                        </button>
+                    </div>
+                    <div class="table-container risk-table-container" id="riskTableScrollContainer" aria-describedby="riskRegisterScrollHint">
                         <table id="risksTable">
                             <thead>
                                 <tr>
-                                    <th class="sortable-header" onclick="rms.setRiskRegisterSort('id')">ID <span id="riskSortArrow-id" class="sort-arrow">↕</span></th>
+                                    <th class="risk-id-column sortable-header" onclick="rms.setRiskRegisterSort('id')">ID <span id="riskSortArrow-id" class="sort-arrow">↕</span></th>
                                     <th class="risk-description-column">Description</th>
                                     <th class="sortable-header" onclick="rms.setRiskRegisterSort('process')">Processus / sous-processus <span id="riskSortArrow-process" class="sort-arrow">↕</span></th>
                                     <th>Thématique</th>

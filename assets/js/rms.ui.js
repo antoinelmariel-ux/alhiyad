@@ -48,6 +48,9 @@ function switchTab(tabNameOrEvent, maybeTabName) {
         if (tabName === 'interviews' && typeof rms.reloadInterviewFiles === 'function') {
             rms.reloadInterviewFiles();
         }
+        if (tabName === 'risks' && typeof window.updateRiskRegisterScrollCue === 'function') {
+            window.requestAnimationFrame(window.updateRiskRegisterScrollCue);
+        }
     }
 }
 window.switchTab = switchTab;

@@ -2278,8 +2278,79 @@ tbody tr.risk-row-blurred:hover {
     border: 1px solid var(--border-color);
 }
 
+.risk-register-scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(37, 99, 235, 0.22);
+    border-radius: 14px;
+    background: linear-gradient(120deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.03));
+    color: var(--text-color);
+}
+
+.risk-register-scroll-hint-copy {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    line-height: 1.45;
+}
+
+.risk-register-scroll-hint-kicker {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.risk-register-scroll-hint-arrow {
+    color: var(--primary-color);
+    font-weight: 800;
+}
+
+.risk-register-scroll-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.risk-table-container {
+    position: relative;
+    scrollbar-gutter: stable;
+}
+
+.risk-table-container.can-scroll-left {
+    box-shadow: 0 8px 24px rgba(15, 41, 51, 0.08), inset 32px 0 28px -28px rgba(13, 31, 60, 0.35);
+}
+
+.risk-table-container.can-scroll-right {
+    box-shadow: 0 8px 24px rgba(15, 41, 51, 0.08), inset -36px 0 30px -30px rgba(13, 31, 60, 0.45);
+}
+
+.risk-table-container.can-scroll-left.can-scroll-right {
+    box-shadow:
+        0 8px 24px rgba(15, 41, 51, 0.08),
+        inset 32px 0 28px -28px rgba(13, 31, 60, 0.35),
+        inset -36px 0 30px -30px rgba(13, 31, 60, 0.45);
+}
+
 #risksTable {
     min-width: 1500px;
+}
+
+#risksTable .risk-id-column,
+#risksTable tbody td:first-child:not([colspan]) {
+    width: 84px;
+    min-width: 84px;
+    max-width: 84px;
 }
 
 #risksTable .risk-description-column,
@@ -2288,8 +2359,51 @@ tbody tr.risk-row-blurred:hover {
     max-width: 560px;
 }
 
+#risksTable .risk-description-column,
+#risksTable .risk-description-cell,
+#risksTable .risk-id-column,
+#risksTable tbody td:first-child:not([colspan]) {
+    position: sticky;
+    background: var(--surface-color);
+}
+
+#risksTable .risk-id-column,
+#risksTable tbody td:first-child:not([colspan]) {
+    left: 0;
+    z-index: 4;
+}
+
+#risksTable .risk-description-column,
+#risksTable .risk-description-cell {
+    left: 84px;
+    z-index: 3;
+    box-shadow: 12px 0 16px -16px rgba(13, 31, 60, 0.45);
+}
+
+#risksTable .risk-id-column,
+#risksTable .risk-description-column {
+    z-index: 6;
+    background: var(--light-bg);
+}
+
+#risksTable tbody tr:hover td:first-child:not([colspan]),
+#risksTable tbody tr:hover .risk-description-cell {
+    background: var(--light-bg);
+}
+
 #risksTable .risk-description-cell {
     white-space: normal;
+}
+
+@media (max-width: 760px) {
+    .risk-register-scroll-hint {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .risk-register-scroll-button {
+        width: 100%;
+    }
 }
 
 .risk-register-title {
