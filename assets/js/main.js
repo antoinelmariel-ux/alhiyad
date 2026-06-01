@@ -1,3 +1,66 @@
+
+function setupRiskRegisterScrollCue() {
+    const container = document.getElementById('riskTableScrollContainer');
+    const button = document.getElementById('riskTableScrollButton');
+
+    if (!container) {
+        return null;
+    }
+
+    const update = () => {
+        const maxScrollLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+        const canScrollLeft = container.scrollLeft > 4;
+        const canScrollRight = container.scrollLeft < maxScrollLeft - 4;
+        const hasHorizontalOverflow = maxScrollLeft > 4;
+
+        container.classList.toggle('has-horizontal-overflow', hasHorizontalOverflow);
+        container.classList.toggle('can-scroll-left', canScrollLeft);
+        container.classList.toggle('can-scroll-right', canScrollRight);
+
+        if (button) {
+            button.hidden = !hasHorizontalOverflow;
+            button.textContent = canScrollRight ? 'Voir les colonnes à droite →' : '← Revenir au début du tableau';
+            button.setAttribute(
+                'aria-label',
+                canScrollRight
+                    ? 'Faire défiler le registre des risques vers les colonnes de droite'
+                    : 'Revenir au début du registre des risques'
+            );
+        }
+    };
+
+    container.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+
+    if (button) {
+        button.addEventListener('click', () => {
+            const maxScrollLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+            const shouldGoRight = container.scrollLeft < maxScrollLeft - 4;
+            container.scrollTo({
+                left: shouldGoRight ? maxScrollLeft : 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(update);
+        resizeObserver.observe(container);
+        const table = document.getElementById('risksTable');
+        if (table) resizeObserver.observe(table);
+    }
+
+    const tableBody = document.getElementById('risksTableBody');
+    if (tableBody && 'MutationObserver' in window) {
+        const mutationObserver = new MutationObserver(update);
+        mutationObserver.observe(tableBody, { childList: true, subtree: true });
+    }
+
+    requestAnimationFrame(update);
+    window.updateRiskRegisterScrollCue = update;
+    return update;
+}
+
 function prepareOnboardingStep(stepIndex) {
     const stickMenuTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
     const slowScrollMainTo = (top) => window.scrollTo({ top, behavior: 'smooth' });
@@ -276,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof registerBeforeUnloadWarning === 'function') registerBeforeUnloadWarning();
     applyPatch();
     rms.renderAll();
+    setupRiskRegisterScrollCue();
 
     const startTourButton = document.getElementById('startOnboardingTourBtn');
     const tg = buildOnboardingTour();
