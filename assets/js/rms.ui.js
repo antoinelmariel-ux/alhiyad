@@ -213,7 +213,7 @@ function searchRisks(searchTermOrEvent, sourceElement) {
         searchTerm = originElement?.value;
     }
 
-    const normalizedValue = searchTerm == null ? '' : String(searchTerm).trim();
+    const normalizedValue = searchTerm == null ? '' : String(searchTerm);
 
     if (!rms.filters) {
         rms.filters = { process: '', type: '', status: '', theme: '', search: '', entity: [], tiers: [] };
@@ -1730,7 +1730,7 @@ function renderControlSelectionList() {
     if (focusContainer) {
         focusContainer.innerHTML = '';
     }
-    const query = controlFilterQueryForRisk.toLowerCase();
+    const query = controlFilterQueryForRisk;
     const typeMap = Array.isArray(rms.config?.controlTypes)
         ? rms.config.controlTypes.reduce((acc, item) => {
             if (!item || item.value == null) return acc;
@@ -1746,8 +1746,8 @@ function renderControlSelectionList() {
         }, {})
         : {};
     const availableControls = rms.controls.filter(ctrl => {
-        const name = (ctrl.name || '').toLowerCase();
-        return String(ctrl.id).includes(query) || name.includes(query);
+        const haystack = [ctrl.id, ctrl.name].filter(value => value != null).join(' ');
+        return matchesSearchQuery(haystack, query);
     });
     const recommendedControls = focusLabel
         ? availableControls.filter(ctrl => recommendedSet.has(ctrl.id))
@@ -1970,10 +1970,10 @@ window.createActionPlanFromRisk = createActionPlanFromRisk;
 function renderActionPlanSelectionList() {
     const list = document.getElementById('actionPlanList');
     if (!list) return;
-    const query = actionPlanFilterQueryForRisk.toLowerCase();
+    const query = actionPlanFilterQueryForRisk;
     list.innerHTML = rms.actionPlans.filter(plan => {
-        const title = (plan.title || '').toLowerCase();
-        return String(plan.id).includes(query) || title.includes(query);
+        const haystack = [plan.id, plan.title].filter(value => value != null).join(' ');
+        return matchesSearchQuery(haystack, query);
     }).map(plan => {
         const isSelected = selectedActionPlansForRisk.some(id => idsEqual(id, plan.id));
         const title = escapeHtml(plan.title || 'Sans titre');
@@ -2246,10 +2246,10 @@ window.openRiskSelectorForPlan = openRiskSelectorForPlan;
 function renderRiskSelectionListForPlan() {
     const riskList = document.getElementById('riskListForPlan');
     if (!riskList) return;
-    const query = riskFilterQueryForPlan.toLowerCase();
+    const query = riskFilterQueryForPlan;
     riskList.innerHTML = rms.risks.filter(risk => {
-        const title = (risk.titre || risk.description || '').toLowerCase();
-        return String(risk.id).includes(query) || title.includes(query);
+        const haystack = [risk.id, risk.titre, risk.description].filter(value => value != null).join(' ');
+        return matchesSearchQuery(haystack, query);
     }).map(risk => {
         const isSelected = selectedRisksForPlan.some(id => idsEqual(id, risk.id));
         const title = escapeHtml(risk.titre || risk.description || 'Sans titre');

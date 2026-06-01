@@ -5513,7 +5513,7 @@ class RiskManagementSystem {
         return {
             query,
             referent,
-            normalizedQuery: query.toLowerCase(),
+            normalizedQuery: query,
             normalizedReferent: referent.toLowerCase(),
             hasQuery: query.length > 0,
             hasReferent: referent.length > 0
@@ -5523,18 +5523,20 @@ class RiskManagementSystem {
     evaluateProcessVisibility(process, subs, filters) {
         const processReferents = Array.isArray(process?.referents) ? process.referents : [];
 
-        const matchesProcessQuery = !filters.hasQuery || [process.label, process.value, ...processReferents]
-            .filter(value => typeof value === 'string')
-            .some(value => value.toLowerCase().includes(filters.normalizedQuery));
+        const matchesProcessQuery = !filters.hasQuery || matchesSearchQuery(
+            [process.label, process.value, ...processReferents].filter(value => typeof value === 'string').join(' '),
+            filters.normalizedQuery
+        );
 
         const matchesProcessReferent = !filters.hasReferent || processReferents
             .some(ref => typeof ref === 'string' && ref.toLowerCase() === filters.normalizedReferent);
 
         const normalizedSubs = subs.map((subProcess, index) => {
             const subReferents = Array.isArray(subProcess?.referents) ? subProcess.referents : [];
-            const matchesQuery = !filters.hasQuery || [subProcess.label, subProcess.value, ...subReferents]
-                .filter(value => typeof value === 'string')
-                .some(value => value.toLowerCase().includes(filters.normalizedQuery));
+            const matchesQuery = !filters.hasQuery || matchesSearchQuery(
+                [subProcess.label, subProcess.value, ...subReferents].filter(value => typeof value === 'string').join(' '),
+                filters.normalizedQuery
+            );
             const matchesReferent = !filters.hasReferent || subReferents
                 .some(ref => typeof ref === 'string' && ref.toLowerCase() === filters.normalizedReferent);
 
@@ -8546,7 +8548,7 @@ class RiskManagementSystem {
 
         const processFilter = String(process || '').toLowerCase();
         const themeFilter = String(theme || '').toLowerCase();
-        const searchFilter = String(search || '').toLowerCase();
+        const searchFilter = String(search || '');
         const entityFilters = Array.isArray(entity)
             ? entity.map(value => String(value || '').toLowerCase()).filter(Boolean)
             : [];
@@ -8601,14 +8603,13 @@ class RiskManagementSystem {
             }
 
             if (searchFilter) {
-                const title = risk?.titre != null ? String(risk.titre).toLowerCase() : '';
-                const description = risk?.description != null ? String(risk.description).toLowerCase() : '';
-                const idValue = risk?.id != null ? String(risk.id).toLowerCase() : '';
-                const tiersValues = Array.isArray(risk?.tiers)
-                    ? risk.tiers.map(value => String(value || '').toLowerCase()).filter(Boolean)
-                    : [];
-                const tiersText = tiersValues.join(' ');
-                if (!title.includes(searchFilter) && !description.includes(searchFilter) && !idValue.includes(searchFilter) && !tiersText.includes(searchFilter)) {
+                const searchHaystack = [
+                    risk?.id,
+                    risk?.titre,
+                    risk?.description,
+                    ...(Array.isArray(risk?.tiers) ? risk.tiers : [])
+                ].filter(value => value != null).join(' ');
+                if (!matchesSearchQuery(searchHaystack, searchFilter)) {
                     return false;
                 }
             }
@@ -10627,7 +10628,7 @@ class RiskManagementSystem {
         const { type = '', search = '' } = this.controlFilters || {};
 
         const typeFilter = String(type || '').toLowerCase();
-        const searchTerm = String(search || '').trim().toLowerCase();
+        const searchTerm = String(search || '');
 
         if (!typeFilter && !searchTerm) {
             return controls.slice();
@@ -10635,14 +10636,13 @@ class RiskManagementSystem {
 
         return controls.filter(control => {
             const controlType = String(control?.type || '').toLowerCase();
-            const controlName = String(control?.name || '').toLowerCase();
-            const controlOwner = String(control?.owner || '').toLowerCase();
+            const controlHaystack = [control?.name, control?.owner].filter(value => value != null).join(' ');
 
             if (typeFilter && controlType !== typeFilter) {
                 return false;
             }
 
-            if (searchTerm && !controlName.includes(searchTerm) && !controlOwner.includes(searchTerm)) {
+            if (!matchesSearchQuery(controlHaystack, searchTerm)) {
                 return false;
             }
 
@@ -10753,8 +10753,8 @@ class RiskManagementSystem {
         } = this.actionPlanFilters || {};
 
         const statusFilter = this.normalizeStatusValue('actionPlan', status);
-        const nameFilter = String(name || '').trim().toLowerCase();
-        const ownerFilter = String(owner || '').trim().toLowerCase();
+        const nameFilter = String(name || '');
+        const ownerFilter = String(owner || '');
         const dueDateOrderFilter = String(dueDateOrder || '').toLowerCase();
 
         const filteredPlans = plans.filter(plan => {
@@ -10764,16 +10764,14 @@ class RiskManagementSystem {
             }
 
             if (nameFilter) {
-                const planTitle = plan?.title != null ? String(plan.title).toLowerCase() : '';
-                const planId = plan?.id != null ? String(plan.id).toLowerCase() : '';
-                if (!planTitle.includes(nameFilter) && !planId.includes(nameFilter)) {
+                const planHaystack = [plan?.id, plan?.title].filter(value => value != null).join(' ');
+                if (!matchesSearchQuery(planHaystack, nameFilter)) {
                     return false;
                 }
             }
 
             if (ownerFilter) {
-                const planOwner = plan?.owner != null ? String(plan.owner).toLowerCase() : '';
-                if (!planOwner.includes(ownerFilter)) {
+                if (!matchesSearchQuery(plan?.owner, ownerFilter)) {
                     return false;
                 }
             }
@@ -11148,9 +11146,6 @@ class RiskManagementSystem {
         }
 
         let normalizedValue = value == null ? '' : String(value);
-        if (normalizedKey === 'search') {
-            normalizedValue = normalizedValue.trim();
-        }
         this.interviewFilters[normalizedKey] = normalizedValue;
 
         if (normalizedKey === 'process') {
@@ -12665,8 +12660,7 @@ class RiskManagementSystem {
                     searchParts.push(updatedLabel);
                 }
 
-                const haystack = normalizeForSearch(searchParts.join(' '));
-                if (!haystack || !haystack.includes(searchFilter)) {
+                if (!matchesSearchQuery(searchParts.join(' '), filters.search)) {
                     return false;
                 }
             }
