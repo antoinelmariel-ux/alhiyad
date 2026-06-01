@@ -241,13 +241,48 @@ function prepareOnboardingStep(stepIndex) {
 }
 
 
+function isOnboardingTourVisible(tg) {
+    return Boolean(tg?.isVisible && document.querySelector('.tg-dialog'));
+}
+
+async function navigateOnboardingTour(tg, direction) {
+    if (!isOnboardingTourVisible(tg) || tg._alhiyadNavigationPending) {
+        return;
+    }
+
+    tg._alhiyadNavigationPending = true;
+
+    try {
+        if (direction === 'next') {
+            const isLastStep = tg.activeStep >= (tg.tourSteps?.length || 0) - 1;
+            if (isLastStep) {
+                await tg.finishTour(true, tg.group);
+            } else {
+                await tg.nextStep();
+            }
+            return;
+        }
+
+        await tg.prevStep();
+    } catch (error) {
+        const expectedBoundaryError = direction === 'prev' && error === 'Start of tour steps';
+        if (!expectedBoundaryError) {
+            console.warn('Navigation du tour guidé ignorée :', error);
+        }
+    } finally {
+        requestAnimationFrame(() => {
+            tg._alhiyadNavigationPending = false;
+        });
+    }
+}
+
 function bindOnboardingDialogButtons(tg) {
     document.addEventListener('click', (event) => {
         const nextBtn = event.target.closest('.tg-dialog-next-btn');
         if (nextBtn) {
             event.preventDefault();
             event.stopPropagation();
-            tg.nextStep();
+            navigateOnboardingTour(tg, 'next');
             return;
         }
 
@@ -255,8 +290,21 @@ function bindOnboardingDialogButtons(tg) {
         if (prevBtn) {
             event.preventDefault();
             event.stopPropagation();
-            tg.prevStep();
+            navigateOnboardingTour(tg, 'prev');
         }
+    }, true);
+}
+
+function bindOnboardingKeyboardControls(tg) {
+    window.addEventListener('keydown', (event) => {
+        if (!isOnboardingTourVisible(tg) || !['ArrowRight', 'ArrowLeft'].includes(event.key)) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        navigateOnboardingTour(tg, event.key === 'ArrowRight' ? 'next' : 'prev');
     }, true);
 }
 
@@ -293,6 +341,7 @@ function buildOnboardingTour() {
         finishLabel: 'Fin',
         exitOnEscape: true,
         exitOnClickOutside: false,
+        keyboardControls: false,
         activeStepInteraction: true,
         rememberStep: false,
         steps: [
@@ -354,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tg = buildOnboardingTour();
     if (tg) {
         bindOnboardingDialogButtons(tg);
+        bindOnboardingKeyboardControls(tg);
     }
 
     if (startTourButton && tg) {
